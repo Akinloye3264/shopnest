@@ -9,6 +9,40 @@ const router = express.Router();
 router.use(protect);
 router.use(isAdmin);
 
+/**
+ * @swagger
+ * /admin/dashboard:
+ *   get:
+ *     summary: Get admin dashboard statistics
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Admin dashboard data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     users:
+ *                       type: object
+ *                     stores:
+ *                       type: integer
+ *                     products:
+ *                       type: integer
+ *                     orders:
+ *                       type: integer
+ *                     revenue:
+ *                       type: number
+ *       500:
+ *         description: Server error
+ */
 // @route   GET /api/admin/dashboard
 // @desc    Get admin dashboard stats
 // @access  Private/Admin
@@ -47,6 +81,31 @@ router.get('/dashboard', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /admin/sellers:
+ *   get:
+ *     summary: Get all sellers
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all sellers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *       500:
+ *         description: Server error
+ */
 // @route   GET /api/admin/sellers
 // @desc    Get all sellers
 // @access  Private/Admin
@@ -67,6 +126,40 @@ router.get('/sellers', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /admin/sellers/{id}/approve:
+ *   patch:
+ *     summary: Approve a seller
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Seller user ID
+ *     responses:
+ *       200:
+ *         description: Seller approved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Seller not found
+ *       500:
+ *         description: Server error
+ */
 // @route   PATCH /api/admin/sellers/:id/approve
 // @desc    Approve a seller
 // @access  Private/Admin
@@ -97,6 +190,40 @@ router.patch('/sellers/:id/approve', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /admin/sellers/{id}/suspend:
+ *   patch:
+ *     summary: Suspend a seller
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Seller user ID
+ *     responses:
+ *       200:
+ *         description: Seller suspended successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Seller not found
+ *       500:
+ *         description: Server error
+ */
 // @route   PATCH /api/admin/sellers/:id/suspend
 // @desc    Suspend a seller
 // @access  Private/Admin

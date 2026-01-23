@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../../utils/api'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../context/AuthContext'
 import { validatePassword, getPasswordError } from '../../utils/validation'
@@ -62,7 +62,7 @@ const ResetPassword = () => {
     setLoading(true)
 
     try {
-      const response = await axios.post(`/api/auth/resetpassword/${resettoken}`, {
+      const response = await api.post(`/api/auth/resetpassword/${resettoken}`, {
         password: formData.password,
         confirmPassword: formData.confirmPassword
       })

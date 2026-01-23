@@ -90,6 +90,17 @@ const Product = sequelize.define('Product', {
       key: 'id'
     }
   },
+  sellerEmail: {
+    type: DataTypes.STRING,
+    field: 'seller_email',
+    validate: {
+      isEmail: true
+    }
+  },
+  sellerPhone: {
+    type: DataTypes.STRING,
+    field: 'seller_phone'
+  },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,

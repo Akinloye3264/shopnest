@@ -4,9 +4,10 @@ import { useAuth } from '../../context/AuthContext'
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
+    email: localStorage.getItem('rememberedEmail') || '',
     password: ''
   })
+  const [rememberMe, setRememberMe] = useState(!!localStorage.getItem('rememberedEmail'))
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
@@ -22,6 +23,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
+
+    // Handle remember me
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', formData.email)
+    } else {
+      localStorage.removeItem('rememberedEmail')
+    }
 
     const result = await login(formData.email, formData.password)
     
@@ -116,6 +124,8 @@ const Login = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">

@@ -15,17 +15,30 @@ import adminRoutes from './routes/admin.js';
 import productRoutes from './routes/products.js';
 import orderRoutes from './routes/orders.js';
 import paymentRoutes from './routes/payments.js';
-
-// Load environment variables
-dotenv.config();
+import cartRoutes from './routes/cart.js';
+import productRequestRoutes from './routes/productRequests.js';
+import jobRoutes from './routes/jobs.js';
+import jobApplicationRoutes from './routes/jobApplications.js';
+import messageRoutes from './routes/messages.js';
+import notificationRoutes from './routes/notifications.js';
+import learningResourceRoutes from './routes/learningResources.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load environment variables from backend folder
+dotenv.config({ path: path.join(__dirname, '.env') });
+
 const app = express();
 
 // Middleware
-app.use(cors());
+// CORS configuration - allow frontend origin
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -33,15 +46,14 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Database connection
 sequelize.authenticate()
   .then(() => {
-    console.log('✅ MySQL database connected successfully');
-    // Sync database (create tables if they don't exist)
-    return sequelize.sync({ alter: false });
+    console.log(' MySQL database connected successfully');
+    return sequelize.sync({ alter: true });
   })
   .then(() => {
-    console.log('✅ Database synced successfully');
+    console.log(' Database synced successfully');
   })
   .catch((err) => {
-    console.error('❌ Database connection error:', err);
+    console.error(' Database connection error:', err);
   });
 
 // Swagger API Documentation
@@ -58,6 +70,13 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/product-requests', productRequestRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/job-applications', jobApplicationRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/learning-resources', learningResourceRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -76,6 +95,6 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Server running on port ${PORT}`);
+  console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
 });

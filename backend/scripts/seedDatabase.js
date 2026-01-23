@@ -14,7 +14,7 @@ dotenv.config({ path: resolve(__dirname, '../../.env') });  // root/.env (option
 
 // Now import AFTER dotenv has populated process.env
 const { default: sequelize } = await import('../config/database.js');
-const { User, Store, Product, Order, DiscountCode } = await import('../models/index.js');
+const { User, Store, Product, Order, DiscountCode, Cart, ProductRequest } = await import('../models/index.js');
 
 // Sample data
 const sampleUsers = [
@@ -172,9 +172,9 @@ async function seedDatabase() {
     await sequelize.authenticate();
     console.log('Connected to database');
 
-    // Sync database (create tables)
+    // Sync database (create tables and add missing columns)
     console.log('Syncing database...');
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ alter: true }); // Use alter: true to add new columns
     console.log(' Database synced');
 
     // Clear existing data (optional - comment out if you want to keep existing data)
@@ -249,6 +249,8 @@ for (const seller of sellers) {
         slug,
         sellerId: seller.id,
         storeId: store.id,
+        sellerEmail: seller.email,
+        sellerPhone: seller.phone,
         images: [{
           url: `https://picsum.photos/800/600?random=${i + 1}`,
           alt: productData.name

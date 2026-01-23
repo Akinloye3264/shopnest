@@ -1,12 +1,13 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { Op } from 'sequelize';
-import crypto from 'crypto';
 import { User, Store } from '../models/index.js';
 import { generateToken } from '../utils/generateToken.js';
 import { generateResetToken } from '../utils/generateResetToken.js';
 import sendEmail from '../utils/sendEmail.js';
+import sendSMS from '../utils/sendSMS.js';
 import { protect } from '../middleware/auth.js';
+import crypto from 'crypto';
 
 const router = express.Router();
 
@@ -42,7 +43,7 @@ const router = express.Router();
  *                 type: string
  *               role:
  *                 type: string
- *                 enum: [customer, seller]
+ *                 enum: [customer, seller, employee, employer]
  *                 default: customer
  *               phone:
  *                 type: string
@@ -72,9 +73,9 @@ router.post(
     body('name').trim().notEmpty().withMessage('Name is required'),
     body('email').isEmail().withMessage('Please provide a valid email'),
     body('password')
-      .isLength({ min: 8, max: 16 })
-      .withMessage('Password must be between 8 and 16 characters')
-      .matches(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+      .isLength({ min: 8, max: 24 })
+      .withMessage('Password must be between 8 and 24 characters')
+      .matches(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]/)
       .withMessage('Password must contain at least one letter, one number, and one special character'),
     body('confirmPassword').custom((value, { req }) => {
       if (value !== req.body.password) {
@@ -82,7 +83,7 @@ router.post(
       }
       return true;
     }),
-    body('role').optional().isIn(['customer', 'seller']).withMessage('Invalid role'),
+    body('role').optional().isIn(['customer', 'seller', 'employee', 'employer']).withMessage('Invalid role'),
     body('phone').optional().matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/)
       .withMessage('Please provide a valid phone number')
   ],
@@ -95,7 +96,6 @@ router.post(
 
       const { name, email, password, role = 'customer', phone, storeName, confirmPassword } = req.body;
 
-      // Check if user already exists
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         return res.status(400).json({
@@ -180,8 +180,29 @@ router.post(
  *     responses:
  *       200:
  *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       401:
  *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Account suspended
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 // @route   POST /api/auth/login
 // @desc    Login user
@@ -265,6 +286,21 @@ router.post(
  *     responses:
  *       200:
  *         description: Password reset email sent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Email could not be sent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 // @route   POST /api/auth/forgotpassword
 // @desc    Forgot password - send reset token
@@ -385,6 +421,25 @@ router.post('/forgotpassword', async (req, res) => {
  *     responses:
  *       200:
  *         description: Password reset successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 // @route   POST /api/auth/resetpassword/:resettoken
 // @desc    Reset password
@@ -502,5 +557,314 @@ router.get('/me', protect, async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /auth/send-phone-otp:
+ *   post:
+ *     summary: Send OTP to phone number for verification
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - phone
+ *             properties:
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully
+ *       400:
+ *         description: Invalid phone number or user not found
+ */
+// @route   POST /api/auth/send-phone-otp
+// @desc    Send OTP to phone number
+// @access  Private
+router.post(
+  '/send-phone-otp',
+  protect,
+  [
+    body('phone')
+      .trim()
+      .notEmpty()
+      .withMessage('Phone number is required')
+      .matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/)
+      .withMessage('Please provide a valid phone number')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
+      }
+
+      const { phone } = req.body;
+      const user = await User.findByPk(req.user.id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+      // Update user with OTP
+      await user.update({
+        phone,
+        phoneOtp: otp,
+        phoneOtpExpire: new Date(otpExpire),
+        phoneVerified: false
+      });
+
+      // Send OTP via SMS
+      try {
+        await sendSMS({
+          phone,
+          message: `Your ShopNest verification code is: ${otp}. This code will expire in 10 minutes.`
+        });
+
+        res.json({
+          success: true,
+          message: 'OTP sent successfully to your phone number'
+        });
+      } catch (smsError) {
+        console.error('SMS error:', smsError);
+        // Clear OTP if SMS fails
+        await user.update({
+          phoneOtp: null,
+          phoneOtpExpire: null
+        });
+
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to send OTP. Please try again later.'
+        });
+      }
+    } catch (error) {
+      console.error('Send phone OTP error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error sending OTP',
+        error: error.message
+      });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /auth/verify-phone-otp:
+ *   post:
+ *     summary: Verify phone number with OTP
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - otp
+ *             properties:
+ *               otp:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 6
+ *     responses:
+ *       200:
+ *         description: Phone verified successfully
+ *       400:
+ *         description: Invalid or expired OTP
+ */
+// @route   POST /api/auth/verify-phone-otp
+// @desc    Verify phone number with OTP
+// @access  Private
+router.post(
+  '/verify-phone-otp',
+  protect,
+  [
+    body('otp')
+      .trim()
+      .notEmpty()
+      .withMessage('OTP is required')
+      .isLength({ min: 6, max: 6 })
+      .withMessage('OTP must be 6 digits')
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
+      }
+
+      const { otp } = req.body;
+      const user = await User.findByPk(req.user.id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      // Check if OTP exists and is not expired
+      if (!user.phoneOtp || !user.phoneOtpExpire) {
+        return res.status(400).json({
+          success: false,
+          message: 'No OTP found. Please request a new OTP.'
+        });
+      }
+
+      if (new Date(user.phoneOtpExpire) < new Date()) {
+        // Clear expired OTP
+        await user.update({
+          phoneOtp: null,
+          phoneOtpExpire: null
+        });
+
+        return res.status(400).json({
+          success: false,
+          message: 'OTP has expired. Please request a new OTP.'
+        });
+      }
+
+      // Verify OTP
+      if (user.phoneOtp !== otp) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid OTP. Please try again.'
+        });
+      }
+
+      // OTP is valid, mark phone as verified
+      await user.update({
+        phoneVerified: true,
+        phoneOtp: null,
+        phoneOtpExpire: null
+      });
+
+      res.json({
+        success: true,
+        message: 'Phone number verified successfully',
+        user: {
+          id: user.id,
+          phone: user.phone,
+          phoneVerified: true
+        }
+      });
+    } catch (error) {
+      console.error('Verify phone OTP error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error verifying OTP',
+        error: error.message
+      });
+    }
+  }
+);
+
+/**
+ * @swagger
+ * /auth/profile:
+ *   put:
+ *     summary: Update user profile
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               bio:
+ *                 type: string
+ *               skills:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               profileImage:
+ *                 type: string
+ *               resume:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ */
+// @route   PUT /api/auth/profile
+// @desc    Update user profile
+// @access  Private
+router.put(
+  '/profile',
+  protect,
+  [
+    body('name').optional().trim().notEmpty(),
+    body('phone').optional().matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/),
+    body('bio').optional().trim(),
+    body('skills').optional().isArray(),
+    body('profileImage').optional().trim(),
+    body('resume').optional().trim()
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
+      }
+
+      const user = await User.findByPk(req.user.id);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      const allowedFields = ['name', 'phone', 'bio', 'skills', 'profileImage', 'resume'];
+      const updateData = {};
+
+      allowedFields.forEach(field => {
+        if (req.body[field] !== undefined) {
+          updateData[field] = req.body[field];
+        }
+      });
+
+      await user.update(updateData);
+
+      const updatedUser = await User.findByPk(req.user.id, {
+        attributes: { exclude: ['password'] }
+      });
+
+      res.json({
+        success: true,
+        message: 'Profile updated successfully',
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error('Update profile error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error updating profile',
+        error: error.message
+      });
+    }
+  }
+);
 
 export default router;

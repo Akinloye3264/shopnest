@@ -1,4 +1,9 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const options = {
   definition: {
@@ -17,10 +22,6 @@ const options = {
         url: 'http://localhost:5000/api',
         description: 'Development server'
       },
-      {
-        url: 'https://api.shopnest.com/api',
-        description: 'Production server'
-      }
     ],
     components: {
       securitySchemes: {
@@ -49,7 +50,7 @@ const options = {
             },
             role: {
               type: 'string',
-              enum: ['customer', 'seller', 'admin'],
+              enum: ['customer', 'seller', 'admin', 'employee', 'employer'],
               description: 'User role'
             },
             phone: {
@@ -259,7 +260,7 @@ const options = {
       }
     ]
   },
-  apis: ['./routes/*.js']
+  apis: [path.join(__dirname, '..', 'routes', '*.js')]
 };
 
 const swaggerSpec = swaggerJsdoc(options);

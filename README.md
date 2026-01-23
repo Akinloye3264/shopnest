@@ -79,6 +79,11 @@ EMAIL_FROM_NAME=ShopNest
 
 # Frontend URL
 FRONTEND_URL=http://localhost:3000
+
+# Stripe Payment Gateway
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 ```
 
 4. Start the backend server:
@@ -100,7 +105,12 @@ cd frontend
 npm install
 ```
 
-3. Start the development server:
+3. Create a `.env` file in the **frontend directory**:
+```env
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```

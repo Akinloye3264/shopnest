@@ -97,8 +97,10 @@ const Register = () => {
     const result = await register(registerData)
     
     if (result.success) {
-      if (formData.role === 'seller') {
+      if (formData.role === 'seller' || formData.role === 'employer') {
         navigate('/seller/dashboard')
+      } else if (formData.role === 'employee') {
+        navigate('/jobs')
       } else {
         navigate('/products')
       }
@@ -189,6 +191,8 @@ const Register = () => {
               >
                 <option value="customer">Shop as a Customer</option>
                 <option value="seller">Sell Products</option>
+                <option value="employee">Looking for a Job</option>
+                <option value="employer">Looking for People to Recruit</option>
               </select>
             </div>
 
@@ -244,7 +248,7 @@ const Register = () => {
               </div>
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
               <p className="mt-1 text-xs text-gray-500">
-                Must be 8-16 characters with at least one letter, one number, and one special character (@$!%*?&)
+                Must be 8-24 characters with at least one letter, one number, and one special character (@$!%*?#&)
               </p>
             </div>
 

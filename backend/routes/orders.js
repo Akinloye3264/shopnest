@@ -4,6 +4,55 @@ import { Order, Product, User, Store } from '../models/index.js';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /orders:
+ *   post:
+ *     summary: Create a new order
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - items
+ *             properties:
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     productId:
+ *                       type: integer
+ *                     quantity:
+ *                       type: integer
+ *               shippingAddress:
+ *                 type: object
+ *               billingAddress:
+ *                 type: object
+ *               discountCode:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Order created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Order'
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
 // @route   POST /api/orders
 // @desc    Create a new order
 // @access  Private
@@ -70,11 +119,11 @@ router.post('/', protect, async (req, res) => {
       sellerId,
       storeId,
       shippingAddressName: shippingAddress?.name || req.user.name,
-      shippingAddressStreet: shippingAddress?.street || req.user.addressStreet,
-      shippingAddressCity: shippingAddress?.city || req.user.addressCity,
-      shippingAddressState: shippingAddress?.state || req.user.addressState,
-      shippingAddressCountry: shippingAddress?.country || req.user.addressCountry,
-      shippingAddressZipCode: shippingAddress?.zipCode || req.user.addressZipCode,
+      shippingAddressStreet: shippingAddress?.street || req.user.addressStreet || '',
+      shippingAddressCity: shippingAddress?.city || req.user.addressCity || '',
+      shippingAddressState: shippingAddress?.state || req.user.addressState || '',
+      shippingAddressCountry: shippingAddress?.country || req.user.addressCountry || '',
+      shippingAddressZipCode: shippingAddress?.zipCode || req.user.addressZipCode || '',
       shippingAddressPhone: shippingAddress?.phone || req.user.phone,
       billingAddressName: billingAddress?.name || shippingAddress?.name || req.user.name,
       billingAddressStreet: billingAddress?.street || shippingAddress?.street || req.user.addressStreet,
@@ -114,6 +163,40 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /orders/{id}:
+ *   get:
+ *     summary: Get a single order by ID
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Order ID
+ *     responses:
+ *       200:
+ *         description: Order details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Order'
+ *       403:
+ *         description: Not authorized to view this order
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Server error
+ */
 // @route   GET /api/orders/:id
 // @desc    Get single order
 // @access  Private
@@ -146,16 +229,17 @@ router.get('/:id', protect, async (req, res) => {
       });
     }
 
-    // Check authorization
-    if (
-      order.customerId !== req.user.id &&
-      order.sellerId !== req.user.id &&
-      req.user.role !== 'admin'
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: 'Not authorized to view this order'
-      });
+    // Check authorization - admins can view all orders
+    if (req.user.role !== 'admin') {
+      if (
+        order.customerId !== req.user.id &&
+        order.sellerId !== req.user.id
+      ) {
+        return res.status(403).json({
+          success: false,
+          message: 'Not authorized to view this order'
+        });
+      }
     }
 
     res.json({ success: true, data: order });
