@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../../utils/api'
 import Navbar from '../../components/Navbar'
 import toast from 'react-hot-toast'
 
@@ -13,7 +13,7 @@ const SellerOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('/api/seller/orders')
+      const response = await api.get('/api/seller/orders')
       setOrders(response.data.data)
     } catch (error) {
       toast.error('Error fetching orders')

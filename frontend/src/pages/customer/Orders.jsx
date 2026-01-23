@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../../utils/api'
 import Navbar from '../../components/Navbar'
 import toast from 'react-hot-toast'
 
@@ -13,7 +13,7 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('/api/customer/orders')
+      const response = await api.get('/api/customer/orders')
       setOrders(response.data.data)
     } catch (error) {
       toast.error('Error fetching orders')
@@ -66,6 +66,9 @@ const Orders = () => {
                       {order.seller?.storeName || order.seller?.name}
                     </p>
                     <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                    {order.shippingAddressPhone && (
+                      <p className="text-sm text-gray-500 mt-1">Phone: {order.shippingAddressPhone}</p>
+                    )}
                   </div>
                   <div className="text-right">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.orderStatus)}`}>

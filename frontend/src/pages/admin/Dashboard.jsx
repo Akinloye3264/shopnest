@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../../utils/api'
 import Navbar from '../../components/Navbar'
 import toast from 'react-hot-toast'
 
@@ -16,7 +16,7 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('/api/admin/dashboard')
+      const response = await api.get('/api/admin/dashboard')
       setStats(response.data.data)
     } catch (error) {
       toast.error('Error fetching dashboard data')
@@ -27,7 +27,7 @@ const AdminDashboard = () => {
 
   const fetchSellers = async () => {
     try {
-      const response = await axios.get('/api/admin/sellers')
+      const response = await api.get('/api/admin/sellers')
       setSellers(response.data.data)
     } catch (error) {
       console.error('Error fetching sellers:', error)
@@ -36,7 +36,7 @@ const AdminDashboard = () => {
 
   const handleApprove = async (sellerId) => {
     try {
-      await axios.patch(`/api/admin/sellers/${sellerId}/approve`)
+      await api.patch(`/api/admin/sellers/${sellerId}/approve`)
       toast.success('Seller approved successfully')
       fetchSellers()
     } catch (error) {
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
 
   const handleSuspend = async (sellerId) => {
     try {
-      await axios.patch(`/api/admin/sellers/${sellerId}/suspend`)
+      await api.patch(`/api/admin/sellers/${sellerId}/suspend`)
       toast.success('Seller suspended successfully')
       fetchSellers()
     } catch (error) {

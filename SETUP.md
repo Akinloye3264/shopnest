@@ -29,9 +29,20 @@ JWT_EXPIRE=7d
 
 # Frontend URL
 FRONTEND_URL=http://localhost:3000
+
+# Stripe Payment Gateway
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 ```
 
-**Important**: Replace `MONGODB_URI` with your actual MongoDB connection string.
+**Important**: 
+- Replace database credentials with your actual MySQL credentials
+- Add your Stripe API keys from [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
+- Create a `.env` file in the **frontend directory** with:
+  ```env
+  VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+  ```
 
 ### 3. Install Dependencies
 

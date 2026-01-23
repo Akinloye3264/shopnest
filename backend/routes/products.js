@@ -1,5 +1,5 @@
 import express from 'express';
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { body, validationResult } from 'express-validator';
 import { protect, isSeller } from '../middleware/auth.js';
 import { Product, Store, User } from '../models/index.js';
@@ -94,12 +94,13 @@ router.get('/', async (req, res) => {
           attributes: ['id', 'name', 'slug', 'logo']
         }
       ],
-      order: [['createdAt', 'DESC']],
+      order: [['id', 'DESC']],
       limit: parseInt(limit),
       offset
     });
 
-    res.json({
+    // Return flag for frontend to show product request option if no results and search was performed
+    const response = {
       success: true,
       data: products,
       pagination: {
@@ -107,8 +108,11 @@ router.get('/', async (req, res) => {
         limit: parseInt(limit),
         total: count,
         pages: Math.ceil(count / parseInt(limit))
-      }
-    });
+      },
+      noResults: count === 0 && !!search // Flag for frontend to show product request option
+    };
+
+    res.json(response);
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({
@@ -277,7 +281,9 @@ router.post(
         tags: tags || [],
         sku,
         sellerId: req.user.id,
-        storeId: store.id
+        storeId: store.id,
+        sellerEmail: req.user.email,
+        sellerPhone: req.user.phone
       });
 
       res.status(201).json({
@@ -327,7 +333,8 @@ router.patch('/:id', protect, isSeller, async (req, res) => {
       });
     }
 
-    if (product.sellerId !== req.user.id) {
+    // Allow admins to update any product, or sellers to update their own
+    if (req.user.role !== 'admin' && product.sellerId !== req.user.id) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to update this product'
@@ -382,7 +389,8 @@ router.delete('/:id', protect, isSeller, async (req, res) => {
       });
     }
 
-    if (product.sellerId !== req.user.id) {
+    // Allow admins to delete any product, or sellers to delete their own
+    if (req.user.role !== 'admin' && product.sellerId !== req.user.id) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to delete this product'

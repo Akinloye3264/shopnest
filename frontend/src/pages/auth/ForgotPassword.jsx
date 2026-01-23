@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../../utils/api'
 import toast from 'react-hot-toast'
 
 const ForgotPassword = () => {
@@ -13,7 +13,7 @@ const ForgotPassword = () => {
     setLoading(true)
 
     try {
-      const response = await axios.post('/api/auth/forgotpassword', { email })
+      const response = await api.post('/api/auth/forgotpassword', { email })
       toast.success(response.data.message || 'Password reset email sent')
       setSent(true)
     } catch (error) {

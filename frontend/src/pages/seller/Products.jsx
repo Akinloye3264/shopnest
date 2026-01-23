@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../../utils/api'
 import Navbar from '../../components/Navbar'
 import toast from 'react-hot-toast'
 
@@ -22,7 +22,7 @@ const SellerProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('/api/seller/products')
+      const response = await api.get('/api/seller/products')
       setProducts(response.data.data)
     } catch (error) {
       toast.error('Error fetching products')
@@ -40,7 +40,7 @@ const SellerProducts = () => {
         stock: parseInt(formData.stock),
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
       }
-      await axios.post('/api/products', productData)
+      await api.post('/api/products', productData)
       toast.success('Product created successfully')
       setShowModal(false)
       setFormData({ name: '', description: '', price: '', category: '', stock: '', tags: '' })

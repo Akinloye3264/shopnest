@@ -32,7 +32,7 @@ const User = sequelize.define('User', {
     }
   },
   role: {
-    type: DataTypes.ENUM('customer', 'seller', 'admin'),
+    type: DataTypes.ENUM('customer', 'seller', 'admin', 'employee', 'employer'),
     defaultValue: 'customer'
   },
   phone: {
@@ -93,6 +93,70 @@ const User = sequelize.define('User', {
   resetPasswordExpire: {
     type: DataTypes.DATE,
     field: 'reset_password_expire'
+  },
+  phoneVerified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    field: 'phone_verified'
+  },
+  phoneOtp: {
+    type: DataTypes.STRING,
+    field: 'phone_otp'
+  },
+  phoneOtpExpire: {
+    type: DataTypes.DATE,
+    field: 'phone_otp_expire'
+  },
+  emailOtp: {
+    type: DataTypes.STRING,
+    field: 'email_otp'
+  },
+  emailOtpExpire: {
+    type: DataTypes.DATE,
+    field: 'email_otp_expire'
+  },
+  loginOtp: {
+    type: DataTypes.STRING,
+    field: 'login_otp'
+  },
+  loginOtpExpire: {
+    type: DataTypes.DATE,
+    field: 'login_otp_expire'
+  },
+  loginOtpMethod: {
+    type: DataTypes.ENUM('sms', 'email'),
+    field: 'login_otp_method'
+  },
+  skills: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: [],
+    field: 'skills'
+  },
+  bio: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    field: 'bio'
+  },
+  profileImage: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'profile_image'
+  },
+  resume: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'resume'
+  },
+  totalEarnings: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0,
+    field: 'total_earnings'
+  },
+  completedTasks: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+    field: 'completed_tasks'
   }
 }, {
   tableName: 'users',

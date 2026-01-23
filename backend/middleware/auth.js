@@ -55,6 +55,10 @@ export const protect = async (req, res, next) => {
 
 export const authorize = (...roles) => {
   return (req, res, next) => {
+    // Admins can access all routes
+    if (req.user.role === 'admin') {
+      return next();
+    }
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
@@ -66,6 +70,10 @@ export const authorize = (...roles) => {
 };
 
 export const isSeller = (req, res, next) => {
+  // Admins can access all seller routes
+  if (req.user.role === 'admin') {
+    return next();
+  }
   if (req.user.role !== 'seller') {
     return res.status(403).json({
       success: false,
@@ -86,6 +94,34 @@ export const isAdmin = (req, res, next) => {
     return res.status(403).json({
       success: false,
       message: 'Only admins can access this route'
+    });
+  }
+  next();
+};
+
+export const isEmployer = (req, res, next) => {
+  // Admins can access all employer routes
+  if (req.user.role === 'admin') {
+    return next();
+  }
+  if (req.user.role !== 'employer' && req.user.role !== 'seller') {
+    return res.status(403).json({
+      success: false,
+      message: 'Only employers/sellers can access this route'
+    });
+  }
+  next();
+};
+
+export const isEmployee = (req, res, next) => {
+  // Admins can access all employee routes
+  if (req.user.role === 'admin') {
+    return next();
+  }
+  if (req.user.role !== 'employee' && req.user.role !== 'customer') {
+    return res.status(403).json({
+      success: false,
+      message: 'Only employees/customers can access this route'
     });
   }
   next();

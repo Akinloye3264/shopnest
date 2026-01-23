@@ -17,10 +17,21 @@ const PrivateRoute = ({ children, role }) => {
   }
 
   if (role && user.role !== role) {
-    if (user.role === 'seller') {
+    // Allow employers to access seller routes
+    if (role === 'seller' && (user.role === 'employer' || user.role === 'seller')) {
+      return children
+    }
+    // Allow employees to access customer routes
+    if (role === 'customer' && (user.role === 'employee' || user.role === 'customer')) {
+      return children
+    }
+    
+    if (user.role === 'seller' || user.role === 'employer') {
       return <Navigate to="/seller/dashboard" replace />
     } else if (user.role === 'admin') {
       return <Navigate to="/admin/dashboard" replace />
+    } else if (user.role === 'employee') {
+      return <Navigate to="/jobs" replace />
     } else {
       return <Navigate to="/" replace />
     }

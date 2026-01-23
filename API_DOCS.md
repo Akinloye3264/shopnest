@@ -22,7 +22,7 @@ http://localhost:5000/api-docs
 ### API Base URL
 
 - **Development**: `http://localhost:5000/api`
-- **Production**: `https://api.shopnest.com/api`
+- 
 
 ### Authentication
 
