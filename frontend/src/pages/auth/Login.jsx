@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import toast from 'react-hot-toast'
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    // Show redirect message if exists
+    if (location.state?.message) {
+      toast.success(location.state.message)
+    }
+  }, [location.state])
 
   const handleChange = (e) => {
     setFormData({
@@ -34,14 +43,27 @@ const Login = () => {
     const result = await login(formData.email, formData.password)
     
     if (result.success) {
+      // Get pending job application if exists
+      const pendingJobApplication = localStorage.getItem('pendingJobApplication')
+      
       // Navigate based on user role
       const user = JSON.parse(localStorage.getItem('user') || '{}')
-      if (user.role === 'seller') {
+      
+      if (pendingJobApplication) {
+        // If there's a pending job application, redirect to jobs
+        localStorage.removeItem('pendingJobApplication')
+        toast.success('Login successful! You can now apply for jobs.')
+        navigate('/jobs')
+      } else if (user.role === 'seller') {
         navigate('/seller/dashboard')
+      } else if (user.role === 'employer') {
+        navigate('/jobs/employer-dashboard')
+      } else if (user.role === 'employee') {
+        navigate('/jobs/seeker-dashboard')
       } else if (user.role === 'admin') {
         navigate('/admin/dashboard')
       } else {
-        navigate('/products')
+        navigate(location.state?.from || '/products')
       }
     }
     
