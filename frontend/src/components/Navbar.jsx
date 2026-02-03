@@ -99,13 +99,13 @@ const Navbar = () => {
                 {(user.role === 'seller' || user.role === 'employer') && (
                   <>
                     <Link 
-                      to="/seller/dashboard" 
+                      to={user.role === 'employer' ? '/jobs/employer-dashboard' : '/seller/dashboard'} 
                       className="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200 font-medium flex items-center space-x-2"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                       </svg>
-                      <span>Dashboard</span>
+                      <span>{user.role === 'employer' ? 'Recruiter Dashboard' : 'Dashboard'}</span>
                     </Link>
                     {user.role === 'employer' && (
                       <Link 
@@ -119,6 +119,18 @@ const Navbar = () => {
                       </Link>
                     )}
                   </>
+                )}
+
+                {user.role === 'employee' && (
+                  <Link 
+                    to="/jobs/seeker-dashboard" 
+                    className="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-200 font-medium flex items-center space-x-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span>Job Dashboard</span>
+                  </Link>
                 )}
                 
                 {user.role === 'admin' && (
@@ -274,11 +286,11 @@ const Navbar = () => {
                   {(user.role === 'seller' || user.role === 'employer') && (
                     <>
                       <Link 
-                        to="/seller/dashboard" 
+                        to={user.role === 'employer' ? '/jobs/employer-dashboard' : '/seller/dashboard'} 
                         className="block px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        Dashboard
+                        {user.role === 'employer' ? 'Recruiter Dashboard' : 'Dashboard'}
                       </Link>
                       {user.role === 'employer' && (
                         <Link 
@@ -290,6 +302,16 @@ const Navbar = () => {
                         </Link>
                       )}
                     </>
+                  )}
+                  
+                  {user.role === 'employee' && (
+                    <Link 
+                      to="/jobs/seeker-dashboard" 
+                      className="block px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors font-medium"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Job Dashboard
+                    </Link>
                   )}
                   
                   {user.role === 'admin' && (

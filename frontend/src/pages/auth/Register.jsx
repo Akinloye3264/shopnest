@@ -97,10 +97,12 @@ const Register = () => {
     const result = await register(registerData)
     
     if (result.success) {
-      if (formData.role === 'seller' || formData.role === 'employer') {
+      if (formData.role === 'seller') {
         navigate('/seller/dashboard')
+      } else if (formData.role === 'employer') {
+        navigate('/jobs/employer-dashboard')
       } else if (formData.role === 'employee') {
-        navigate('/jobs')
+        navigate('/jobs/seeker-dashboard')
       } else {
         navigate('/products')
       }

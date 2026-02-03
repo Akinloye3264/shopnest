@@ -23,6 +23,8 @@ import JobList from './pages/jobs/JobList'
 import JobDetail from './pages/jobs/JobDetail'
 import PostJob from './pages/jobs/PostJob'
 import RecommendedJobs from './pages/jobs/RecommendedJobs'
+import EmployerDashboard from './pages/jobs/EmployerDashboard'
+import JobSeekerDashboard from './pages/jobs/JobSeekerDashboard'
 import Messages from './pages/messages/Messages'
 import Notifications from './pages/notifications/Notifications'
 import LearningResources from './pages/learning/LearningResources'
@@ -58,9 +60,11 @@ function App() {
             
             {/* Employee Routes */}
             <Route path="/jobs/recommended" element={<PrivateRoute role="employee"><RecommendedJobs /></PrivateRoute>} />
+            <Route path="/jobs/seeker-dashboard" element={<PrivateRoute role="employee"><JobSeekerDashboard /></PrivateRoute>} />
             
             {/* Employer Routes */}
             <Route path="/jobs/post" element={<PrivateRoute role="employer"><PostJob /></PrivateRoute>} />
+            <Route path="/jobs/employer-dashboard" element={<PrivateRoute role="employer"><EmployerDashboard /></PrivateRoute>} />
             
             {/* Seller Routes */}
             <Route path="/seller/dashboard" element={<PrivateRoute role="seller"><SellerDashboard /></PrivateRoute>} />

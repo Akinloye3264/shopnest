@@ -5,6 +5,9 @@ import { Job, JobApplication, User, Notification } from '../models/index.js';
 import { protect, isEmployer, isEmployee } from '../middleware/auth.js';
 import sendEmail from '../utils/sendEmail.js';
 import sendSMS from '../utils/sendSMS.js';
+import fetchApiJobs from '../utils/fetchApiJobs.js';
+
+
 
 const router = express.Router();
 
@@ -83,7 +86,7 @@ router.get('/', async (req, res) => {
           attributes: ['id', 'name', 'email', 'storeName', 'profileImage']
         }
       ],
-      order: [['createdAt', 'DESC']]
+      order: [['created_at', 'DESC']]
     });
 
     res.json({
@@ -96,6 +99,81 @@ router.get('/', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching jobs',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /jobs/apijobs:
+ *   get:
+ *     summary: Get jobs from API Jobs
+ *     tags: [Jobs]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: location
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: country
+ *         schema:
+ *           type: string
+ *           default: ng
+ *     responses:
+ *       200:
+ *         description: List of jobs from API Jobs
+ *       503:
+ *         description: API Jobs unavailable or credentials missing
+ */
+// @route   GET /api/jobs/apijobs
+// @desc    Fetch jobs from API Jobs (must be before /:id)
+// @access  Public
+router.get('/apijobs', async (req, res) => {
+  try {
+    const { search, location, category, page = 1, country = 'ng' } = req.query;
+
+    const result = await fetchApiJobs({
+      country,
+      search: search || '',
+      location: location || '',
+      category: category || '',
+      page: parseInt(page) || 1,
+      resultsPerPage: 20
+    });
+
+    res.json({
+      success: true,
+      data: result.data,
+      count: result.count,
+      total: result.total,
+      page: result.page,
+      source: 'apijobs'
+    });
+  } catch (error) {
+    if (error.message?.includes('API_JOBS')) {
+      return res.status(503).json({
+        success: false,
+        message: 'API Jobs listings unavailable. Set API_JOBS in .env.'
+      });
+    }
+    console.error('API Jobs error:', error);
+    res.status(502).json({
+      success: false,
+      message: 'Failed to fetch jobs from API Jobs',
       error: error.message
     });
   }
