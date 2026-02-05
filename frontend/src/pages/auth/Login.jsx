@@ -63,7 +63,7 @@ const Login = () => {
       } else if (user.role === 'admin') {
         navigate('/admin/dashboard')
       } else {
-        navigate(location.state?.from || '/products')
+        navigate(location.state?.from || '/jobs')
       }
     }
     
