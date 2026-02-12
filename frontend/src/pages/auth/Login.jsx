@@ -6,7 +6,8 @@ import toast from 'react-hot-toast'
 const Login = () => {
   const [formData, setFormData] = useState({
     email: localStorage.getItem('rememberedEmail') || '',
-    password: ''
+    password: '',
+    verificationMethod: 'email'
   })
   const [rememberMe, setRememberMe] = useState(!!localStorage.getItem('rememberedEmail'))
   const [showPassword, setShowPassword] = useState(false)
@@ -40,31 +41,53 @@ const Login = () => {
       localStorage.removeItem('rememberedEmail')
     }
 
-    const result = await login(formData.email, formData.password)
-    
-    if (result.success) {
-      // Get pending job application if exists
-      const pendingJobApplication = localStorage.getItem('pendingJobApplication')
+    try {
+      const result = await login(formData.email, formData.password, formData.verificationMethod)
       
-      // Navigate based on user role
-      const user = JSON.parse(localStorage.getItem('user') || '{}')
-      
-      if (pendingJobApplication) {
-        // If there's a pending job application, redirect to jobs
-        localStorage.removeItem('pendingJobApplication')
-        toast.success('Login successful! You can now apply for jobs.')
-        navigate('/jobs')
-      } else if (user.role === 'seller') {
-        navigate('/seller/dashboard')
-      } else if (user.role === 'employer') {
-        navigate('/jobs/employer-dashboard')
-      } else if (user.role === 'employee') {
-        navigate('/jobs/seeker-dashboard')
-      } else if (user.role === 'admin') {
-        navigate('/admin/dashboard')
-      } else {
-        navigate(location.state?.from || '/jobs')
+      if (result.success) {
+        if (result.requiresVerification) {
+          // Store verification data for verification page
+          localStorage.setItem('verificationData', JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            verificationMethod: result.verificationMethod,
+            isLoginVerification: true
+          }))
+          
+          // Navigate to verification page
+          navigate('/verify', { 
+            state: { 
+              verificationMethod: result.verificationMethod,
+              email: formData.email
+            } 
+          })
+        } else {
+          // Login successful, navigate based on role
+          const user = result.user
+          
+          // Get pending job application if exists
+          const pendingJobApplication = localStorage.getItem('pendingJobApplication')
+          
+          if (pendingJobApplication) {
+            localStorage.removeItem('pendingJobApplication')
+            toast.success('Login successful! You can now apply for jobs.')
+            navigate('/jobs')
+          } else if (user.role === 'seller') {
+            navigate('/seller/dashboard')
+          } else if (user.role === 'employer') {
+            navigate('/jobs/employer-dashboard')
+          } else if (user.role === 'employee') {
+            navigate('/jobs/seeker-dashboard')
+          } else if (user.role === 'admin') {
+            navigate('/admin/dashboard')
+          } else {
+            navigate(location.state?.from || '/products')
+          }
+        }
       }
+    } catch (error) {
+      console.error('Login error:', error)
+      // Error is already handled by the login function
     }
     
     setLoading(false)
@@ -137,6 +160,36 @@ const Login = () => {
                     </svg>
                   )}
                 </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Verification Method
+              </label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="verificationMethod"
+                    value="email"
+                    checked={formData.verificationMethod === 'email'}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">Email</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="verificationMethod"
+                    value="phone"
+                    checked={formData.verificationMethod === 'phone'}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">Phone</span>
+                </label>
               </div>
             </div>
 

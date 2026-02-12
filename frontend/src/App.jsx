@@ -15,7 +15,7 @@ import SellerAnalytics from './pages/seller/Analytics'
 import AdminDashboard from './pages/admin/Dashboard'
 import CustomerProducts from './pages/customer/Products'
 import Cart from './pages/customer/Cart'
-// import Checkout from './pages/customer/Checkout'
+import Checkout from './pages/customer/Checkout'
 import Orders from './pages/customer/Orders'
 import ForgotPassword from './pages/auth/ForgotPassword'
 import ResetPassword from './pages/auth/ResetPassword'
@@ -30,18 +30,20 @@ import Notifications from './pages/notifications/Notifications'
 import LearningResources from './pages/learning/LearningResources'
 import LearningResourceDetail from './pages/learning/LearningResourceDetail'
 import Profile from './pages/profile/Profile'
+import VerificationForm from './components/auth/VerificationForm'
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <ScrollToTop />
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-primary-50">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verify" element={<VerificationForm />} />
             <Route path="/products" element={<PrivateRoute><CustomerProducts /></PrivateRoute>} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:resettoken" element={<ResetPassword />} />
@@ -52,7 +54,7 @@ function App() {
             
             {/* Customer Routes */}
             <Route path="/cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
-            {/* <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} /> */}
+            <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
             <Route path="/my-orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />

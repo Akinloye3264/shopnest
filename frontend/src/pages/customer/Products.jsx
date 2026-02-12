@@ -158,7 +158,7 @@ const CustomerProducts = () => {
                   <img
                     src={product.images[0].url}
                     alt={product.name}
-                    className="w-full h-48 object-cover rounded-lg mb-4"
+                    className="w-full h-48 object-contain rounded-lg mb-4 bg-gray-100"
                   />
                 )}
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>

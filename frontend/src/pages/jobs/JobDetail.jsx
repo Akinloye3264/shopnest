@@ -15,7 +15,9 @@ const JobDetail = () => {
   const [applying, setApplying] = useState(false)
   const [applicationData, setApplicationData] = useState({
     coverLetter: '',
-    resume: ''
+    resume: '',
+    resumeFile: null,
+    coverLetterFile: null
   })
   const [showApplyModal, setShowApplyModal] = useState(false)
 
@@ -51,11 +53,32 @@ const JobDetail = () => {
     setApplying(true)
 
     try {
-      const response = await api.post(`/api/jobs/${id}/apply`, applicationData)
+      const formData = new FormData()
+      formData.append('coverLetter', applicationData.coverLetter)
+      formData.append('resume', applicationData.resume)
+      
+      if (applicationData.resumeFile) {
+        formData.append('resumeFile', applicationData.resumeFile)
+      }
+      if (applicationData.coverLetterFile) {
+        formData.append('coverLetterFile', applicationData.coverLetterFile)
+      }
+
+      const response = await api.post(`/api/jobs/${id}/apply`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      
       if (response.data.success) {
         toast.success('Application submitted successfully!')
         setShowApplyModal(false)
-        setApplicationData({ coverLetter: '', resume: '' })
+        setApplicationData({ 
+          coverLetter: '', 
+          resume: '',
+          resumeFile: null,
+          coverLetterFile: null
+        })
         fetchJob() // Refresh to see application status
       }
     } catch (error) {
@@ -246,11 +269,27 @@ const JobDetail = () => {
                   </label>
                   <textarea
                     className="input w-full"
-                    rows="6"
+                    rows="4"
                     value={applicationData.coverLetter}
                     onChange={(e) => setApplicationData({ ...applicationData, coverLetter: e.target.value })}
-                    placeholder="Tell the employer why you're a good fit for this position..."
+                    placeholder="Tell employer why you're a good fit for this position..."
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Cover Letter File (Optional - PDF only)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    className="input w-full"
+                    onChange={(e) => setApplicationData({ ...applicationData, coverLetterFile: e.target.files[0] })}
+                  />
+                  {applicationData.coverLetterFile && (
+                    <p className="text-sm text-green-600 mt-1">
+                      Selected: {applicationData.coverLetterFile.name}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -266,6 +305,22 @@ const JobDetail = () => {
                   {user?.resume && (
                     <p className="text-sm text-gray-500 mt-1">
                       Your saved resume: {user.resume}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Resume File (Optional - PDF only)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    className="input w-full"
+                    onChange={(e) => setApplicationData({ ...applicationData, resumeFile: e.target.files[0] })}
+                  />
+                  {applicationData.resumeFile && (
+                    <p className="text-sm text-green-600 mt-1">
+                      Selected: {applicationData.resumeFile.name}
                     </p>
                   )}
                 </div>

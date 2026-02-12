@@ -37,15 +37,31 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const login = async (email, password) => {
+  const login = async (email, password, verificationMethod = 'email') => {
     try {
-      const response = await api.post('/api/auth/login', { email, password })
+      const response = await api.post('/api/auth/login', { 
+        email, 
+        password, 
+        verificationMethod 
+      })
+      
+      if (response.data.requiresVerification) {
+        // Return verification requirement
+        return { 
+          success: true, 
+          requiresVerification: true,
+          verificationMethod: response.data.verificationMethod,
+          message: response.data.message
+        }
+      }
+      
+      // Login successful without verification
       const { token, user } = response.data
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(user))
       setUser(user)
       toast.success('Login successful!')
-      return { success: true }
+      return { success: true, user }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed')
       return { success: false, error: error.response?.data?.message }
@@ -55,12 +71,24 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const response = await api.post('/api/auth/register', userData)
+      
+      if (response.data.requiresVerification) {
+        // Return verification requirement
+        return { 
+          success: true, 
+          requiresVerification: true,
+          verificationMethod: response.data.verificationMethod,
+          message: response.data.message
+        }
+      }
+      
+      // Registration successful without verification
       const { token, user } = response.data
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(user))
       setUser(user)
       toast.success('Registration successful!')
-      return { success: true }
+      return { success: true, user }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Registration failed')
       return { success: false, error: error.response?.data?.message }

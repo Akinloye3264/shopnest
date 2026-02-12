@@ -124,7 +124,7 @@ const User = sequelize.define('User', {
     field: 'login_otp_expire'
   },
   loginOtpMethod: {
-    type: DataTypes.ENUM('sms', 'email'),
+    type: DataTypes.ENUM('sms', 'email', 'phone'),
     field: 'login_otp_method'
   },
   skills: {

@@ -103,6 +103,157 @@ router.get('/', protect, async (req, res) => {
 
 /**
  * @swagger
+ * /job-applications:
+ *   post:
+ *     summary: Submit job application with Formspree
+ *     tags: [Job Applications]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - jobId
+ *               - resume
+ *             properties:
+ *               jobId:
+ *                 type: integer
+ *               coverLetter:
+ *                 type: string
+ *               resume:
+ *                 type: string
+ *                 format: binary
+ *               coverLetterFile:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Application submitted successfully
+ */
+// @route   POST /api/job-applications
+// @desc    Submit job application and send to Formspree
+// @access  Private/Employee
+router.post('/', protect, isEmployee, async (req, res) => {
+  try {
+    const { jobId, coverLetter } = req.body;
+    const resumeFile = req.files?.resume;
+    const coverLetterFile = req.files?.coverLetterFile;
+
+    // Validate required fields
+    if (!jobId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Job ID is required'
+      });
+    }
+
+    if (!resumeFile) {
+      return res.status(400).json({
+        success: false,
+        message: 'Resume file is required'
+      });
+    }
+
+    // Check if job exists
+    const job = await Job.findByPk(jobId);
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: 'Job not found'
+      });
+    }
+
+    // Check if already applied
+    const existingApplication = await JobApplication.findOne({
+      where: {
+        jobId,
+        applicantId: req.user.id
+      }
+    });
+
+    if (existingApplication) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already applied for this job'
+      });
+    }
+
+    // Prepare Formspree data
+    const formData = new FormData();
+    formData.append('jobId', jobId);
+    formData.append('jobTitle', job.title);
+    formData.append('companyName', job.companyName || 'Company');
+    formData.append('applicantName', req.user.name);
+    formData.append('applicantEmail', req.user.email);
+    formData.append('applicantPhone', req.user.phone || '');
+    formData.append('coverLetter', coverLetter || '');
+    formData.append('applicationDate', new Date().toISOString());
+    
+    // Add files if they exist
+    if (resumeFile) {
+      formData.append('resume', resumeFile.data, resumeFile.name);
+    }
+    if (coverLetterFile) {
+      formData.append('coverLetterFile', coverLetterFile.data, coverLetterFile.name);
+    }
+
+    // Submit to Formspree
+    const formspreeResponse = await fetch('https://formspree.io/f/mvgqbpyn', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!formspreeResponse.ok) {
+      throw new Error(`Formspree submission failed: ${formspreeResponse.status}`);
+    }
+
+    // Save application to database
+    const application = await JobApplication.create({
+      jobId,
+      applicantId: req.user.id,
+      resume: resumeFile?.name || '',
+      coverLetter: coverLetter || '',
+      status: 'pending'
+    });
+
+    // Update job application count
+    await job.increment('currentApplications');
+
+    // Create notification for employer
+    await Notification.create({
+      userId: job.employerId,
+      type: 'new_job_application',
+      title: 'New Job Application',
+      message: `${req.user.name} has applied for "${job.title}"`,
+      relatedJobId: jobId,
+      relatedApplicationId: application.id,
+      actionUrl: `/jobs/${jobId}/applications`
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Application submitted successfully',
+      data: application
+    });
+
+  } catch (error) {
+    console.error('Submit application error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error submitting application',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @swagger
  * /job-applications/{id}:
  *   get:
  *     summary: Get a single job application

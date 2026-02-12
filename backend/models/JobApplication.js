@@ -35,6 +35,16 @@ const JobApplication = sequelize.define('JobApplication', {
     allowNull: true,
     field: 'resume'
   },
+  resumeFile: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'resume_file'
+  },
+  coverLetterFile: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: 'cover_letter_file'
+  },
   status: {
     type: DataTypes.ENUM('pending', 'reviewing', 'shortlisted', 'rejected', 'accepted', 'withdrawn'),
     defaultValue: 'pending',

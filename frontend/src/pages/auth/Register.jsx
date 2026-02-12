@@ -11,7 +11,8 @@ const Register = () => {
     confirmPassword: '',
     role: 'customer',
     phone: '',
-    storeName: ''
+    storeName: '',
+    verificationMethod: 'email' // 'email' or 'phone'
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -43,13 +44,15 @@ const Register = () => {
       newErrors.name = 'Name is required'
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!validateEmail(formData.email)) {
+    if (!formData.email.trim() && formData.verificationMethod === 'email') {
+      newErrors.email = 'Email is required for email verification'
+    } else if (!validateEmail(formData.email) && formData.verificationMethod === 'email') {
       newErrors.email = 'Please enter a valid email address'
     }
 
-    if (formData.phone && !validatePhone(formData.phone)) {
+    if (formData.verificationMethod === 'phone' && !formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required for phone verification'
+    } else if (formData.phone && !validatePhone(formData.phone)) {
       newErrors.phone = 'Please enter a valid phone number'
     }
 
@@ -87,7 +90,8 @@ const Register = () => {
       password: formData.password,
       confirmPassword: formData.confirmPassword,
       role: formData.role,
-      phone: formData.phone
+      phone: formData.phone,
+      verificationMethod: formData.verificationMethod
     }
 
     if (formData.role === 'seller') {
@@ -97,14 +101,40 @@ const Register = () => {
     const result = await register(registerData)
     
     if (result.success) {
-      if (formData.role === 'seller') {
-        navigate('/seller/dashboard')
-      } else if (formData.role === 'employer') {
-        navigate('/jobs/employer-dashboard')
-      } else if (formData.role === 'employee') {
-        navigate('/jobs/seeker-dashboard')
+      if (result.requiresVerification) {
+        // Store verification data for verification page
+        localStorage.setItem('verificationData', JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          role: formData.role,
+          verificationMethod: result.verificationMethod,
+          isLoginVerification: false
+        }))
+        
+        // Navigate to verification page
+        navigate('/verify', { 
+          state: { 
+            verificationMethod: result.verificationMethod,
+            email: formData.email,
+            phone: formData.phone
+          } 
+        })
       } else {
-        navigate('/products')
+        // Registration successful without verification
+        if (formData.role === 'seller') {
+          navigate('/seller/dashboard')
+        } else if (formData.role === 'employer') {
+          navigate('/jobs/employer-dashboard')
+        } else if (formData.role === 'employee') {
+          navigate('/jobs/seeker-dashboard')
+        } else {
+          navigate('/login', { 
+            state: { 
+              message: 'Registration successful! Please login to continue.' 
+            } 
+          })
+        }
       }
     }
     
@@ -132,6 +162,35 @@ const Register = () => {
         <div className="card">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Choose Verification Method
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="verificationMethod"
+                    value="email"
+                    checked={formData.verificationMethod === 'email'}
+                    onChange={(e) => setFormData({ ...formData, verificationMethod: e.target.value })}
+                    className="mr-2"
+                  />
+                  <span className="text-sm">Email Verification</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="verificationMethod"
+                    value="phone"
+                    checked={formData.verificationMethod === 'phone'}
+                    onChange={(e) => setFormData({ ...formData, verificationMethod: e.target.value })}
+                    className="mr-2"
+                  />
+                  <span className="text-sm">Phone Verification (OTP)</span>
+                </label>
+              </div>
+            </div>
+            <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                 Full Name
               </label>
@@ -149,14 +208,14 @@ const Register = () => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email address
+                Email address {formData.verificationMethod === 'email' && '(Required)'}
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
-                required
+                required={formData.verificationMethod === 'email'}
                 className={`input ${errors.email ? 'border-red-500' : ''}`}
                 value={formData.email}
                 onChange={handleChange}
@@ -166,13 +225,14 @@ const Register = () => {
 
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number (optional)
+                Phone Number {formData.verificationMethod === 'phone' && '(Required)'}
               </label>
               <input
                 id="phone"
                 name="phone"
                 type="tel"
                 placeholder="+1234567890"
+                required={formData.verificationMethod === 'phone'}
                 className={`input ${errors.phone ? 'border-red-500' : ''}`}
                 value={formData.phone}
                 onChange={handleChange}

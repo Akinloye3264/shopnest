@@ -1,7 +1,7 @@
 /**
- * Fetch jobs from API Jobs API
+ * Fetch jobs from Adzuna API
  * @param {Object} options - Query parameters
- * @param {string} options.country - Country code (default: 'ng')
+ * @param {string} options.country - Country code (default: 'gb' for UK)
  * @param {string} options.search - Search query
  * @param {string} options.location - Location filter
  * @param {string} options.category - Category filter
@@ -10,96 +10,101 @@
  * @returns {Promise<Object>} - API response with job listings
  */
 async function fetchApiJobs({
-  country = 'ng',
+  country = 'gb', // Changed from 'ng' to 'gb' (UK) since Adzuna doesn't support Nigeria
   search = '',
   location = '',
   category = '',
   page = 1,
   resultsPerPage = 20
 } = {}) {
-  const apiKey = process.env.API_JOBS;
+  const appId = process.env.ADZUNA_APP_ID;
+  const apiKey = process.env.ADZUNA_API_KEY;
   
-  if (!apiKey) {
-    throw new Error('API_JOBS environment variable is not set. Please add your API Jobs API key to the .env file.');
+  if (!appId || !apiKey) {
+    throw new Error('ADZUNA_APP_ID or ADZUNA_API_KEY environment variables are not set. Please add your Adzuna credentials to the .env file.');
   }
 
   try {
-    // Build request body
-    const requestBody = {
-      size: resultsPerPage
-    };
-
-    // Add optional parameters if provided
-    if (search) requestBody.q = search;
-    // Remove location for now as it seems to be invalid parameter
-    // if (location) requestBody.location = location;
-    if (category) requestBody.category = category;
-    if (country) requestBody.country = country;
-    if (page > 1) requestBody.page = page;
-
-    const url = 'https://api.apijobs.dev/v1/job/search';
+    // Build URL parameters for Adzuna API - use the exact format that works with curl
+    const baseUrl = `https://api.adzuna.com/v1/api/jobs/${country}/search`;
+    const params = new URLSearchParams();
     
-    console.log(`Fetching jobs from API Jobs: ${url}`, requestBody);
+    // Add required parameters
+    params.append('app_id', appId);
+    params.append('app_key', apiKey);
+    params.append('results_per_page', resultsPerPage.toString());
+    
+    // Add optional parameters only if they have values
+    if (search && search.trim()) {
+      params.append('what', search.trim());
+    }
+    if (location && location.trim()) {
+      params.append('where', location.trim());
+    }
+    if (page && page > 1) {
+      params.append('page', page.toString());
+    }
+
+    const url = `${baseUrl}?${params.toString()}`;
 
     const response = await fetch(url, {
-      method: 'POST',
+      method: 'GET',
       headers: {
-        'apikey': apiKey,
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
+      }
     });
     
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`API Jobs request failed: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(`Adzuna API request failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
     
     // Transform the API response to match our expected format
     const transformedData = {
-      data: data.data || data.jobs || [],
-      count: data.count || data.data?.length || 0,
-      total: data.total || data.total_jobs || 0,
-      page: parseInt(data.page || page),
-      totalPages: data.total_pages || Math.ceil((data.total || 0) / resultsPerPage),
-      source: 'apijobs'
+      data: data.results || [],
+      count: data.count || data.results?.length || 0,
+      total: data.count || 0,
+      page: parseInt(page),
+      totalPages: Math.ceil((data.count || 0) / resultsPerPage),
+      source: 'adzuna'
     };
 
     // Transform job listings to match our database schema
     transformedData.data = transformedData.data.map(job => ({
       id: job.id,
-      title: job.title || job.job_title,
-      description: job.description || job.job_description,
-      category: job.category || job.job_category || 'other',
-      type: job.type || job.job_type || 'full-time',
-      location: job.location || job.job_location,
-      salary: job.salary || null,
-      salaryType: job.salary_type || 'fixed',
-      company: job.company || job.company_name,
-      isRemote: job.is_remote || job.remote || false,
-      experienceLevel: job.experience_level || job.experience || 'any',
-      requiredSkills: job.required_skills || job.skills || [],
-      tags: job.tags || [],
-      applicationUrl: job.application_url || job.apply_url,
-      postedAt: job.posted_at || job.created_at || job.date_posted,
-      deadline: job.deadline || job.application_deadline,
-      source: 'apijobs',
-      externalId: job.id
+      title: job.title,
+      description: job.description,
+      category: job.category?.label || 'other',
+      type: job.contract_type || 'full-time',
+      location: job.location?.display_name || job.location?.area?.[0] || 'Remote',
+      salary: job.salary_min ? (job.salary_max ? Math.round((job.salary_min + job.salary_max) / 2) : job.salary_min) : null,
+      salaryType: job.salary_is_predicted ? 'estimated' : 'fixed',
+      company: job.company?.display_name || 'Unknown Company',
+      isRemote: job.location?.area?.[0]?.toLowerCase().includes('remote') || false,
+      experienceLevel: 'any', // Adzuna doesn't provide experience level
+      requiredSkills: [], // Extract from description if needed
+      tags: job.category?.tag || [],
+      applicationUrl: job.redirect_url,
+      postedAt: job.created,
+      deadline: null, // Adzuna doesn't provide deadline
+      source: 'adzuna',
+      externalId: job.id,
+      externalUrl: job.redirect_url
     }));
 
-    console.log(`Successfully fetched ${transformedData.data.length} jobs from API Jobs`);
+    console.log(`Successfully fetched ${transformedData.data.length} jobs from Adzuna`);
     return transformedData;
 
   } catch (error) {
-    console.error('Error fetching jobs from API Jobs:', error);
+    console.error('Error fetching jobs from Adzuna:', error);
     
-    if (error.message.includes('API_JOBS_KEY')) {
+    if (error.message.includes('ADZUNA')) {
       throw error;
     }
     
-    throw new Error(`Failed to fetch jobs from API Jobs: ${error.message}`);
+    throw new Error(`Failed to fetch jobs from Adzuna: ${error.message}`);
   }
 }
 

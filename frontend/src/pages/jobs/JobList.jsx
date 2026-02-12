@@ -15,7 +15,7 @@ const JobList = () => {
     location: '',
     search: '',
     experienceLevel: '',
-    source: 'all' // 'all' | 'platform' | 'apijobs'
+    source: 'all' // 'all' | 'platform' | 'adzuna'
   })
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -39,7 +39,7 @@ const JobList = () => {
     }
 
     // For external API jobs, open in new tab
-    if (job.externalSource === 'apijobs' && job.externalUrl) {
+    if (job.externalSource === 'adzuna' && job.externalUrl) {
       window.open(job.externalUrl, '_blank')
       return
     }
@@ -75,14 +75,14 @@ const JobList = () => {
           api.get('/api/jobs', { params: platformParams }).then(r => ({ source: 'platform', ...r.data }))
         )
       }
-      if (filters.source === 'all' || filters.source === 'apijobs') {
+      if (filters.source === 'all' || filters.source === 'adzuna') {
         fetches.push(
-          api.get('/api/jobs/apijobs', { params: apiJobsParams })
-            .then(r => ({ source: 'apijobs', ...r.data }))
+          api.get('/api/jobs/adzuna', { params: apiJobsParams })
+            .then(r => ({ source: 'adzuna', ...r.data }))
             .catch(err => {
               if (err.response?.status === 503 || err.response?.status === 502) {
                 setApiJobsAvailable(false)
-                return { source: 'apijobs', data: [], count: 0 }
+                return { source: 'adzuna', data: [], count: 0 }
               }
               throw err
             })
@@ -97,18 +97,18 @@ const JobList = () => {
 
       const results = await Promise.all(fetches)
       const platformJobs = results.find(r => r.source === 'platform')?.data || []
-      const apiJobs = results.find(r => r.source === 'apijobs')?.data || []
+      const adzunaJobs = results.find(r => r.source === 'adzuna')?.data || []
 
-      // Platform filters (type, experienceLevel) don't apply to API Jobs; we filter client-side for "all"
+      // Platform filters (type, experienceLevel) don't apply to Adzuna Jobs; we filter client-side for "all"
       let combined = []
       if (filters.source === 'all') {
-        combined = [...platformJobs, ...apiJobs]
+        combined = [...platformJobs, ...adzunaJobs]
         // Sort by date, newest first
         combined.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
       } else if (filters.source === 'platform') {
         combined = platformJobs
       } else {
-        combined = apiJobs
+        combined = adzunaJobs
       }
 
       setJobs(combined)
@@ -129,7 +129,7 @@ const JobList = () => {
   }
 
   const JobCard = ({ job }) => {
-    const isExternal = job.externalSource === 'apijobs' && job.externalUrl
+    const isExternal = job.externalSource === 'adzuna' && job.externalUrl
     const Wrapper = isExternal ? 'a' : Link
     const wrapperProps = isExternal
       ? { href: job.externalUrl, target: '_blank', rel: 'noopener noreferrer' }
@@ -143,28 +143,38 @@ const JobList = () => {
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
-              {job.externalSource === 'apijobs' && (
-                <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-xs font-medium">
-                  API Jobs
+              <h3 className="text-xl font-semibold text-primary-900">{job.title}</h3>
+              {job.externalSource === 'adzuna' && (
+                <span className="px-2 py-0.5 bg-accent-100 text-accent-800 rounded text-xs font-medium">
+                  Adzuna
                 </span>
               )}
             </div>
-            <p className="text-gray-600 mb-3 line-clamp-2">{job.description}</p>
+            <p className="text-gray-600 mb-2 line-clamp-2">{job.description}</p>
             <div className="flex flex-wrap gap-2 mb-3">
-              <span className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-xs font-medium">
-                {job.type}
-              </span>
               {job.category && (
-                <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                <span className="px-2 py-1 bg-primary-100 text-primary-700 rounded text-xs">
                   {job.category}
                 </span>
               )}
-              {job.isRemote && (
-                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                  Remote
+              {job.type && (
+                <span className="px-2 py-1 bg-secondary-100 text-secondary-700 rounded text-xs">
+                  {job.type}
                 </span>
               )}
+              {job.experienceLevel && (
+                <span className="px-2 py-1 bg-primary-100 text-primary-700 rounded text-xs">
+                  {job.experienceLevel}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-lg font-bold text-secondary-600">
+                {formatCurrency(job.salary)}
+              </span>
+              <span className="text-xs text-gray-500">
+                {job.created_at ? new Date(job.created_at).toLocaleDateString() : ''}
+              </span>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
               {job.location && (
@@ -222,31 +232,31 @@ const JobList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-primary-50">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-display font-bold text-gray-900 mb-4">Job Opportunities</h1>
+          <h1 className="text-3xl font-display font-bold text-primary-900 mb-4">Job Opportunities</h1>
 
           {/* Source filter */}
           <div className="flex flex-wrap gap-2 mb-4">
             <span className="text-sm font-medium text-gray-700">Source:</span>
-            {['all', 'platform', 'apijobs'].map((src) => (
+            {['all', 'platform', 'adzuna'].map((src) => (
               <button
                 key={src}
                 type="button"
                 onClick={() => setFilters(f => ({ ...f, source: src }))}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   filters.source === src
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'bg-secondary-600 text-white'
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-primary-100'
                 }`}
               >
-                {src === 'all' ? 'All' : src === 'platform' ? 'ShopNest' : 'API Jobs'}
+                {src === 'all' ? 'All' : src === 'platform' ? 'ShopNest' : 'Adzuna'}
               </button>
             ))}
             {!apiJobsAvailable && filters.source !== 'platform' && (
-              <span className="text-xs text-amber-600 self-center">API Jobs unavailable</span>
+              <span className="text-xs text-amber-600 self-center">Adzuna unavailable</span>
             )}
           </div>
 
@@ -326,10 +336,10 @@ const JobList = () => {
               </svg>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs found</h3>
               <p className="text-gray-600 mb-4">
-                {filters.source === 'apijobs' 
+                {filters.source === 'adzuna' 
                   ? 'No external jobs available. Try switching to "ShopNest" or "All" sources.'
                   : filters.source === 'platform'
-                  ? 'No jobs posted on ShopNest yet. Try switching to "API Jobs" for external opportunities.'
+                  ? 'No jobs posted on ShopNest yet. Try switching to "Adzuna" for external opportunities.'
                   : 'No jobs found with your current filters. Try adjusting your search criteria.'
                 }
               </p>
@@ -352,7 +362,7 @@ const JobList = () => {
             </div>
           </div>
         ) : (
-          <div className="grid gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {jobs.map((job) => (
               <JobCard key={job.id} job={job} />
             ))}

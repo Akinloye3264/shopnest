@@ -3,13 +3,29 @@ import { body, validationResult, query } from 'express-validator';
 import { Op } from 'sequelize';
 import { Job, JobApplication, User, Notification } from '../models/index.js';
 import { protect, isEmployer, isEmployee } from '../middleware/auth.js';
+import { uploadResumeFiles } from '../middleware/upload.js';
 import sendEmail from '../utils/sendEmail.js';
 import sendSMS from '../utils/sendSMS.js';
 import fetchApiJobs from '../utils/fetchApiJobs.js';
-
+import path from 'path';
 
 
 const router = express.Router();
+
+// Serve uploaded files
+router.get('/uploads/resumes/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(process.cwd(), 'uploads', 'resumes', filename);
+  
+  res.download(filePath, (err) => {
+    if (err) {
+      res.status(404).json({
+        success: false,
+        message: 'File not found'
+      });
+    }
+  });
+});
 
 /**
  * @swagger
@@ -106,9 +122,9 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /jobs/apijobs:
+ * /jobs/adzuna:
  *   get:
- *     summary: Get jobs from API Jobs
+ *     summary: Get jobs from Adzuna
  *     tags: [Jobs]
  *     security: []
  *     parameters:
@@ -132,19 +148,19 @@ router.get('/', async (req, res) => {
  *         name: country
  *         schema:
  *           type: string
- *           default: ng
+ *           default: gb
  *     responses:
  *       200:
- *         description: List of jobs from API Jobs
+ *         description: List of jobs from Adzuna
  *       503:
- *         description: API Jobs unavailable or credentials missing
+ *         description: Adzuna unavailable or credentials missing
  */
-// @route   GET /api/jobs/apijobs
-// @desc    Fetch jobs from API Jobs (must be before /:id)
+// @route   GET /api/jobs/adzuna
+// @desc    Fetch jobs from Adzuna (must be before /:id)
 // @access  Public
-router.get('/apijobs', async (req, res) => {
+router.get('/adzuna', async (req, res) => {
   try {
-    const { search, location, category, page = 1, country = 'ng' } = req.query;
+    const { search, location, category, page = 1, country = 'gb' } = req.query;
 
     const result = await fetchApiJobs({
       country,
@@ -161,19 +177,19 @@ router.get('/apijobs', async (req, res) => {
       count: result.count,
       total: result.total,
       page: result.page,
-      source: 'apijobs'
+      source: 'adzuna'
     });
   } catch (error) {
-    if (error.message?.includes('API_JOBS')) {
+    if (error.message?.includes('ADZUNA')) {
       return res.status(503).json({
         success: false,
-        message: 'API Jobs listings unavailable. Set API_JOBS in .env.'
+        message: 'Adzuna listings unavailable. Set ADZUNA_APP_ID and ADZUNA_API_KEY in .env.'
       });
     }
-    console.error('API Jobs error:', error);
+    console.error('Adzuna error:', error);
     res.status(502).json({
       success: false,
-      message: 'Failed to fetch jobs from API Jobs',
+      message: 'Failed to fetch jobs from Adzuna',
       error: error.message
     });
   }
@@ -570,6 +586,7 @@ router.post(
   '/:id/apply',
   protect,
   isEmployee,
+  uploadResumeFiles,
   [
     body('coverLetter').optional().trim(),
     body('resume').optional().trim()
@@ -628,11 +645,17 @@ router.post(
         });
       }
 
+      // Get file paths from uploaded files
+      const resumeFile = req.files?.resumeFile?.[0]?.filename || null;
+      const coverLetterFile = req.files?.coverLetterFile?.[0]?.filename || null;
+
       const application = await JobApplication.create({
         jobId: job.id,
         applicantId: req.user.id,
         coverLetter: req.body.coverLetter || null,
         resume: req.body.resume || req.user.resume || null,
+        resumeFile: resumeFile,
+        coverLetterFile: coverLetterFile,
         status: 'pending'
       });
 

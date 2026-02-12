@@ -22,6 +22,8 @@ import jobApplicationRoutes from './routes/jobApplications.js';
 import messageRoutes from './routes/messages.js';
 import notificationRoutes from './routes/notifications.js';
 import learningResourceRoutes from './routes/learningResources.js';
+import aiRoutes from './routes/ai.js';
+import externalProductsRoutes from './routes/externalProducts.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,7 +49,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 sequelize.authenticate()
   .then(() => {
     console.log(' MySQL database connected successfully');
-    return sequelize.sync({ alter: true });
+    return sequelize.sync({ alter: false });
   })
   .then(() => {
     console.log(' Database synced successfully');
@@ -69,7 +71,7 @@ app.use('/api/customer', customerRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/payments', paymentRoutes);
+app.use('/api/paygitments', paymentRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/product-requests', productRequestRoutes);
 app.use('/api/jobs', jobRoutes);
@@ -77,6 +79,8 @@ app.use('/api/job-applications', jobApplicationRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/learning-resources', learningResourceRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/external-products', externalProductsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

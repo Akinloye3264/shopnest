@@ -37,6 +37,71 @@ router.get('/', async (req, res) => {
   try {
     const { category, difficulty, search, resourceType } = req.query;
 
+    // Try AI-generated resources first
+    try {
+      const apiKey = process.env.COHERE_API_KEY;
+      if (apiKey) {
+        const prompt = `Generate 5 learning resources for business and professional development${category ? ` focusing on ${category}` : ''}${difficulty ? ` at ${difficulty} level` : ''}. Return as JSON array with title, description, category, difficulty_level, resource_type, and content_summary for each.`;
+
+        const response = await fetch('https://api.cohere.ai/v1/chat', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'Cohere-Version': '2024-05-21'
+          },
+          body: JSON.stringify({
+            model: 'command-nightly',
+            message: prompt,
+            max_tokens: 1000,
+            temperature: 0.7
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          let aiResponse = data.text || '[]';
+          
+          // Extract JSON from response
+          const jsonMatch = aiResponse.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            aiResponse = jsonMatch[0];
+          }
+
+          try {
+            const resources = JSON.parse(aiResponse);
+            if (Array.isArray(resources) && resources.length > 0) {
+              return res.json({
+                success: true,
+                data: resources.map((resource, index) => ({
+                  id: `ai-${index}`,
+                  title: resource.title || 'Untitled Resource',
+                  description: resource.description || 'No description available',
+                  content: resource.content_summary || 'Content coming soon...',
+                  category: resource.category || category || 'general',
+                  resourceType: resource.resource_type || 'article',
+                  difficulty: resource.difficulty_level || difficulty || 'beginner',
+                  url: '#',
+                  thumbnail: 'https://via.placeholder.com/300x200',
+                  isPublished: true,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                  source: 'ai'
+                })),
+                source: 'ai'
+              });
+            }
+          } catch (parseError) {
+            console.log('AI parse failed, using database');
+          }
+        }
+      }
+    } catch (aiError) {
+      console.log('AI not available, using database');
+    }
+
+    // Fallback to database resources if AI fails
+
     const whereClause = {
       isPublished: true
     };

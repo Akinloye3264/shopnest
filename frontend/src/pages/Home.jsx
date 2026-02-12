@@ -23,7 +23,7 @@ const Home = () => {
             <span className="text-primary-600 animate-pulse"> ShopNest</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto animate-fade-in-delay">
-            Your all-in-one platform for e-commerce, job opportunities, and business growth. Perfect for entrepreneurs, job seekers, and recruiters.
+            Your all-in-one platform for e-commerce, job opportunities, and business growth. Perfect for entrepreneurs, job seekers, and job recruiters.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-delay-2">
             {!user ? (
