@@ -1,77 +1,263 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply font-sans antialiased;
+@theme {
+  --color-brand-primary: #1a1a1a;
+  --color-brand-accent: #000000;
+  --color-bg-base: #ffffff;
+  --color-bg-muted: #f8f9fa;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2.5rem;
+}
+
+:root {
+  --studio-width: 1400px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-bg-base);
+  color: var(--color-brand-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Studio Theme Layout */
+.studio-container {
+  max-width: var(--studio-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.studio-card {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: var(--radius-2xl);
+  padding: 3rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.studio-card:hover {
+  border-color: #000000;
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.studio-button {
+  background: #000000;
+  color: #ffffff;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.studio-button:hover {
+  background: #333333;
+  transform: scale(1.02);
+}
+
+.studio-button-ghost {
+  background: transparent;
+  color: #000000;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: 1px solid #eeeeee;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.studio-button-ghost:hover {
+  background: #f8f9fa;
+  border-color: #000000;
+}
+
+/* Typography */
+.studio-h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin-bottom: 2rem;
+}
+
+.studio-h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+
+.studio-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888888;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Form Styles */
+.studio-input {
+  width: 100%;
+  padding: 1.25rem 1.75rem;
+  border-radius: 1.25rem;
+  border: 2px solid #eeeeee;
+  background: #fdfdfd;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.studio-input:focus {
+  border-color: #000000;
+  background: #ffffff;
+}
+
+/* AI Elements */
+.studio-ai-bubble {
+  background: #000000;
+  color: #ffffff;
+  padding: 2rem;
+  border-radius: 2rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* AI Response Formatting */
+.ai-response-bubble strong {
+  font-weight: 800;
+  color: #000;
+}
+
+.ai-response-bubble .ai-heading {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 1.25rem 0 0.5rem 0;
+  color: #111;
+  letter-spacing: -0.01em;
+}
+
+.ai-response-bubble .ai-heading:first-child {
+  margin-top: 0;
+}
+
+.ai-response-bubble .ai-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.ai-response-bubble .ai-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.6;
+}
+
+.ai-response-bubble .ai-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #999;
+  font-size: 0.75rem;
+  top: 2px;
+}
+
+/* Utils */
+.studio-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .studio-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
 
-@layer components {
-  .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.pt-18 {
+  padding-top: 4.5rem;
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
   }
-  
-  .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
-  }
-  
-  .btn-secondary {
-    @apply bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500;
-  }
-  
-  .btn-outline {
-    @apply border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500;
-  }
-  
-  .btn-ghost {
-    @apply text-gray-700 hover:bg-gray-100 focus:ring-gray-500;
-  }
-  
-  .input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-  }
-  
-  .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+
+  100% {
+    transform: translateX(-50%);
   }
 }
 
-@layer utilities {
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+/* Sticky Nav Background */
+.nav-blur {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.no-icon {
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background: currentColor;
+  position: relative;
+}
+
+.no-icon::before,
+.no-icon::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background: currentColor;
+  left: 0;
+}
+
+.no-icon::before {
+  top: -8px;
+}
+
+.no-icon::after {
+  bottom: -8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .studio-container {
+    padding: 0 1rem;
   }
 
-  @keyframes bounce-slow {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  .animate-fade-in {
-    animation: fade-in 1s ease-out;
-  }
-
-  .animate-fade-in-delay {
-    animation: fade-in 1s ease-out 0.2s both;
-  }
-
-  .animate-fade-in-delay-2 {
-    animation: fade-in 1s ease-out 0.4s both;
-  }
-
-  .animate-bounce-slow {
-    animation: bounce-slow 3s ease-in-out infinite;
+  .studio-card {
+    padding: 1.5rem;
   }
 }
