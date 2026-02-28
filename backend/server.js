@@ -1,100 +1,93 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './config/swagger.js';
-import { sequelize } from './models/index.js';
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
 
 // Import routes
-import authRoutes from './routes/auth.js';
-import sellerRoutes from './routes/seller.js';
-import customerRoutes from './routes/customer.js';
-import adminRoutes from './routes/admin.js';
-import productRoutes from './routes/products.js';
-import orderRoutes from './routes/orders.js';
-import paymentRoutes from './routes/payments.js';
-import cartRoutes from './routes/cart.js';
-import productRequestRoutes from './routes/productRequests.js';
-import jobRoutes from './routes/jobs.js';
-import jobApplicationRoutes from './routes/jobApplications.js';
-import messageRoutes from './routes/messages.js';
-import notificationRoutes from './routes/notifications.js';
-import learningResourceRoutes from './routes/learningResources.js';
+const authRoutes = require('./src/routes/auth.routes.js');
+const googleAuthRoutes = require('./src/routes/google.auth.js');
+const aiRoutes = require('./src/routes/ai.routes.js');
+const productRoutes = require('./src/routes/product.routes.js');
+const jobRoutes = require('./src/routes/job.routes.js');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load environment variables from backend folder
-dotenv.config({ path: path.join(__dirname, '.env') });
+// Import middleware
+const { errorHandler, notFound, requestLogger } = require('./src/middleware/error.middleware.js');
 
 const app = express();
+const PORT = process.env.PORT || 5001;
+const { sequelize } = require('./src/config/database.config');
+require('./src/models'); // Initialize associations
+
+// Connect to Database
+sequelize.sync({ alter: true })
+  .then(() => console.log('✅ MySQL Models synchronized.'))
+  .catch(err => console.error('❌ Error synchronizing models:', err));
 
 // Middleware
-// CORS configuration - allow frontend origin
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Database connection
-sequelize.authenticate()
-  .then(() => {
-    console.log(' MySQL database connected successfully');
-    return sequelize.sync({ alter: true });
-  })
-  .then(() => {
-    console.log(' Database synced successfully');
-  })
-  .catch((err) => {
-    console.error(' Database connection error:', err);
-  });
-
-// Swagger API Documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'ShopNest API Documentation'
-}));
+app.use(requestLogger);
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/seller', sellerRoutes);
-app.use('/api/customer', customerRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/google-auth', googleAuthRoutes);
+app.use('/api/ai', aiRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/product-requests', productRequestRoutes);
 app.use('/api/jobs', jobRoutes);
-app.use('/api/job-applications', jobApplicationRoutes);
-app.use('/api/messages', messageRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/learning-resources', learningResourceRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'ShopNest API is running' });
+// Legacy routes for backward compatibility
+app.get('/api/external-products', (req, res) => {
+  res.redirect('/api/products');
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    message: err.message || 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err : {}
+// Google OAuth is handled by src/routes/google.auth.js
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    version: '2.0.0'
   });
 });
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(` Environment: ${process.env.NODE_ENV || 'development'}`);
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to ShopNest API',
+    version: '2.0.0',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      googleAuth: '/api/google-auth',
+      ai: '/api/ai',
+      products: '/api/products',
+      jobs: '/api/jobs'
+    },
+    documentation: 'https://api.shopnest.com/docs'
+  });
 });
+
+// Error handling middleware
+app.use(notFound);
+app.use(errorHandler);
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 ShopNest Server v2.0.0 running on port ${PORT}`);
+  console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  console.log(`🔗 Google OAuth Init: http://localhost:${PORT}/api/google-auth/google`);
+  console.log(`📡 Google OAuth Redirect: http://localhost:${PORT}/api/google-auth/callback`);
+  console.log(`🤖 AI Assistant: http://localhost:${PORT}/api/ai/learning-assistant`);
+  console.log(`🛍️ Products: http://localhost:${PORT}/api/products`);
+  console.log(`💼 Jobs: http://localhost:${PORT}/api/jobs`);
+  console.log(`🔐 Health Check: http://localhost:${PORT}/health`);
+  console.log(`📚 API Documentation: http://localhost:${PORT}/`);
+});
+
+module.exports = app;

@@ -1,0 +1,118 @@
+/* ShopNest App Styles */
+
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Navigation styles */
+.nav-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Card styles */
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Button styles */
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+  background: white;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Form styles */
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Error styles */
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Success styles */
+.success-message {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+  
+  .card {
+    margin: 16px;
+  }
+}
