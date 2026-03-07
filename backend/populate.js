@@ -51,7 +51,7 @@ async function seed() {
         // Find first user to be the owner
         const user = await User.findOne();
         if (!user) {
-            console.log('❌ No user found in DB. Please register at least one user first!');
+            console.log('No user found in DB. Please register at least one user first!');
             return;
         }
 
@@ -64,10 +64,10 @@ async function seed() {
             });
         }
 
-        console.log('✅ Marketplace populated successfully!');
+        console.log(' Marketplace populated successfully!');
         process.exit(0);
     } catch (error) {
-        console.error('❌ Seeding failed:', error);
+        console.error('Seeding failed:', error);
         process.exit(1);
     }
 }

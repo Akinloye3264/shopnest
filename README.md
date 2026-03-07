@@ -54,10 +54,9 @@ cd backend
 npm install
 ```
 
-3. Create a `.env` file in the **root directory** of the project:
+3. Create a `.env` file in the **backend directory** (see `.env.example` for template):
 ```env
-PORT=5000
-NODE_ENV=development
+PORT=5001
 
 # Database Configuration (MySQL)
 DB_HOST=localhost
@@ -67,23 +66,21 @@ DB_USER=root
 DB_PASSWORD=your_password_here
 
 # JWT Secret
-JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
-JWT_EXPIRE=7d
+JWT_secret=your_super_secret_jwt_key_change_this_in_production
 
 # Email Configuration (for password reset)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_gmail_app_password
-EMAIL_FROM_NAME=ShopNest
 
-# Frontend URL
-FRONTEND_URL=http://localhost:3000
+# URLs (update for production deployment)
+FRONTEND_URL=http://localhost:5173
+BACKEND_URL=http://localhost:5001
 
 # Stripe Payment Gateway
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
 STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+
+# Optional: Google OAuth, Twilio, AI APIs (see .env.example for full list)
 ```
 
 4. Start the backend server:
@@ -91,7 +88,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 npm run dev
 ```
 
-The backend will run on `http://localhost:5000`
+The backend will run on `http://localhost:5001`
 
 ### Frontend Setup
 
@@ -105,9 +102,10 @@ cd frontend
 npm install
 ```
 
-3. Create a `.env` file in the **frontend directory**:
+3. Create a `.env` file in the **frontend directory** (see `.env.example` for template):
 ```env
-VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+# API URL - Update this when deploying to production
+VITE_API_URL=http://localhost:5001
 ```
 
 4. Start the development server:
@@ -115,7 +113,17 @@ VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
 npm run dev
 ```
 
-The frontend will run on `http://localhost:3000`
+The frontend will run on `http://localhost:5173`
+
+## 🚀 Deployment
+
+For production deployment instructions (Render, Vercel, etc.), see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+**Key Points for Deployment:**
+- Update `VITE_API_URL` in frontend `.env` to your backend URL
+- Update `FRONTEND_URL` and `BACKEND_URL` in backend `.env`
+- Configure Google OAuth redirect URIs for production URLs
+- Use environment variables instead of hardcoded URLs
 
 ## 🗄️ Database Seeding
 
@@ -147,7 +155,7 @@ This will create:
 
 Swagger API documentation is available at:
 ```
-http://localhost:5000/api-docs
+http://localhost:5001/api-docs
 ```
 
 The documentation includes:

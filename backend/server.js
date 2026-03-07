@@ -8,6 +8,11 @@ const googleAuthRoutes = require('./src/routes/google.auth.js');
 const aiRoutes = require('./src/routes/ai.routes.js');
 const productRoutes = require('./src/routes/product.routes.js');
 const jobRoutes = require('./src/routes/job.routes.js');
+const paymentRoutes = require('./src/routes/payment.routes.js');
+const orderRoutes = require('./src/routes/order.routes.js');
+const reviewRoutes = require('./src/routes/review.routes.js');
+const messageRoutes = require('./src/routes/message.routes.js');
+const adminRoutes = require('./src/routes/admin.routes.js');
 
 // Import middleware
 const { errorHandler, notFound, requestLogger } = require('./src/middleware/error.middleware.js');
@@ -19,8 +24,8 @@ require('./src/models'); // Initialize associations
 
 // Connect to Database
 sequelize.sync({ alter: true })
-  .then(() => console.log('✅ MySQL Models synchronized.'))
-  .catch(err => console.error('❌ Error synchronizing models:', err));
+  .then(() => console.log(' MySQL Models synchronized.'))
+  .catch(err => console.error(' Error synchronizing models:', err));
 
 // Middleware
 app.use(cors({
@@ -37,22 +42,25 @@ app.use('/api/google-auth', googleAuthRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Legacy routes for backward compatibility
 app.get('/api/external-products', (req, res) => {
   res.redirect('/api/products');
 });
 
-// Google OAuth is handled by src/routes/google.auth.js
-
 // Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
-    message: 'Server is running',
+    message: 'ShopNest Server is running',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    version: '2.0.0'
+    version: '2.1.0'
   });
 });
 
@@ -60,14 +68,19 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to ShopNest API',
-    version: '2.0.0',
+    version: '2.1.0',
     endpoints: {
       health: '/health',
       auth: '/api/auth',
       googleAuth: '/api/google-auth',
       ai: '/api/ai',
       products: '/api/products',
-      jobs: '/api/jobs'
+      jobs: '/api/jobs',
+      orders: '/api/orders',
+      reviews: '/api/reviews',
+      messages: '/api/messages',
+      admin: '/api/admin',
+      payments: '/api/payments'
     },
     documentation: 'https://api.shopnest.com/docs'
   });
@@ -79,15 +92,17 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 ShopNest Server v2.0.0 running on port ${PORT}`);
-  console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
-  console.log(`🔗 Google OAuth Init: http://localhost:${PORT}/api/google-auth/google`);
-  console.log(`📡 Google OAuth Redirect: http://localhost:${PORT}/api/google-auth/callback`);
-  console.log(`🤖 AI Assistant: http://localhost:${PORT}/api/ai/learning-assistant`);
-  console.log(`🛍️ Products: http://localhost:${PORT}/api/products`);
-  console.log(`💼 Jobs: http://localhost:${PORT}/api/jobs`);
-  console.log(`🔐 Health Check: http://localhost:${PORT}/health`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/`);
+  console.log(` ShopNest Server v2.1.0 running on port ${PORT}`);
+  console.log(` Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  console.log(` Google OAuth: http://localhost:${PORT}/api/google-auth/google`);
+  console.log(` AI Assistant: http://localhost:${PORT}/api/ai/learning-assistant`);
+  console.log(` Products: http://localhost:${PORT}/api/products`);
+  console.log(` Jobs: http://localhost:${PORT}/api/jobs`);
+  console.log(` Orders: http://localhost:${PORT}/api/orders`);
+  console.log(` Reviews: http://localhost:${PORT}/api/reviews`);
+  console.log(` Messages: http://localhost:${PORT}/api/messages`);
+  console.log(` Admin: http://localhost:${PORT}/api/admin/stats`);
+  console.log(` Health Check: http://localhost:${PORT}/health`);
 });
 
 module.exports = app;

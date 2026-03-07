@@ -70,7 +70,6 @@ router.post('/verify-register', async (req, res) => {
         message: 'Email and verification code are required'
       });
     }
-
     const result = verifyOTP(email, otp);
     if (!result.valid) {
       return res.status(400).json({ success: false, message: result.message });

@@ -11,12 +11,15 @@
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/postcss": "^4.2.1",
     "@tailwindcss/vite": "^4.2.1",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.13.5",
     "framer-motion": "^12.34.3",
+    "lucide-react": "^0.575.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-helmet-async": "^2.0.5",
@@ -30,6 +33,7 @@
     "redux-persist": "^6.0.0",
     "socket.io-client": "^4.8.3",
     "swiper": "^12.1.2",
+    "three": "^0.183.2",
     "yup": "^1.7.1"
   },
   "devDependencies": {
@@ -37,6 +41,7 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.183.1",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.27",
     "eslint": "^9.39.1",

@@ -91,8 +91,30 @@ backend/
 
 4. **Start production server**:
    ```bash
-   npm start
-   ```
+    npm start
+    ```
+
+## 🗄️ Database Seeding
+
+To populate the database with initial sample data (Users, Products, and Jobs), run the following command:
+
+```bash
+npm run seed
+```
+
+This will:
+1.  **Sync the database**: Ensures all tables exist.
+2.  **Create Default Users**:
+    - **Admin**: `admin@shopnest.com` (pw: `admin123`)
+    - **Seller**: `seller@shopnest.com` (pw: `seller123`)
+    - **Buyer**: `buyer@shopnest.com` (pw: `buyer123`)
+    - **Employer**: `employer@shopnest.com` (pw: `employer123`)
+    - **Employee**: `employee@shopnest.com` (pw: `employee123`)
+3.  **Seed Products**: Adds high-quality sample products assigned to the seller.
+4.  **Seed Jobs**: Adds sample job postings assigned to the employer.
+
+> [!NOTE]
+> The seeding process is idempotent and will only create records if they don't already exist.
 
 ## 📦 Dependencies
 

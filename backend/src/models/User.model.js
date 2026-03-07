@@ -24,7 +24,7 @@ const User = sequelize.define('User', {
         allowNull: true // Null for Google OAuth users
     },
     role: {
-        type: DataTypes.ENUM('buyer', 'seller', 'job_seeker', 'admin'),
+        type: DataTypes.ENUM('buyer', 'seller', 'job_seeker', 'admin', 'employer', 'employee'),
         defaultValue: 'buyer'
     },
     picture: {
