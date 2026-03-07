@@ -5,8 +5,13 @@ import Register from './components/Register'
 import Dashboard from './components/Dashboard'
 import Products from './components/Products'
 import Jobs from './components/Jobs'
+import Orders from './components/Orders'
+import Messaging from './components/Messaging'
+import AdminPanel from './components/AdminPanel'
 import AuthCallback from './components/AuthCallback'
+import Background3D from './components/Background3D'
 import { Toaster } from 'react-hot-toast'
+import { ShoppingCart, MessageSquare, LayoutDashboard, Shield } from 'lucide-react'
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -36,24 +41,16 @@ function App() {
 
   const formatMarkdown = (text: string): string => {
     let html = text
-      // Escape HTML
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-    // Bold: **text**
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    // Headers: ### text or ## text
     html = html.replace(/^### (.+)$/gm, '<h4 class="ai-heading">$1</h4>')
     html = html.replace(/^## (.+)$/gm, '<h3 class="ai-heading">$1</h3>')
-    // Unordered list items: - text
     html = html.replace(/^- (.+)$/gm, '<li>$1</li>')
-    // Numbered list items: 1. text
     html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-    // Wrap consecutive <li> in <ul>
     html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul class="ai-list">$1</ul>')
-    // Line breaks for remaining newlines (but not before/after block elements)
     html = html.replace(/\n(?!<)/g, '<br />')
-    // Clean up extra <br /> before block elements
     html = html.replace(/<br \/>(\s*<(?:ul|h3|h4))/g, '$1')
     html = html.replace(/(<\/(?:ul|h3|h4)>)<br \/>/g, '$1')
     return html
@@ -73,7 +70,6 @@ function App() {
     }
     checkAuth()
 
-    // Listen for storage changes (e.g. from AuthCallback)
     const handleStorageChange = () => {
       const storedUser = localStorage.getItem('user')
       if (storedUser) {
@@ -116,10 +112,19 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="min-h-screen font-sans selection:bg-black selection:text-white">
-        <Toaster position="top-center" />
+      <Background3D />
+      <div className="min-h-screen font-sans selection:bg-brand-accent selection:text-black text-white relative z-10">
+        <Toaster position="top-center"
+          toastOptions={{
+            style: {
+              background: '#111',
+              color: '#fff',
+              border: '1px solid rgba(255,255,255,0.1)'
+            }
+          }}
+        />
 
-        {/* Navigation - Fixed Sticky */}
+        {/* Navigation */}
         {user && (
           <nav className="fixed top-0 left-0 w-full z-[100] nav-blur transition-all duration-300">
             <div className="studio-container flex justify-between items-center h-24">
@@ -128,10 +133,30 @@ function App() {
               </Link>
 
               {/* Desktop Nav */}
-              <div className="hidden lg:flex items-center space-x-12">
-                <Link to="/products" className="text-sm font-bold uppercase tracking-widest hover:text-gray-500 transition-colors">Marketplace</Link>
-                <Link to="/jobs" className="text-sm font-bold uppercase tracking-widest hover:text-gray-500 transition-colors">Career Hub</Link>
-                <button onClick={() => setAiOpen(true)} className="text-sm font-bold uppercase tracking-widest hover:text-gray-500 transition-colors">Consult AI</button>
+              <div className="hidden lg:flex items-center space-x-10">
+                <Link to="/dashboard" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
+                  <LayoutDashboard size={14} /> Dashboard
+                </Link>
+                {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/products" className="text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">Marketplace</Link>
+                )}
+                {(user.role === 'job_seeker' || user.role === 'employee' || user.role === 'employer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/jobs" className="text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">Career Hub</Link>
+                )}
+                {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/orders" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
+                    <ShoppingCart size={14} /> Orders
+                  </Link>
+                )}
+                <Link to="/messages" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
+                  <MessageSquare size={14} /> Messages
+                </Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
+                    <Shield size={14} /> Admin
+                  </Link>
+                )}
+                <button onClick={() => setAiOpen(true)} className="text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">Consult AI</button>
               </div>
 
               <div className="hidden lg:flex items-center space-x-8">
@@ -144,18 +169,30 @@ function App() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="lg:hidden p-4 focus:outline-none"
               >
-                <div className={`w-8 h-0.5 bg-black transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`}></div>
-                <div className={`w-8 h-0.5 bg-black mt-2 transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}></div>
+                <div className={`w-8 h-0.5 bg-white transition-all ${mobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`}></div>
+                <div className={`w-8 h-0.5 bg-white mt-2 transition-all ${mobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}></div>
               </button>
             </div>
 
             {/* Mobile Nav Overlay */}
             {mobileMenuOpen && (
-              <div className="lg:hidden absolute top-24 left-0 w-full bg-white border-b-2 border-black p-8 flex flex-col space-y-8 animate-fade-in shadow-2xl">
-                <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase">Marketplace</Link>
-                <Link to="/jobs" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase">Career Hub</Link>
-                <button onClick={() => { setAiOpen(true); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase text-left text-brand-secondary">Consult AI</button>
-                <div className="pt-8 border-t border-gray-100 flex justify-between items-center">
+              <div className="lg:hidden absolute top-24 left-0 w-full bg-[#050505]/95 backdrop-blur-2xl border-b-2 border-brand-accent/30 p-8 flex flex-col space-y-6 animate-fade-in shadow-2xl">
+                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Dashboard</Link>
+                {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Marketplace</Link>
+                )}
+                {(user.role === 'job_seeker' || user.role === 'employee' || user.role === 'employer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/jobs" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Career Hub</Link>
+                )}
+                {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/orders" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Orders</Link>
+                )}
+                <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Messages</Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-brand-accent">Admin Panel</Link>
+                )}
+                <button onClick={() => { setAiOpen(true); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase text-left text-brand-accent">Consult AI</button>
+                <div className="pt-6 border-t border-white/10 flex justify-between items-center">
                   <span className="text-xs font-black uppercase tracking-widest text-gray-400">{user.email}</span>
                   <button onClick={handleLogout} className="studio-button text-xs px-6">LOGOUT</button>
                 </div>
@@ -173,10 +210,13 @@ function App() {
             <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
             <Route path="/products" element={user ? <Products user={user} /> : <Navigate to="/login" />} />
             <Route path="/jobs" element={user ? <Jobs user={user} /> : <Navigate to="/login" />} />
+            <Route path="/orders" element={user ? <Orders user={user} /> : <Navigate to="/login" />} />
+            <Route path="/messages" element={user ? <Messaging user={user} /> : <Navigate to="/login" />} />
+            <Route path="/admin" element={user ? <AdminPanel user={user} /> : <Navigate to="/login" />} />
           </Routes>
         </main>
 
-        {/* AI Modal - Enhanced */}
+        {/* AI Modal */}
         {aiOpen && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl">
             <div className="w-full max-w-4xl max-h-[90vh] flex flex-col animate-slide-up">
@@ -212,7 +252,7 @@ function App() {
                   type="text"
                   value={aiMessage}
                   onChange={(e) => setAiMessage(e.target.value)}
-                  placeholder="Inquire about growth..."
+                  placeholder="Inquire about E-commerce..."
                   className="flex-1 bg-transparent border-b-4 border-white/10 text-white text-4xl font-black pb-4 outline-none focus:border-white transition-colors placeholder:text-white/10"
                 />
                 <button type="submit" className="studio-button px-12 text-lg">SEND</button>

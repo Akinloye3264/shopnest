@@ -97,4 +97,31 @@ router.post('/', async (req, res) => {
   }
 });
 
+// POST /api/products/seed - Seed sample products
+router.post('/seed', async (req, res) => {
+  try {
+    const { sellerId } = req.body;
+    if (!sellerId) return res.status(400).json({ success: false, message: 'SellerId required' });
+
+    const samples = [
+      { title: 'Ultra-Wide Logic Monitor', description: 'Maximum surface area for multi-stream logic analysis.', price: 1200, category: 'Electronics' },
+      { title: 'Aeron Ergonomic Throne', description: 'Sustainable support for high-bandwidth engineering sessions.', price: 1500, category: 'Business Tools' },
+      { title: 'Quantizer ANC Hub', description: 'Absolute acoustic isolation for deep focus protocols.', price: 450, category: 'Electronics' },
+      { title: 'Vector Standing Desk', description: 'Dynamic height adjustment for fluid workflow transitions.', price: 950, category: 'Business Tools' },
+      { title: 'Neural-Link Cable Set', description: 'High-fidelity data transmission for premium peripherals.', price: 45, category: 'Electronics' }
+    ];
+
+    const products = await Promise.all(samples.map(s => Product.create({
+      ...s,
+      sellerId,
+      image: `https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?auto=format&fit=crop&q=80&w=800`, // Placeholder
+      stock: 50
+    })));
+
+    res.json({ success: true, message: 'Warehouse populated.', products });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

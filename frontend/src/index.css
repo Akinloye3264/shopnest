@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-primary: #1a1a1a;
-  --color-brand-accent: #000000;
-  --color-bg-base: #ffffff;
-  --color-bg-muted: #f8f9fa;
+  --color-brand-primary: #050505;
+  --color-brand-accent: #00ff88;
+  --color-bg-base: #050505;
+  --color-bg-muted: #111111;
 
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
 
   --radius-xs: 0.25rem;
   --radius-sm: 0.5rem;
@@ -24,8 +24,25 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   background: var(--color-bg-base);
-  color: var(--color-brand-primary);
+  color: #ffffff;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-2xl);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: var(--color-brand-accent);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Studio Theme Layout */
@@ -36,55 +53,58 @@ body {
 }
 
 .studio-card {
-  background: #ffffff;
-  border: 1px solid #eeeeee;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-2xl);
+  backdrop-filter: blur(10px);
   padding: 3rem;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .studio-card:hover {
-  border-color: #000000;
+  border-color: var(--color-brand-accent);
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
 }
 
 .studio-button {
-  background: #000000;
-  color: #ffffff;
-  padding: 1rem 2rem;
+  background: var(--color-brand-accent);
+  color: #000000;
+  padding: 1rem 2.5rem;
   border-radius: 9999px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.875rem;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.05em;
   transition: all 0.3s ease;
   cursor: pointer;
   border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 14px 0 rgba(0, 255, 136, 0.39);
 }
 
 .studio-button:hover {
-  background: #333333;
-  transform: scale(1.02);
+  background: #ffffff;
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 255, 136, 0.23);
 }
 
 .studio-button-ghost {
   background: transparent;
-  color: #000000;
+  color: #ffffff;
   padding: 1rem 2rem;
   border-radius: 9999px;
   font-weight: 700;
   font-size: 0.875rem;
-  border: 1px solid #eeeeee;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .studio-button-ghost:hover {
-  background: #f8f9fa;
-  border-color: #000000;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-brand-accent);
 }
 
 /* Typography */
@@ -119,16 +139,22 @@ body {
   width: 100%;
   padding: 1.25rem 1.75rem;
   border-radius: 1.25rem;
-  border: 2px solid #eeeeee;
-  background: #fdfdfd;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   font-weight: 500;
+  color: #ffffff;
   transition: all 0.3s ease;
   outline: none;
 }
 
+.studio-input-with-icon {
+  padding-left: 6rem !important;
+}
+
 .studio-input:focus {
-  border-color: #000000;
-  background: #ffffff;
+  border-color: var(--color-brand-accent);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.1);
 }
 
 /* AI Elements */
@@ -145,14 +171,14 @@ body {
 /* AI Response Formatting */
 .ai-response-bubble strong {
   font-weight: 800;
-  color: #000;
+  color: var(--color-brand-accent);
 }
 
 .ai-response-bubble .ai-heading {
   font-size: 1.05rem;
   font-weight: 800;
   margin: 1.25rem 0 0.5rem 0;
-  color: #111;
+  color: #ffffff;
   letter-spacing: -0.01em;
 }
 
@@ -219,10 +245,10 @@ body {
 
 /* Sticky Nav Background */
 .nav-blur {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(5, 5, 5, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .no-icon {

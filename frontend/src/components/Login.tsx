@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, ShieldCheck, Github } from 'lucide-react'
+import API_URL from '../config'
 
 interface LoginProps {
   onLogin: (user: any) => void
@@ -17,14 +20,14 @@ function Login({ onLogin }: LoginProps) {
   const navigate = useNavigate()
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5001/api/google-auth/google'
+    window.location.href = `${API_URL}/api/google-auth/google`
   }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5001/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -32,7 +35,7 @@ function Login({ onLogin }: LoginProps) {
       const data = await response.json()
       if (data.requiresVerification) {
         setStep('verify')
-        toast.success('Verification code sent to your email!')
+        toast.success('Verification code sent!')
       } else if (data.success) {
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
@@ -52,7 +55,7 @@ function Login({ onLogin }: LoginProps) {
     e.preventDefault()
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5001/api/auth/verify-login', {
+      const response = await fetch(`${API_URL}/api/auth/verify-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
@@ -76,16 +79,16 @@ function Login({ onLogin }: LoginProps) {
   const handleResendOTP = async () => {
     setResending(true)
     try {
-      const response = await fetch('http://localhost:5001/api/auth/resend-otp', {
+      const response = await fetch(`${API_URL}/api/auth/resend-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, context: 'login' })
       })
       const data = await response.json()
       if (data.success) {
-        toast.success('New verification code sent!')
+        toast.success('New code sent!')
       } else {
-        toast.error(data.message || 'Failed to resend code.')
+        toast.error(data.message || 'Failed to resend.')
       }
     } catch {
       toast.error('Network failure.')
@@ -94,149 +97,144 @@ function Login({ onLogin }: LoginProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-white">
-      {/* Visual Side */}
-      <div className="lg:w-1/2 p-8 lg:p-20 bg-black flex flex-col justify-between text-white overflow-hidden relative">
-        <div className="z-10">
-          <Link to="/" className="text-4xl font-black tracking-tighter">ShopNest<span className="text-gray-500">.</span></Link>
-        </div>
-        <div className="z-10 mt-20 lg:mt-0">
-          <h1 className="text-7xl lg:text-[10rem] font-black tracking-tighter leading-[0.85] uppercase mb-12">Scale<br />Now.</h1>
-          <p className="text-xl font-medium text-gray-400 max-w-md leading-relaxed">
-            The infrastructure for modern digital commerce and talent acquisition.
-          </p>
-        </div>
-        <div className="z-10 flex space-x-8 text-[10px] font-black uppercase tracking-[0.3em] opacity-30 mt-12 lg:mt-0">
-          <span>MARKETPLACE</span>
-          <span>RECRUITMENT</span>
-          <span>AI SYSTEMS</span>
-        </div>
-        {/* Background Graphic */}
-        <div className="absolute bottom-0 right-0 w-[40rem] h-[40rem] bg-indigo-500 opacity-10 blur-[200px] select-none pointer-events-none"></div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <AnimatePresence mode="wait">
+        {step === 'credentials' ? (
+          <motion.div
+            key="login-form"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 1.1, y: -20 }}
+            className="w-full max-w-lg glass-card p-8 lg:p-12 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/10 blur-3xl -z-10" />
 
-      {/* Form Side */}
-      <div className="lg:w-1/2 p-8 lg:p-40 flex flex-col justify-center bg-white relative">
-        <div className="max-w-md w-full mx-auto">
-          {step === 'credentials' ? (
-            <>
-              <div className="mb-20">
-                <h2 className="text-5xl font-black tracking-tighter uppercase mb-2">Login!</h2>
-                <p className="text-gray-400 font-medium">Please enter your credentials.</p>
-              </div>
+            <div className="text-center mb-10">
+              <Link to="/" className="text-3xl font-black tracking-tighter block mb-6">
+                ShopNest<span className="text-brand-accent">.</span>
+              </Link>
+              <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Welcome Back</h2>
+              <p className="text-gray-400 font-medium">Enter your credentials to scale up.</p>
+            </div>
 
-              <form onSubmit={handleEmailLogin} className="space-y-10">
-                <div className="group">
-                  <label className="studio-label group-focus-within:text-black transition-colors">Email Address</label>
+            <form onSubmit={handleEmailLogin} className="space-y-6">
+              <div className="space-y-2">
+                <label className="studio-label ml-1">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="studio-input"
-                    placeholder="example@gmail.com"
+                    className="studio-input studio-input-with-icon font-medium"
+                    placeholder="name@example.com"
                   />
                 </div>
-
-                <div className="group">
-                  <label className="studio-label group-focus-within:text-black transition-colors">Password</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="studio-input pr-14"
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-black transition-colors"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
-                      ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                <button type="submit" disabled={loading} className="studio-button w-full h-16 text-lg">
-                  {loading ? 'PROCESSING...' : 'LOGIN'}
-                </button>
-              </form>
-
-              <div className="mt-12 text-center">
-                <div className="relative flex items-center justify-center mb-10">
-                  <div className="absolute w-full border-t border-gray-100"></div>
-                </div>
-
-                <button onClick={handleGoogleLogin} className="studio-button-ghost w-full h-16 flex items-center justify-center space-x-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest">Sign in with Google Account</span>
-                </button>
               </div>
 
-              <p className="mt-16 text-center text-xs font-black uppercase tracking-widest text-gray-300">
-                NO ACCOUNT? <Link to="/register" className="text-black hover:underline underline-offset-4 decoration-2">Create Account</Link>
-              </p>
-            </>
-          ) : (
-            <>
-              <div className="mb-16">
+              <div className="space-y-2">
+                <label className="studio-label ml-1">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="studio-input studio-input-with-icon pr-14 font-medium"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" disabled={loading} className="studio-button w-full h-16 text-lg group">
+                <span className="mr-2">{loading ? 'PROCESSING...' : 'ACCESS PORTAL'}</span>
+                {!loading && <ArrowRight className="inline group-hover:translate-x-1 transition-transform" size={20} />}
+              </button>
+            </form>
+
+            <div className="mt-10">
+              <div className="relative flex items-center justify-center mb-8">
+                <div className="absolute w-full border-t border-white/5"></div>
+                <span className="relative bg-[#0a0a0a]/50 backdrop-blur-md px-4 text-[10px] font-black uppercase tracking-widest text-gray-500">Secure Gateways</span>
+              </div>
+
+              <button onClick={handleGoogleLogin} className="studio-button-ghost w-full h-16 flex items-center justify-center space-x-3 group">
+                <svg width="20" height="20" viewBox="0 0 48 48">
+                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                </svg>
+                <span className="text-xs font-black uppercase tracking-widest group-hover:text-brand-accent transition-colors">Continue with Google</span>
+              </button>
+            </div>
+
+            <p className="mt-10 text-center text-xs font-black uppercase tracking-widest text-gray-500">
+              No account? <Link to="/register" className="text-white hover:text-brand-accent hover:underline underline-offset-4 transition-all">Create Identity</Link>
+            </p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="verify-form"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -20 }}
+            className="w-full max-w-lg glass-card p-12 text-center"
+          >
+            <ShieldCheck className="mx-auto text-brand-accent mb-6" size={64} />
+            <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Security Layer</h2>
+            <p className="text-gray-400 font-medium mb-10">
+              We've dispatched a 6-digit code to <br />
+              <strong className="text-white text-lg">{email}</strong>
+            </p>
+
+            <form onSubmit={handleVerifyOTP} className="space-y-8">
+              <input
+                type="text"
+                required
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                className="studio-input text-center text-5xl font-black tracking-[0.5em] h-24"
+                placeholder="000000"
+                maxLength={6}
+                autoFocus
+              />
+
+              <button type="submit" disabled={loading || otp.length !== 6} className="studio-button w-full h-16 text-lg">
+                {loading ? 'VERIFYING...' : 'AUTHORIZE LOGIN'}
+              </button>
+            </form>
+
+            <div className="mt-10 pt-10 border-t border-white/5">
+              <p className="text-xs text-gray-500 mb-4 font-bold uppercase tracking-widest">Protocol failed?</p>
+              <div className="flex justify-center space-x-8">
                 <button
                   onClick={() => { setStep('credentials'); setOtp('') }}
-                  className="text-xs font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors mb-8 block"
+                  className="text-xs font-black uppercase tracking-widest text-gray-400 hover:text-white flex items-center"
                 >
-                  ← Back
+                  <ArrowLeft size={14} className="mr-2" /> Change Details
                 </button>
-                <h2 className="text-5xl font-black tracking-tighter uppercase mb-2">Verify.</h2>
-                <p className="text-gray-400 font-medium">
-                  We sent a 6-digit code to <strong className="text-black">{email}</strong>
-                </p>
-              </div>
-
-              <form onSubmit={handleVerifyOTP} className="space-y-10">
-                <div className="group">
-                  <label className="studio-label group-focus-within:text-black transition-colors">Verification Code</label>
-                  <input
-                    type="text"
-                    required
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="studio-input text-center text-3xl font-black tracking-[0.5em]"
-                    placeholder="000000"
-                    maxLength={6}
-                    autoFocus
-                  />
-                </div>
-
-                <button type="submit" disabled={loading || otp.length !== 6} className="studio-button w-full h-16 text-lg">
-                  {loading ? 'VERIFYING...' : 'VERIFY & LOGIN'}
-                </button>
-              </form>
-
-              <div className="mt-10 text-center">
-                <p className="text-xs text-gray-400 mb-4">Didn't receive a code?</p>
                 <button
                   onClick={handleResendOTP}
                   disabled={resending}
-                  className="text-xs font-black uppercase tracking-widest text-black hover:underline underline-offset-4 decoration-2 disabled:opacity-30"
+                  className="text-xs font-black uppercase tracking-widest text-brand-accent hover:underline disabled:opacity-30"
                 >
-                  {resending ? 'SENDING...' : 'RESEND CODE'}
+                  {resending ? 'RETRANSMITTING...' : 'RESEND CODE'}
                 </button>
               </div>
-            </>
-          )}
-        </div>
-
-        {/* Support Link */}
-        <div className="absolute bottom-10 left-0 w-full text-center">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-300">ShopNest @ 2026</span>
-        </div>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -66,7 +66,7 @@ router.get('/callback', async (req, res) => {
         client_secret: process.env.GOOGLE_SECRET,
         code: code,
         grant_type: 'authorization_code',
-        redirect_uri: `${process.env.BACKEND_URL}/api/google-auth/callback`
+        redirect_uri: `${process.env.BACKEND_URL || 'http://localhost:5001'}/api/google-auth/callback`
       })
     });
 
@@ -93,13 +93,10 @@ router.get('/callback', async (req, res) => {
     let user = await User.findOne({ where: { email: userData.email } });
 
     if (!user) {
-      user = await User.create({
-        name: userData.name,
-        email: userData.email,
-        picture: userData.picture,
-        googleId: userData.id,
-        role: 'buyer' // Default role
-      });
+      // Redirect new Google users to signup to pick a role
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const signupUrl = `${frontendUrl}/register?email=${encodeURIComponent(userData.email)}&name=${encodeURIComponent(userData.name)}&googleId=${userData.id}&picture=${encodeURIComponent(userData.picture || '')}`;
+      return res.redirect(signupUrl);
     } else if (!user.googleId) {
       // Link google account if email matches but no googleId
       user.googleId = userData.id;

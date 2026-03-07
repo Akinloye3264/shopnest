@@ -140,4 +140,59 @@ router.post('/:id/apply', async (req, res) => {
   }
 });
 
+// GET /api/jobs/employer/:employerId/applications - Get applications for employer's jobs
+router.get('/employer/:employerId/applications', async (req, res) => {
+  try {
+    const { employerId } = req.params;
+
+    const applications = await Application.findAll({
+      include: [
+        {
+          model: Job,
+          as: 'job',
+          where: { employerId },
+          attributes: ['title', 'company']
+        },
+        {
+          model: User,
+          as: 'applicant',
+          attributes: ['name', 'email']
+        }
+      ]
+    });
+
+    res.json({
+      success: true,
+      applications
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/jobs/seed - Seed sample ecosystem jobs
+router.post('/seed', async (req, res) => {
+  try {
+    const { employerId } = req.body;
+    if (!employerId) return res.status(400).json({ success: false, message: 'EmployerId required' });
+
+    const samples = [
+      { title: 'Senior Logic Architect', company: 'Nexus Systems', description: 'Lead the design of high-scale commerce logic.', location: 'Remote', type: 'Full-time' },
+      { title: 'Frontend Systems Engineer', company: 'ShopNest Core', description: 'Build premium glass-morphism interfaces.', location: 'Global', type: 'Full-time' },
+      { title: 'Operations Strategist', company: 'Logistics Prime', description: 'Optimize warehouse data transmission.', location: 'London, UK', type: 'Contract' },
+      { title: 'AI Implementation Lead', company: 'Neural Node', description: 'Deploy Claude-based assistants.', location: 'San Francisco, CA', type: 'Full-time' }
+    ];
+
+    const jobs = await Promise.all(samples.map(s => Job.create({
+      ...s,
+      employerId,
+      salary: '$120,000 - $180,000'
+    })));
+
+    res.json({ success: true, message: 'Opportunities seeded.', jobs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
