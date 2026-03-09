@@ -31,7 +31,7 @@ sequelize.sync({ alter: true })
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:5173',
-  'https://shopnest-change-in-all-form.netlify.app'
+  'https://sshopnest.netlify.app'
 ].filter(Boolean);
 
 app.use(cors({
