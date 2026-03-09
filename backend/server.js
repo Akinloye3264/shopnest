@@ -28,8 +28,20 @@ sequelize.sync({ alter: true })
   .catch(err => console.error(' Error synchronizing models:', err));
 
 // Middleware
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'https://shopnest-change-in-all-form.netlify.app'
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
@@ -92,17 +104,11 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, "0.0.0.0", () => {
+  const backendUrl = process.env.BACKEND_URL || `http://localhost:${PORT}`;
   console.log(` ShopNest Server v2.1.0 running on port ${PORT}`);
+  console.log(` Backend URL: ${backendUrl}`);
   console.log(` Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
-  console.log(` Google OAuth: http://localhost:${PORT}/api/google-auth/google`);
-  console.log(` AI Assistant: http://localhost:${PORT}/api/ai/learning-assistant`);
-  console.log(` Products: http://localhost:${PORT}/api/products`);
-  console.log(` Jobs: http://localhost:${PORT}/api/jobs`);
-  console.log(` Orders: http://localhost:${PORT}/api/orders`);
-  console.log(` Reviews: http://localhost:${PORT}/api/reviews`);
-  console.log(` Messages: http://localhost:${PORT}/api/messages`);
-  console.log(` Admin: http://localhost:${PORT}/api/admin/stats`);
-  console.log(` Health Check: http://localhost:${PORT}/health`);
+  console.log(` Health Check: ${backendUrl}/health`);
 });
 
 module.exports = app;
