@@ -3,11 +3,11 @@ FROM node:18
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
 
 COPY . .
 
-EXPOSE 5001
+ENV PORT=10000
+EXPOSE 10000
 
 CMD ["npm", "start"]
