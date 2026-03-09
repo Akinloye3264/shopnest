@@ -91,7 +91,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(` ShopNest Server v2.1.0 running on port ${PORT}`);
   console.log(` Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
   console.log(` Google OAuth: http://localhost:${PORT}/api/google-auth/google`);
