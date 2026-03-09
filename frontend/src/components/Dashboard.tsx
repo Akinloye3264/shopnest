@@ -1,4 +1,4 @@
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowUpRight, TrendingUp, Users, Package, Zap, Globe, Shield, Terminal, ArrowRight } from 'lucide-react'
 

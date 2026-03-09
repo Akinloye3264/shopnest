@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Users, Package, Briefcase, FileText, ShoppingCart, Star, TrendingUp, DollarSign, Trash2, Edit } from 'lucide-react'
+import { Users, Package, Briefcase, FileText, ShoppingCart, Star, DollarSign, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import API_URL from '../config'
 

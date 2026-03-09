@@ -10,6 +10,7 @@ interface OrderItem {
     id: string
     quantity: number
     price: number
+    productId?: string
     product: { title: string; image: string; price: number }
 }
 
@@ -185,7 +186,7 @@ function Orders({ user }: { user: User }) {
                                                                 </div>
                                                                 {order.status === 'delivered' && (
                                                                     <button
-                                                                        onClick={(e) => { e.stopPropagation(); setReviewModal({ productId: item.productId as any || '', title: item.product?.title || '' }) }}
+                                                                        onClick={(e) => { e.stopPropagation(); setReviewModal({ productId: item.productId || item.id, title: item.product?.title || '' }) }}
                                                                         className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-brand-accent border border-brand-accent/30 px-4 py-2 rounded-full hover:bg-brand-accent/10 transition-colors"
                                                                     >
                                                                         <Star size={12} /> Review

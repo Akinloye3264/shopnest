@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
-import { Search, MapPin, Briefcase, Users, Plus, ExternalLink, Loader2, Upload, FileText, CheckCircle, X } from 'lucide-react'
+import { Search, Briefcase, Users, Plus, ExternalLink, Loader2, Upload, FileText, CheckCircle, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import API_URL from '../config'
 
