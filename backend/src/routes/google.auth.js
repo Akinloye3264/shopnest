@@ -118,7 +118,7 @@ router.get('/callback', async (req, res) => {
       role: user.role
     };
 
-    // Redirect to frontend callback with user data
+    
     const frontendUrl = process.env.FRONTEND_URL;
     const redirectUrl = `${frontendUrl}/auth/callback?token=${mockToken}&user=${encodeURIComponent(JSON.stringify(safeUser))}`;
 
