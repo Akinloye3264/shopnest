@@ -94,7 +94,7 @@ router.get('/callback', async (req, res) => {
 
     if (!user) {
       // Redirect new Google users to signup to pick a role
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const frontendUrl = process.env.FRONTEND_URL;
       const signupUrl = `${frontendUrl}/register?email=${encodeURIComponent(userData.email)}&name=${encodeURIComponent(userData.name)}&googleId=${userData.id}&picture=${encodeURIComponent(userData.picture || '')}`;
       return res.redirect(signupUrl);
     } else if (!user.googleId) {
@@ -119,7 +119,7 @@ router.get('/callback', async (req, res) => {
     };
 
     // Redirect to frontend callback with user data
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = process.env.FRONTEND_URL;
     const redirectUrl = `${frontendUrl}/auth/callback?token=${mockToken}&user=${encodeURIComponent(JSON.stringify(safeUser))}`;
 
     res.redirect(redirectUrl);

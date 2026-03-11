@@ -31,6 +31,7 @@ sequelize.sync({ alter: true })
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:5173',
+  'http://localhost:5174',
   'https://sshopnest.netlify.app'
 ].filter(Boolean);
 
@@ -107,7 +108,7 @@ app.listen(PORT, "0.0.0.0", () => {
   const backendUrl = process.env.BACKEND_URL || `http://localhost:${PORT}`;
   console.log(` ShopNest Server v2.1.0 running on port ${PORT}`);
   console.log(` Backend URL: ${backendUrl}`);
-  console.log(` Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  console.log(` Frontend URL: ${process.env.FRONTEND_URL}`);
   console.log(` Health Check: ${backendUrl}/health`);
 });
 
