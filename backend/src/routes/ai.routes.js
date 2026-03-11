@@ -35,6 +35,13 @@ router.post('/learning-assistant', async (req, res) => {
     });
 
     const data = await response.json();
+    
+    // Check for API errors
+    if (data.error) {
+      console.error('Claude API Error:', data.error);
+      return res.json({ success: true, response: `AI Error: ${data.error.message || 'API request failed'}`, timestamp: new Date().toISOString() });
+    }
+    
     const aiText = data.content && data.content[0] ? data.content[0].text : "No content in response.";
 
     res.json({ success: true, response: aiText, timestamp: new Date().toISOString() });
