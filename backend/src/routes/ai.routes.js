@@ -19,7 +19,7 @@ router.post('/learning-assistant', async (req, res) => {
     }
 
     const requestBody = {
-      model: 'claude-3-5-sonnet-20240620',
+      model: 'claude-opus-4-1',
       max_tokens: 1024,
       messages: [{ role: 'user', content: `You are ShopNest AI, a helpful business assistant for an e-commerce and job platform. Answer concisely. Question: ${question}` }]
     };
@@ -120,7 +120,7 @@ router.post('/audit-resume', upload.single('resume'), async (req, res) => {
     }
 
     const requestBody = {
-      model: 'claude-3-5-sonnet-20240620',
+      model: 'claude-opus-4-1',
       max_tokens: 1500,
       messages: [
         {
