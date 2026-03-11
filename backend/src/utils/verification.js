@@ -19,8 +19,9 @@ const createEmailTransporter = () => {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
         },
-        connectionTimeout: 10000,
-        socketTimeout: 10000
+        connectionTimeout: 15000,
+        socketTimeout: 15000,
+        family: 4 // Force IPv4
     });
 };
 
