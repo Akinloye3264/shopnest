@@ -12,6 +12,7 @@ import AuthCallback from './components/AuthCallback'
 import Background3D from './components/Background3D'
 import { Toaster } from 'react-hot-toast'
 import { ShoppingCart, MessageSquare, LayoutDashboard, Shield } from 'lucide-react'
+import API_URL from './config'
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -95,7 +96,7 @@ function App() {
     setAiMessage('')
     setAiResponse('Consulting ShopNest Intelligence...')
     try {
-      const res = await fetch('http://localhost:5001/api/ai/learning-assistant', {
+      const res = await fetch(`${API_URL}/api/ai/learning-assistant`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: aiMessage })
