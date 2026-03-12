@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -17,7 +17,15 @@ function Login({ onLogin }: LoginProps) {
   const [step, setStep] = useState<'credentials' | 'verify'>('credentials')
   const [resending, setResending] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [statusMsg, setStatusMsg] = useState('SIGN IN')
   const navigate = useNavigate()
+
+  // Pre-warm server on page load
+  useEffect(() => {
+    fetch(`${API_URL}/health`)
+      .then(() => console.log('✓ Server pre-warmed'))
+      .catch(() => {})
+  }, [])
 
   const handleGoogleLogin = () => {
     window.location.href = `${API_URL}/api/google-auth/google`
@@ -26,6 +34,14 @@ function Login({ onLogin }: LoginProps) {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setStatusMsg('WAKING UP SERVER...')
+    
+    // Update status messages every few seconds
+    const statusTimers = [
+      setTimeout(() => setStatusMsg('CHECKING CREDENTIALS...'), 5000),
+      setTimeout(() => setStatusMsg('ALMOST THERE...'), 15000)
+    ]
+    
     try {
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
@@ -35,6 +51,7 @@ function Login({ onLogin }: LoginProps) {
       const data = await response.json()
       if (data.requiresVerification) {
         setStep('verify')
+        setStatusMsg('SIGN IN')
         toast.success('Verification code sent!')
       } else if (data.success) {
         localStorage.setItem('token', data.token)
@@ -43,11 +60,16 @@ function Login({ onLogin }: LoginProps) {
         toast.success('Access granted.')
         navigate('/dashboard')
       } else {
+        setStatusMsg('SIGN IN')
         toast.error(data.message || 'Authentication failed.')
       }
     } catch (error) {
+      setStatusMsg('SIGN IN')
       toast.error('Network failure.')
     }
+    
+    // Clear timers
+    statusTimers.forEach(timer => clearTimeout(timer))
     setLoading(false)
   }
 
@@ -156,7 +178,7 @@ function Login({ onLogin }: LoginProps) {
               </div>
 
               <button type="submit" disabled={loading} className="studio-button w-full h-16 text-lg group">
-                <span className="mr-2">{loading ? 'PROCESSING...' : 'ACCESS PORTAL'}</span>
+                <span className="mr-2">{loading ? statusMsg : 'ACCESS PORTAL'}</span>
                 {!loading && <ArrowRight className="inline group-hover:translate-x-1 transition-transform" size={20} />}
               </button>
             </form>

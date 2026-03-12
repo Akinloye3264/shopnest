@@ -1,7 +1,8 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
-const dialect = process.env.DB_DIALECT || 'mysql';
+const dialect = process.env.DB_DIALECT || 'postgres';
 
 // Support DATABASE_URL (Render/Heroku) or individual DB vars
 const sequelize = process.env.DATABASE_URL

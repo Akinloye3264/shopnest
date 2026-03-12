@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -18,8 +18,16 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [googleId, setGoogleId] = useState('')
   const [picture, setPicture] = useState('')
+  const [statusMsg, setStatusMsg] = useState('CREATE IDENTITY')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+
+  // Pre-warm server on page load
+  useEffect(() => {
+    fetch(`${API_URL}/health`)
+      .then(() => console.log('✓ Server pre-warmed'))
+      .catch(() => {})
+  }, [])
 
   // Google OAuth Pre-fill
   useState(() => {
@@ -40,6 +48,12 @@ function Register() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setStatusMsg('WAKING UP SERVER...')
+    
+    const statusTimers = [
+      setTimeout(() => setStatusMsg('CREATING ACCOUNT...'), 5000),
+      setTimeout(() => setStatusMsg('ALMOST THERE...'), 15000)
+    ]
 
     try {
       const response = await fetch(`${API_URL}/api/auth/register`, {
@@ -52,16 +66,21 @@ function Register() {
 
       if (data.requiresVerification) {
         setStep('verify')
+        setStatusMsg('CREATE IDENTITY')
         toast.success('Verification code sent!')
       } else if (data.success) {
         toast.success('Identity created! Please login.')
         navigate('/login')
       } else {
+        setStatusMsg('CREATE IDENTITY')
         toast.error(data.message || 'Registration failed')
       }
     } catch (error) {
+      setStatusMsg('CREATE IDENTITY')
       toast.error('Connection error')
     }
+    
+    statusTimers.forEach(timer => clearTimeout(timer))
     setLoading(false)
   }
 
@@ -214,7 +233,7 @@ function Register() {
               </div>
 
               <button type="submit" disabled={loading} className="studio-button w-full h-16 text-lg group">
-                <span className="mr-2">{loading ? 'INITIALIZING...' : 'CREATE IDENTITY'}</span>
+                <span className="mr-2">{loading ? statusMsg : 'CREATE IDENTITY'}</span>
                 {!loading && <ArrowRight className="inline group-hover:translate-x-1 transition-transform" size={20} />}
               </button>
             </form>

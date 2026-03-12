@@ -24,8 +24,8 @@ require('./src/models'); // Initialize associations
 
 // Connect to Database
 sequelize.sync({ alter: true })
-  .then(() => console.log(' MySQL Models synchronized.'))
-  .catch(err => console.error(' Error synchronizing models:', err));
+  .then(() => console.log(`✅ ${process.env.DB_DIALECT?.toUpperCase() || 'DATABASE'} Models synchronized.`))
+  .catch(err => console.error('❌ Error synchronizing models:', err));
 
 // Middleware
 const allowedOrigins = [
