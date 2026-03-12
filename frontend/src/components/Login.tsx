@@ -34,7 +34,7 @@ function Login({ onLogin }: LoginProps) {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setStatusMsg('WAKING UP SERVER...')
+    setStatusMsg('Validating Credentials...')
     
     // Update status messages every few seconds
     const statusTimers = [
@@ -175,6 +175,12 @@ function Login({ onLogin }: LoginProps) {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
+              </div>
+
+              <div className="flex justify-end">
+                <Link to="/forgot-password" className="text-xs font-black uppercase tracking-widest text-gray-400 hover:text-brand-accent transition-colors">
+                  Forgot Password?
+                </Link>
               </div>
 
               <button type="submit" disabled={loading} className="studio-button w-full h-16 text-lg group">

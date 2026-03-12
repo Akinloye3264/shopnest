@@ -4,6 +4,7 @@ const Job = require('./Job.model');
 const Application = require('./Application.model');
 const Review = require('./Review.model');
 const Message = require('./Message.model');
+const OTP = require('./OTP.model');
 const { Order, OrderItem } = require('./Order.model');
 
 // User - Product (Seller can have many products)
@@ -56,6 +57,7 @@ module.exports = {
     Application,
     Review,
     Message,
+    OTP,
     Order,
     OrderItem
 };

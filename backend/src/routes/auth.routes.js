@@ -3,7 +3,7 @@ const router = express.Router();
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { generateOTP, sendEmailOTP, sendSmsOTP, storeOTP, verifyOTP } = require('../utils/verification');
+const { generateOTP, sendEmailOTP, sendSmsOTP, sendWhatsAppOTP, storeOTP, verifyOTP } = require('../utils/verification');
 
 // POST /api/auth/register - Step 1: Register and send OTP
 router.post('/register', async (req, res) => {
@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
 
     // Store OTP with user data for later creation
     const hashedPassword = await bcrypt.hash(password, 10);
-    storeOTP(email, otp, {
+    await storeOTP(email, otp, {
       name,
       email,
       password: hashedPassword,
@@ -38,10 +38,12 @@ router.post('/register', async (req, res) => {
     // Send OTP via email
     const emailSent = await sendEmailOTP(email, otp);
 
-    // Send OTP via SMS if phone provided
+    // Send OTP via SMS and WhatsApp if phone provided
     let smsSent = false;
+    let whatsappSent = false;
     if (phone) {
       smsSent = await sendSmsOTP(phone, otp);
+      whatsappSent = await sendWhatsAppOTP(phone, otp);
     }
 
     res.json({
@@ -49,7 +51,8 @@ router.post('/register', async (req, res) => {
       message: 'Verification code sent',
       verificationSent: {
         email: emailSent,
-        sms: smsSent
+        sms: smsSent,
+        whatsapp: whatsappSent
       },
       requiresVerification: true
     });
@@ -70,7 +73,7 @@ router.post('/verify-register', async (req, res) => {
         message: 'Email and verification code are required'
       });
     }
-    const result = verifyOTP(email, otp);
+    const result = await verifyOTP(email, otp);
     if (!result.valid) {
       return res.status(400).json({ success: false, message: result.message });
     }
@@ -130,15 +133,17 @@ router.post('/login', async (req, res) => {
 
     // Generate and send OTP
     const otp = generateOTP();
-    storeOTP(email, otp, { userId: user.id });
+    await storeOTP(email, otp, { userId: user.id });
 
     // Send OTP via email
     const emailSent = await sendEmailOTP(email, otp);
 
-    // Send OTP via SMS if phone exists
+    // Send OTP via SMS and WhatsApp if phone exists
     let smsSent = false;
+    let whatsappSent = false;
     if (user.phone) {
       smsSent = await sendSmsOTP(user.phone, otp);
+      whatsappSent = await sendWhatsAppOTP(user.phone, otp);
     }
 
     res.json({
@@ -146,7 +151,8 @@ router.post('/login', async (req, res) => {
       message: 'Verification code sent',
       verificationSent: {
         email: emailSent,
-        sms: smsSent
+        sms: smsSent,
+        whatsapp: whatsappSent
       },
       requiresVerification: true
     });
@@ -167,7 +173,7 @@ router.post('/verify-login', async (req, res) => {
       });
     }
 
-    const result = verifyOTP(email, otp);
+    const result = await verifyOTP(email, otp);
     if (!result.valid) {
       return res.status(400).json({ success: false, message: result.message });
     }
@@ -216,19 +222,92 @@ router.post('/resend-otp', async (req, res) => {
     }
 
     const otp = generateOTP();
-    storeOTP(email, otp);
+    await storeOTP(email, otp);
 
     const emailSent = await sendEmailOTP(email, otp);
 
     let smsSent = false;
+    let whatsappSent = false;
     if (phone) {
       smsSent = await sendSmsOTP(phone, otp);
+      whatsappSent = await sendWhatsAppOTP(phone, otp);
     }
 
     res.json({
       success: true,
       message: 'New verification code sent',
-      verificationSent: { email: emailSent, sms: smsSent }
+      verificationSent: { email: emailSent, sms: smsSent, whatsapp: whatsappSent }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/auth/forgot-password - Request password reset
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const otp = generateOTP();
+    await storeOTP(email, otp, { resetPassword: true });
+
+    const emailSent = await sendEmailOTP(email, otp);
+
+    let smsSent = false;
+    let whatsappSent = false;
+    if (user.phone) {
+      smsSent = await sendSmsOTP(user.phone, otp);
+      whatsappSent = await sendWhatsAppOTP(user.phone, otp);
+    }
+
+    res.json({
+      success: true,
+      message: 'Password reset code sent',
+      verificationSent: { email: emailSent, sms: smsSent, whatsapp: whatsappSent }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/auth/reset-password - Reset password with OTP
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email, verification code, and new password are required'
+      });
+    }
+
+    const result = await verifyOTP(email, otp);
+    if (!result.valid) {
+      return res.status(400).json({ success: false, message: result.message });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Password reset successfully'
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

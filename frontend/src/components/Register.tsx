@@ -48,7 +48,7 @@ function Register() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setStatusMsg('WAKING UP SERVER...')
+    setStatusMsg('Validating Credentials...')
     
     const statusTimers = [
       setTimeout(() => setStatusMsg('CREATING ACCOUNT...'), 5000),

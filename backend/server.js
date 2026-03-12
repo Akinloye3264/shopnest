@@ -112,12 +112,12 @@ const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(` Health Check: ${backendUrl}/health`);
 });
 
-// Self-ping to prevent Render spin-down (every 10 minutes)
+// Self-ping to prevent Render spin-down (every 5 minutes)
 const backendUrl = process.env.BACKEND_URL || `http://localhost:${PORT}`;
 setInterval(() => {
   fetch(`${backendUrl}/health`)
-    .then(res => console.log(`✓ Keep-alive ping at ${new Date().toISOString()}`))
+    .then(res => console.log(`⏰ Keep-alive ping at ${new Date().toISOString()}`))
     .catch(() => {}); // silently fail
-}, 10 * 60 * 1000); // every 10 minutes
+}, 5 * 60 * 1000); // every 5 minutes
 
 module.exports = app;

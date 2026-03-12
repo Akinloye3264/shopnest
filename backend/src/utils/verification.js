@@ -1,25 +1,10 @@
-const nodemailer = require('nodemailer');
 const twilio = require('twilio');
-
-// In-memory OTP store (in production, use Redis or DB)
-const otpStore = new Map();
+const { sendOTPEmail } = require('./emailService');
+const OTP = require('../models/OTP.model');
 
 // Generate 6-digit OTP
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-// Create Nodemailer transporter with SendGrid
-const createEmailTransporter = () => {
-    return nodemailer.createTransport({
-        host: 'smtp.sendgrid.net',
-        port: 587,
-        secure: false,
-        auth: {
-            user: 'apikey',
-            pass: process.env.SENDGRID_API_KEY
-        }
-    });
 };
 
 // Create Twilio client
@@ -30,35 +15,12 @@ const createTwilioClient = () => {
     return twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 };
 
-// Send OTP via Email
+// Send OTP via Email using SendGrid
 const sendEmailOTP = async (email, otp) => {
     try {
-        const transporter = createEmailTransporter();
-
-        const mailOptions = {
-            from: `"ShopNest" <${process.env.SENDGRID_FROM_EMAIL || 'noreply@shopnest.com'}>`,
-            to: email,
-            subject: 'ShopNest - Your Verification Code',
-            html: `
-        <div style="font-family: 'Inter', Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
-          <div style="text-align: center; margin-bottom: 32px;">
-            <h1 style="font-size: 28px; font-weight: 900; letter-spacing: -0.02em; margin: 0;">ShopNest<span style="color: #999;">.</span></h1>
-          </div>
-          <div style="background: #000; color: #fff; border-radius: 20px; padding: 40px; text-align: center;">
-            <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; opacity: 0.5; margin: 0 0 24px 0;">Verification Code</p>
-            <h2 style="font-size: 48px; font-weight: 900; letter-spacing: 12px; margin: 0 0 24px 0;">${otp}</h2>
-            <p style="font-size: 14px; opacity: 0.6; margin: 0; line-height: 1.6;">This code expires in <strong>10 minutes</strong>.<br/>Do not share this code with anyone.</p>
-          </div>
-          <p style="text-align: center; font-size: 11px; color: #999; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.1em;">ShopNest &copy; 2026</p>
-        </div>
-      `
-        };
-
-        await transporter.sendMail(mailOptions);
-        console.log(`OTP email sent to ${email}`);
-        return true;
+        return await sendOTPEmail(email, otp);
     } catch (error) {
-        console.error('Email OTP error:', error.message);
+        console.error('❌ Email OTP error:', error.message);
         return false;
     }
 };
@@ -68,7 +30,7 @@ const sendSmsOTP = async (phone, otp) => {
     try {
         const client = createTwilioClient();
         if (!client) {
-            console.log('Twilio not configured, skipping SMS');
+            console.log('⚠️ Twilio not configured, skipping SMS');
             return false;
         }
 
@@ -78,50 +40,99 @@ const sendSmsOTP = async (phone, otp) => {
             to: phone
         });
 
-        console.log(`OTP SMS sent to ${phone}`);
+        console.log(`📱 OTP SMS sent to ${phone}`);
         return true;
     } catch (error) {
-        console.error(' SMS OTP error:', error.message);
+        console.error('❌ SMS OTP error:', error.message);
         return false;
     }
 };
 
-// Store OTP with expiry (10 minutes)
-const storeOTP = (identifier, otp, userData = null) => {
-    otpStore.set(identifier, {
-        otp,
-        userData,
-        createdAt: Date.now(),
-        expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
-    });
+// Send OTP via WhatsApp (Twilio)
+const sendWhatsAppOTP = async (phone, otp) => {
+    try {
+        const client = createTwilioClient();
+        if (!client) {
+            console.log('⚠️ Twilio not configured, skipping WhatsApp');
+            return false;
+        }
+
+        // Format phone number for WhatsApp
+        const whatsappNumber = phone.startsWith('+') ? `whatsapp:${phone}` : `whatsapp:+${phone}`;
+
+        await client.messages.create({
+            from: 'whatsapp:+14155238886', // Twilio WhatsApp sandbox number
+            body: `🔐 Your ShopNest verification code is: ${otp}\n\nThis code expires in 10 minutes.\nDo not share this code with anyone.`,
+            to: whatsappNumber
+        });
+
+        console.log(`💬 OTP WhatsApp sent to ${phone}`);
+        return true;
+    } catch (error) {
+        console.error('❌ WhatsApp OTP error:', error.message);
+        return false;
+    }
 };
 
-// Verify OTP
-const verifyOTP = (identifier, otp) => {
-    const stored = otpStore.get(identifier);
+// Store OTP in database with expiry (10 minutes)
+const storeOTP = async (identifier, otp, userData = null) => {
+    try {
+        // Delete any existing OTPs for this identifier
+        await OTP.destroy({ where: { identifier } });
 
-    if (!stored) {
-        return { valid: false, message: 'No verification code found. Please request a new one.' };
+        // Create new OTP
+        await OTP.create({
+            identifier,
+            otp,
+            userData,
+            expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
+        });
+
+        console.log(`🔐 OTP stored for ${identifier}`);
+        return true;
+    } catch (error) {
+        console.error('❌ Error storing OTP:', error.message);
+        return false;
     }
+};
 
-    if (Date.now() > stored.expiresAt) {
-        otpStore.delete(identifier);
-        return { valid: false, message: 'Verification code has expired. Please request a new one.' };
+// Verify OTP from database
+const verifyOTP = async (identifier, otp) => {
+    try {
+        const stored = await OTP.findOne({
+            where: {
+                identifier,
+                otp,
+                verified: false
+            }
+        });
+
+        if (!stored) {
+            return { valid: false, message: 'Invalid or expired verification code.' };
+        }
+
+        if (new Date() > stored.expiresAt) {
+            await stored.destroy();
+            return { valid: false, message: 'Verification code has expired. Please request a new one.' };
+        }
+
+        // Mark as verified and delete
+        const userData = stored.userData;
+        await stored.destroy();
+
+        console.log(`✅ OTP verified for ${identifier}`);
+        return { valid: true, message: 'Verified successfully.', userData };
+    } catch (error) {
+        console.error('❌ Error verifying OTP:', error.message);
+        return { valid: false, message: 'Verification failed.' };
     }
-
-    if (stored.otp !== otp) {
-        return { valid: false, message: 'Invalid verification code.' };
-    }
-
-    const userData = stored.userData;
-    otpStore.delete(identifier);
-    return { valid: true, message: 'Verified successfully.', userData };
 };
 
 module.exports = {
     generateOTP,
     sendEmailOTP,
     sendSmsOTP,
+    sendWhatsAppOTP,
     storeOTP,
     verifyOTP
 };
