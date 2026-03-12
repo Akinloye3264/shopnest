@@ -18,6 +18,7 @@ function Login({ onLogin }: LoginProps) {
   const [resending, setResending] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [statusMsg, setStatusMsg] = useState('SIGN IN')
+  const [deliveryChannels, setDeliveryChannels] = useState<{ email: boolean; sms: boolean; whatsapp: boolean } | null>(null)
   const navigate = useNavigate()
 
   // Pre-warm server on page load
@@ -50,6 +51,7 @@ function Login({ onLogin }: LoginProps) {
       })
       const data = await response.json()
       if (data.requiresVerification) {
+        setDeliveryChannels(data.verificationSent || null)
         setStep('verify')
         setStatusMsg('SIGN IN')
         toast.success('Verification code sent!')
@@ -108,6 +110,7 @@ function Login({ onLogin }: LoginProps) {
       })
       const data = await response.json()
       if (data.success) {
+        setDeliveryChannels(data.verificationSent || null)
         toast.success('New code sent!')
       } else {
         toast.error(data.message || 'Failed to resend.')
@@ -131,12 +134,16 @@ function Login({ onLogin }: LoginProps) {
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/10 blur-3xl -z-10" />
 
+            <Link to="/" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors mb-6">
+              <ArrowLeft size={14} /> Go Back
+            </Link>
+
             <div className="text-center mb-10">
               <Link to="/" className="text-3xl font-black tracking-tighter block mb-6">
                 ShopNest<span className="text-brand-accent">.</span>
               </Link>
               <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Welcome Back</h2>
-              <p className="text-gray-400 font-medium">Enter your credentials to scale up.</p>
+              <p className="text-gray-400 font-medium">Enter your credentials to log in.</p>
             </div>
 
             <form onSubmit={handleEmailLogin} className="space-y-6">
@@ -207,7 +214,7 @@ function Login({ onLogin }: LoginProps) {
             </div>
 
             <p className="mt-10 text-center text-xs font-black uppercase tracking-widest text-gray-500">
-              No account? <Link to="/register" className="text-white hover:text-brand-accent hover:underline underline-offset-4 transition-all">Create Identity</Link>
+              No account? <Link to="/register" className="text-white hover:text-brand-accent hover:underline underline-offset-4 transition-all">Create Account</Link>
             </p>
           </motion.div>
         ) : (
@@ -220,10 +227,24 @@ function Login({ onLogin }: LoginProps) {
           >
             <ShieldCheck className="mx-auto text-brand-accent mb-6" size={64} />
             <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Security Layer</h2>
-            <p className="text-gray-400 font-medium mb-10">
-              We've dispatched a 6-digit code to <br />
-              <strong className="text-white text-lg">{email}</strong>
+            <p className="text-gray-400 font-medium mb-3">
+              A 6-digit code has been sent to:
             </p>
+            <p className="text-white font-bold text-base mb-4">{email}</p>
+            {deliveryChannels && (
+              <div className="flex flex-wrap justify-center gap-2 mb-8">
+                {deliveryChannels.email && (
+                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">✉ Email</span>
+                )}
+                {deliveryChannels.sms && (
+                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">📱 SMS</span>
+                )}
+                {deliveryChannels.whatsapp && (
+                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">💬 WhatsApp</span>
+                )}
+              </div>
+            )}
+            {!deliveryChannels && <div className="mb-8" />}
 
             <form onSubmit={handleVerifyOTP} className="space-y-8">
               <input

@@ -11,6 +11,9 @@ import Messaging from './components/Messaging'
 import AdminPanel from './components/AdminPanel'
 import AuthCallback from './components/AuthCallback'
 import Background3D from './components/Background3D'
+import LandingPage from './components/LandingPage'
+import About from './components/About'
+import Marketplace from './components/Marketplace'
 import { Toaster } from 'react-hot-toast'
 import { ShoppingCart, MessageSquare, LayoutDashboard, Shield } from 'lucide-react'
 import API_URL from './config'
@@ -205,7 +208,9 @@ function App() {
 
         <main className={user ? "pt-32 pb-24 studio-container" : ""}>
           <Routes>
-            <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
+            <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/login" element={!user ? <Login onLogin={setUser} /> : <Navigate to="/dashboard" />} />
             <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
             <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />

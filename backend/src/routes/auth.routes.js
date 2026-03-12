@@ -5,27 +5,67 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { generateOTP, sendEmailOTP, sendSmsOTP, sendWhatsAppOTP, storeOTP, verifyOTP } = require('../utils/verification');
 
-// POST /api/auth/register - Step 1: Register and send OTP
+// POST /api/auth/register - Email/password (OTP flow) OR Google signup (direct login)
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role, phone } = req.body;
+    const { name, email, password, role, phone, googleId, picture } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Name, email, and password are required'
-      });
+    if (!name || !email) {
+      return res.status(400).json({ success: false, message: 'Name and email are required' });
     }
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ success: false, message: 'User already exists' });
+      // If same Google user tries again, just log them in
+      if (googleId && existingUser.googleId === googleId) {
+        const token = jwt.sign(
+          { id: existingUser.id, email: existingUser.email, role: existingUser.role },
+          process.env.JWT_secret || 'secret',
+          { expiresIn: '24h' }
+        );
+        return res.json({
+          success: true,
+          googleSignup: true,
+          token,
+          user: { id: existingUser.id, name: existingUser.name, email: existingUser.email, role: existingUser.role, picture: existingUser.picture }
+        });
+      }
+      return res.status(400).json({ success: false, message: 'An account with this email already exists' });
     }
 
-    // Generate OTP
-    const otp = generateOTP();
+    // ── GOOGLE SIGNUP: email already verified by Google, create account directly ──
+    if (googleId) {
+      const user = await User.create({
+        name,
+        email,
+        password: null,
+        role: role || 'buyer',
+        phone: phone || null,
+        googleId,
+        picture: picture || null,
+        isVerified: true
+      });
 
-    // Store OTP with user data for later creation
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_secret || 'secret',
+        { expiresIn: '24h' }
+      );
+
+      return res.status(201).json({
+        success: true,
+        googleSignup: true,
+        token,
+        user: { id: user.id, name: user.name, email: user.email, role: user.role, picture: user.picture }
+      });
+    }
+
+    // ── EMAIL/PASSWORD SIGNUP: send OTP for verification ──
+    if (!password) {
+      return res.status(400).json({ success: false, message: 'Password is required' });
+    }
+
+    const otp = generateOTP();
     const hashedPassword = await bcrypt.hash(password, 10);
     await storeOTP(email, otp, {
       name,
@@ -35,10 +75,8 @@ router.post('/register', async (req, res) => {
       phone: phone || null
     });
 
-    // Send OTP via email
     const emailSent = await sendEmailOTP(email, otp);
 
-    // Send OTP via SMS and WhatsApp if phone provided
     let smsSent = false;
     let whatsappSent = false;
     if (phone) {
@@ -49,11 +87,7 @@ router.post('/register', async (req, res) => {
     res.json({
       success: true,
       message: 'Verification code sent',
-      verificationSent: {
-        email: emailSent,
-        sms: smsSent,
-        whatsapp: whatsappSent
-      },
+      verificationSent: { email: emailSent, sms: smsSent, whatsapp: whatsappSent },
       requiresVerification: true
     });
   } catch (error) {
