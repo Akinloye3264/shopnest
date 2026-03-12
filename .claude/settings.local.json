@@ -4,7 +4,10 @@
       "Bash(npm run:*)",
       "Bash(node -e \"require\\(''nodemailer''\\); console.log\\(''nodemailer exists''\\)\")",
       "Bash(npm install:*)",
-      "Bash(EMAIL_USER=shopnest3264@gmail.com EMAIL_PASS=\"pqde gzoc srzu crwj\" node -e \":*)"
+      "Bash(EMAIL_USER=shopnest3264@gmail.com EMAIL_PASS=\"pqde gzoc srzu crwj\" node -e \":*)",
+      "Bash(node -e \":*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
