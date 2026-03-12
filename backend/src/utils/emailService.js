@@ -1,10 +1,4 @@
-const { Resend } = require('resend');
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-// The FROM address must be from a domain verified in your Resend dashboard.
-// If you haven't verified a domain yet, use: onboarding@resend.dev (for testing only)
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+const fetch = require('node-fetch');
 
 const sendOTPEmail = async (email, otp) => {
   const html = `
@@ -22,22 +16,34 @@ const sendOTPEmail = async (email, otp) => {
   `;
 
   try {
-    const { error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: email,
-      subject: 'Your OTP Code - ShopNest',
-      html,
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender: {
+          name: 'ShopNest',
+          email: process.env.BREVO_FROM_EMAIL || process.env.EMAIL_USER,
+        },
+        to: [{ email }],
+        subject: 'Your OTP Code - ShopNest',
+        htmlContent: html,
+      }),
     });
 
-    if (error) {
-      console.error('❌ Resend error:', error.message || JSON.stringify(error));
+    if (!response.ok) {
+      const errBody = await response.json().catch(() => ({}));
+      console.error('❌ Brevo error:', errBody.message || response.statusText);
       return false;
     }
 
-    console.log('✅ OTP email sent via Resend');
+    console.log('✅ OTP email sent via Brevo');
     return true;
   } catch (err) {
-    console.error('❌ Resend error:', err.message);
+    console.error('❌ Brevo error:', err.message);
     return false;
   }
 };
