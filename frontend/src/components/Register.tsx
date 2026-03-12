@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, Mail, Phone, Lock, Eye, EyeOff, ShieldCheck, ArrowRight, ArrowLeft, Briefcase } from 'lucide-react'
+import { User, Mail, Lock, Eye, EyeOff, ShieldCheck, ArrowRight, ArrowLeft, Briefcase } from 'lucide-react'
 import API_URL from '../config'
 
 function Register() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [phone, setPhone] = useState('')
   const [role, setRole] = useState('buyer')
   const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,7 +18,6 @@ function Register() {
   const [googleId, setGoogleId] = useState('')
   const [picture, setPicture] = useState('')
   const [statusMsg, setStatusMsg] = useState('CREATE IDENTITY')
-  const [deliveryChannels, setDeliveryChannels] = useState<{ email: boolean; sms: boolean; whatsapp: boolean } | null>(null)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -67,7 +65,6 @@ function Register() {
           email,
           password: isGoogleFlow ? undefined : password,
           role,
-          phone: phone || undefined,
           googleId: googleId || undefined,
           picture: picture || undefined
         })
@@ -82,7 +79,6 @@ function Register() {
         toast.success('Account created! Welcome to ShopNest.')
         navigate('/dashboard')
       } else if (data.requiresVerification) {
-        setDeliveryChannels(data.verificationSent || null)
         setStep('verify')
         setStatusMsg('CREATE IDENTITY')
         toast.success('Verification code sent!')
@@ -133,11 +129,10 @@ function Register() {
       const response = await fetch(`${API_URL}/api/auth/resend-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, phone: phone || undefined, context: 'register' })
+        body: JSON.stringify({ email, context: 'register' })
       })
       const data = await response.json()
       if (data.success) {
-        setDeliveryChannels(data.verificationSent || null)
         toast.success('New code sent!')
       } else {
         toast.error(data.message || 'Failed to resend.')
@@ -148,16 +143,6 @@ function Register() {
     setResending(false)
   }
 
-  // Build a human-readable list of channels where OTP was sent
-  const getChannelDescription = () => {
-    if (!deliveryChannels) return email
-    const channels: string[] = []
-    if (deliveryChannels.email) channels.push(`email (${email})`)
-    if (deliveryChannels.sms) channels.push('SMS')
-    if (deliveryChannels.whatsapp) channels.push('WhatsApp')
-    if (channels.length === 0) return email
-    return channels.join(', ')
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 py-20">
@@ -234,20 +219,6 @@ function Register() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="studio-label ml-1">Phone Number <span className="text-gray-600">(Optional — for SMS & WhatsApp codes)</span></label>
-                <div className="relative group">
-                  <Phone className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="studio-input studio-input-with-icon font-medium"
-                    placeholder="+234 000 000 0000"
-                  />
-                </div>
-              </div>
-
               {/* Password — only shown for email/password signup, hidden for Google */}
               {!isGoogleFlow && (
                 <div className="space-y-2">
@@ -280,13 +251,13 @@ function Register() {
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="studio-input studio-input-with-icon appearance-none bg-transparent font-bold cursor-pointer"
+                    className="studio-input studio-input-with-icon appearance-none font-bold cursor-pointer bg-[#0d0d0d] text-white"
                   >
-                    <option value="buyer">COMMERCE (BUYER)</option>
-                    <option value="seller">ENTERPRISE (SELLER)</option>
-                    <option value="job_seeker">TALENT (JOB SEEKER)</option>
-                    <option value="employer">ORGANIZATION (EMPLOYER)</option>
-                    <option value="employee">TEAM MEMBER (EMPLOYEE)</option>
+                    <option value="buyer" className="bg-[#0d0d0d] text-white">COMMERCE (BUYER)</option>
+                    <option value="seller" className="bg-[#0d0d0d] text-white">ENTERPRISE (SELLER)</option>
+                    <option value="job_seeker" className="bg-[#0d0d0d] text-white">TALENT (JOB SEEKER)</option>
+                    <option value="employer" className="bg-[#0d0d0d] text-white">ORGANIZATION (EMPLOYER)</option>
+                    <option value="employee" className="bg-[#0d0d0d] text-white">TEAM MEMBER (EMPLOYEE)</option>
                   </select>
                 </div>
               </div>
@@ -334,21 +305,7 @@ function Register() {
             <p className="text-gray-400 font-medium mb-3">
               A 6-digit security code has been sent to:
             </p>
-            <p className="text-white font-bold text-base mb-2">{getChannelDescription()}</p>
-            {deliveryChannels && (
-              <div className="flex flex-wrap justify-center gap-2 mb-8">
-                {deliveryChannels.email && (
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">✉ Email</span>
-                )}
-                {deliveryChannels.sms && (
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">📱 SMS</span>
-                )}
-                {deliveryChannels.whatsapp && (
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">💬 WhatsApp</span>
-                )}
-              </div>
-            )}
-            {!deliveryChannels && <div className="mb-8" />}
+            <p className="text-white font-bold text-base mb-8">{email}</p>
 
             <form onSubmit={handleVerifyOTP} className="space-y-8">
               <input

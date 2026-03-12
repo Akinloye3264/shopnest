@@ -163,7 +163,7 @@ function Products({ user }: { user: any }) {
             className="studio-button-ghost h-20 px-8 flex items-center gap-4 relative group"
           >
             <ShoppingCart size={24} className="group-hover:text-brand-accent transition-colors" />
-            <span className="uppercase tracking-widest font-black">Fleet</span>
+            <span className="uppercase tracking-widest font-black">Cart</span>
             {cart.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-brand-accent text-black text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center animate-pulse">
                 {cart.length}
@@ -243,7 +243,7 @@ function Products({ user }: { user: any }) {
                 className="studio-button w-full h-16 flex items-center justify-center gap-3 group/btn"
               >
                 <Plus size={18} className="group-hover/btn:rotate-90 transition-transform" />
-                <span className="uppercase text-xs tracking-widest font-black">Deploy to Cart</span>
+                <span className="uppercase text-xs tracking-widest font-black">Add to Cart</span>
               </button>
             </div>
           </div>
