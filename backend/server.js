@@ -104,12 +104,20 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   const backendUrl = process.env.BACKEND_URL || `http://localhost:${PORT}`;
   console.log(` ShopNest Server v2.1.0 running on port ${PORT}`);
   console.log(` Backend URL: ${backendUrl}`);
   console.log(` Frontend URL: ${process.env.FRONTEND_URL}`);
   console.log(` Health Check: ${backendUrl}/health`);
 });
+
+// Self-ping to prevent Render spin-down (every 10 minutes)
+const backendUrl = process.env.BACKEND_URL || `http://localhost:${PORT}`;
+setInterval(() => {
+  fetch(`${backendUrl}/health`)
+    .then(res => console.log(`✓ Keep-alive ping at ${new Date().toISOString()}`))
+    .catch(() => {}); // silently fail
+}, 10 * 60 * 1000); // every 10 minutes
 
 module.exports = app;
