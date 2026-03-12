@@ -9,19 +9,16 @@ const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Create Nodemailer transporter
+// Create Nodemailer transporter with SendGrid
 const createEmailTransporter = () => {
     return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
+        host: 'smtp.sendgrid.net',
         port: 587,
         secure: false,
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        },
-        connectionTimeout: 15000,
-        socketTimeout: 15000,
-        family: 4 // Force IPv4
+            user: 'apikey',
+            pass: process.env.SENDGRID_API_KEY
+        }
     });
 };
 
@@ -39,7 +36,7 @@ const sendEmailOTP = async (email, otp) => {
         const transporter = createEmailTransporter();
 
         const mailOptions = {
-            from: `"ShopNest" <${process.env.EMAIL_USER}>`,
+            from: `"ShopNest" <${process.env.SENDGRID_FROM_EMAIL || 'noreply@shopnest.com'}>`,
             to: email,
             subject: 'ShopNest - Your Verification Code',
             html: `
@@ -58,10 +55,10 @@ const sendEmailOTP = async (email, otp) => {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`📧 OTP email sent to ${email}`);
+        console.log(`OTP email sent to ${email}`);
         return true;
     } catch (error) {
-        console.error('❌ Email OTP error:', error.message);
+        console.error('Email OTP error:', error.message);
         return false;
     }
 };
@@ -71,7 +68,7 @@ const sendSmsOTP = async (phone, otp) => {
     try {
         const client = createTwilioClient();
         if (!client) {
-            console.log('⚠️ Twilio not configured, skipping SMS');
+            console.log('Twilio not configured, skipping SMS');
             return false;
         }
 
@@ -81,10 +78,10 @@ const sendSmsOTP = async (phone, otp) => {
             to: phone
         });
 
-        console.log(`📱 OTP SMS sent to ${phone}`);
+        console.log(`OTP SMS sent to ${phone}`);
         return true;
     } catch (error) {
-        console.error('❌ SMS OTP error:', error.message);
+        console.error(' SMS OTP error:', error.message);
         return false;
     }
 };
