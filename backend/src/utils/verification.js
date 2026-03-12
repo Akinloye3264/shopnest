@@ -30,10 +30,10 @@ const storeOTP = async (identifier, otp, userData = null) => {
             expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
         });
 
-        console.log(`🔐 OTP stored for ${identifier}`);
+        console.log(` OTP stored for ${identifier}`);
         return true;
     } catch (error) {
-        console.error('❌ Error storing OTP:', error.message);
+        console.error(' Error storing OTP:', error.message);
         return false;
     }
 };
