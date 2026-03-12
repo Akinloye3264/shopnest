@@ -93,10 +93,18 @@ router.get('/callback', async (req, res) => {
     let user = await User.findOne({ where: { email: userData.email } });
 
     if (!user) {
-      // Redirect new Google users to signup to pick a role
-      const frontendUrl = process.env.FRONTEND_URL;
-      const signupUrl = `${frontendUrl}/register?email=${encodeURIComponent(userData.email)}&name=${encodeURIComponent(userData.name)}&googleId=${userData.id}&picture=${encodeURIComponent(userData.picture || '')}`;
-      return res.redirect(signupUrl);
+      // New Google user — create account directly with default role
+      user = await User.create({
+        name: userData.name,
+        email: userData.email,
+        password: null,
+        role: 'buyer',
+        phone: null,
+        googleId: userData.id,
+        picture: userData.picture || null,
+        isVerified: true
+      });
+      console.log(`✅ New Google user created: ${user.email}`);
     } else if (!user.googleId) {
       // Link google account if email matches but no googleId
       user.googleId = userData.id;
