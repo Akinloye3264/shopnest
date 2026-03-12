@@ -1,32 +1,68 @@
-const { Resend } = require('resend');
+const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Set SendGrid API Key
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Create Nodemailer transporter as fallback
+const createNodemailerTransporter = () => {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: (process.env.EMAIL_PASS || '').replace(/\s/g, ''),
+    },
+  });
+};
 
 const sendOTPEmail = async (email, otp) => {
-  try {
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: email,
-      subject: 'Your OTP Code - ShopNest',
-      html: `
-        <div style="font-family: 'Nunito', Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
-          <div style="text-align: center; margin-bottom: 32px;">
-            <h1 style="font-size: 28px; font-weight: 900; letter-spacing: -0.02em; margin: 0; color: #1a472a;">ShopNest<span style="color: #52b788;">.</span></h1>
-          </div>
-          <div style="background: #1a472a; color: #fff; border-radius: 20px; padding: 40px; text-align: center;">
-            <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; opacity: 0.7; margin: 0 0 24px 0; color: #b7e4c7;">Verification Code</p>
-            <h2 style="font-size: 48px; font-weight: 900; letter-spacing: 12px; margin: 0 0 24px 0; color: #b7e4c7;">${otp}</h2>
-            <p style="font-size: 14px; opacity: 0.8; margin: 0; line-height: 1.6; color: rgba(255,255,255,0.85);">This code expires in <strong>10 minutes</strong>.<br/>Do not share this code with anyone.</p>
-          </div>
-          <p style="text-align: center; font-size: 11px; color: #999; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.1em;">ShopNest © 2026</p>
+  const emailContent = {
+    subject: 'Your OTP Code - ShopNest',
+    html: `
+      <div style="font-family: 'Nunito', Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="font-size: 28px; font-weight: 900; letter-spacing: -0.02em; margin: 0; color: #1a472a;">ShopNest<span style="color: #52b788;">.</span></h1>
         </div>
-      `,
-    });
-    console.log('✅ OTP email sent via Resend');
+        <div style="background: #1a472a; color: #fff; border-radius: 20px; padding: 40px; text-align: center;">
+          <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; opacity: 0.7; margin: 0 0 24px 0; color: #b7e4c7;">Verification Code</p>
+          <h2 style="font-size: 48px; font-weight: 900; letter-spacing: 12px; margin: 0 0 24px 0; color: #b7e4c7;">${otp}</h2>
+          <p style="font-size: 14px; opacity: 0.8; margin: 0; line-height: 1.6; color: rgba(255,255,255,0.85);">This code expires in <strong>10 minutes</strong>.<br/>Do not share this code with anyone.</p>
+        </div>
+        <p style="text-align: center; font-size: 11px; color: #999; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.1em;">ShopNest © 2026</p>
+      </div>
+    `,
+  };
+
+  // Try SendGrid first
+  try {
+    const msg = {
+      to: email,
+      from: process.env.SENDGRID_FROM_EMAIL || 'shopnest3264@gmail.com',
+      subject: emailContent.subject,
+      html: emailContent.html,
+    };
+
+    await sgMail.send(msg);
+    console.log('✅ OTP email sent via SendGrid');
     return true;
-  } catch (error) {
-    console.error('❌ Resend error:', error);
-    return false;
+  } catch (sendgridError) {
+    console.error('❌ SendGrid error:', sendgridError.message);
+    
+    // Fallback to Nodemailer
+    try {
+      const transporter = createNodemailerTransporter();
+      await transporter.sendMail({
+        from: `"ShopNest" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+      });
+      console.log('✅ OTP email sent via Nodemailer (fallback)');
+      return true;
+    } catch (nodemailerError) {
+      console.error('❌ Nodemailer error:', nodemailerError.message);
+      return false;
+    }
   }
 };
 

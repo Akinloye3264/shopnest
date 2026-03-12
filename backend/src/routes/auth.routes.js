@@ -3,7 +3,7 @@ const router = express.Router();
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { generateOTP, sendEmailOTP, sendSmsOTP, storeOTP, verifyOTP } = require('../utils/verification');
+const { generateOTP, sendEmailOTP, storeOTP, verifyOTP } = require('../utils/verification');
 
 // POST /api/auth/register - Email/password (OTP flow) OR Google signup (direct login)
 router.post('/register', async (req, res) => {
@@ -76,12 +76,11 @@ router.post('/register', async (req, res) => {
     });
 
     const emailSent = await sendEmailOTP(email, otp);
-    const smsSent = phone ? await sendSmsOTP(phone, otp) : false;
 
     res.json({
       success: true,
-      message: 'Verification code sent',
-      verificationSent: { email: emailSent, sms: smsSent, whatsapp: false },
+      message: 'Verification code sent to your email',
+      verificationSent: { email: emailSent },
       requiresVerification: true
     });
   } catch (error) {
@@ -163,14 +162,13 @@ router.post('/login', async (req, res) => {
     const otp = generateOTP();
     await storeOTP(email, otp, { userId: user.id });
 
-    // Send OTP via email and SMS (same code)
+    // Send OTP via email only
     const emailSent = await sendEmailOTP(email, otp);
-    const smsSent = user.phone ? await sendSmsOTP(user.phone, otp) : false;
 
     res.json({
       success: true,
-      message: 'Verification code sent',
-      verificationSent: { email: emailSent, sms: smsSent, whatsapp: false },
+      message: 'Verification code sent to your email',
+      verificationSent: { email: emailSent },
       requiresVerification: true
     });
   } catch (error) {
@@ -232,7 +230,7 @@ router.post('/verify-login', async (req, res) => {
 // POST /api/auth/resend-otp - Resend verification code
 router.post('/resend-otp', async (req, res) => {
   try {
-    const { email, phone, context } = req.body;
+    const { email } = req.body;
 
     if (!email) {
       return res.status(400).json({ success: false, message: 'Email is required' });
@@ -242,12 +240,11 @@ router.post('/resend-otp', async (req, res) => {
     await storeOTP(email, otp);
 
     const emailSent = await sendEmailOTP(email, otp);
-    const smsSent = phone ? await sendSmsOTP(phone, otp) : false;
 
     res.json({
       success: true,
-      message: 'New verification code sent',
-      verificationSent: { email: emailSent, sms: smsSent, whatsapp: false }
+      message: 'New verification code sent to your email',
+      verificationSent: { email: emailSent }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -272,12 +269,11 @@ router.post('/forgot-password', async (req, res) => {
     await storeOTP(email, otp, { resetPassword: true });
 
     const emailSent = await sendEmailOTP(email, otp);
-    const smsSent = user.phone ? await sendSmsOTP(user.phone, otp) : false;
 
     res.json({
       success: true,
-      message: 'Password reset code sent',
-      verificationSent: { email: emailSent, sms: smsSent, whatsapp: false }
+      message: 'Password reset code sent to your email',
+      verificationSent: { email: emailSent }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
