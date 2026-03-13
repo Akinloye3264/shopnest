@@ -107,7 +107,7 @@ const seedData = async () => {
                     category: "Home",
                     stock: 10,
                     sellerId: adminUser.id,
-                    image: "https://images.unsplash.com/photo-1518455027359-f3f816b1a23a?auto=format&fit=crop&q=80&w=800"
+                    image: "https://unsplash.com/photos/brown-wooden-study-table-9NI6PEGWxEc"
                 },
                 {
                     title: "Urban Explorer Backpack",
