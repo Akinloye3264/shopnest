@@ -4,8 +4,6 @@ const bcrypt = require('bcryptjs');
 
 const seedData = async () => {
     try {
-        // Sync database (force: true will drop tables and recreate them)
-        // Use force: false to just add if not present, but sync() is good for fresh start
         console.log('Syncing database...');
         await sequelize.sync({ force: false });
 
@@ -76,106 +74,109 @@ const seedData = async () => {
             });
         }
 
-        // 2. Seed Products for the Seller
+        // 2. Seed Products
         console.log('Checking for products...');
 
-        // Fix broken image URLs in existing products
+        // Remove unwanted products if they exist
+        await Product.destroy({ where: { title: 'Polarised Sunglasses' } });
+        await Product.destroy({ where: { title: 'Indoor Plant Set' } });
+
+        // Fix broken image URL if it exists
         await Product.update(
             { image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=800' },
             { where: { title: 'Minimalist Oak Desk' } }
         );
 
+        const allProducts = [
+            {
+                title: "Premium Graphite Pro Laptop",
+                description: "Powerful laptop with 32GB RAM and 1TB SSD. Great for work, design, and coding.",
+                price: 2499.00, category: "Electronics", stock: 25, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Wireless ANC Headphones",
+                description: "Noise-cancelling headphones with 40-hour battery. Clear sound, very comfortable.",
+                price: 349.99, category: "Electronics", stock: 50, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Minimalist Oak Desk",
+                description: "Solid oak desk with cable management built in. Clean and modern look for any room.",
+                price: 850.00, category: "Home", stock: 10, sellerId: adminUser.id,
+                image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Urban Explorer Backpack",
+                description: "Waterproof bag with a padded laptop sleeve. Good for school, work, or travel.",
+                price: 120.00, category: "Fashion", stock: 100, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Mechanical Keyboard",
+                description: "Satisfying tactile typing experience. Great for programmers and heavy typists.",
+                price: 159.99, category: "Electronics", stock: 30, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Stainless Steel Watch",
+                description: "Classic and stylish watch for everyday wear. Water resistant up to 50m.",
+                price: 299.00, category: "Fashion", stock: 40, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Portable Bluetooth Speaker",
+                description: "Loud, clear sound in a small package. Waterproof and 12-hour battery life.",
+                price: 89.99, category: "Electronics", stock: 75, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Running Shoes",
+                description: "Lightweight and breathable shoes. Good cushioning for long runs or everyday use.",
+                price: 110.00, category: "Fashion", stock: 60, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "4K Mirrorless Camera",
+                description: "Take sharp photos and 4K videos. Compact body, swappable lenses, easy to carry.",
+                price: 1199.00, category: "Electronics", stock: 15, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Ergonomic Office Chair",
+                description: "Adjustable lumbar support and armrests. Sit comfortably for hours without back pain.",
+                price: 450.00, category: "Home", stock: 20, sellerId: adminUser.id,
+                image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Coffee Maker",
+                description: "Brews a fresh pot in under 10 minutes. Simple to use, easy to clean.",
+                price: 79.99, category: "Home", stock: 45, sellerId: adminUser.id,
+                image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Leather Wallet",
+                description: "Slim genuine leather wallet. Fits cards and cash without the bulk.",
+                price: 45.00, category: "Fashion", stock: 120, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                title: "Wireless Charging Pad",
+                description: "Fast wireless charging for any Qi-compatible phone. No cables needed.",
+                price: 35.00, category: "Electronics", stock: 90, sellerId: sellerUser.id,
+                image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=800"
+            }
+        ];
+
         const productCount = await Product.count();
-        if (productCount < 15) {
+        if (productCount < 13) {
             console.log('Seeding products...');
             const existingTitles = (await Product.findAll({ attributes: ['title'] })).map(p => p.title);
-
-            const allProducts = [
-                {
-                    title: "Premium Graphite Pro Laptop",
-                    description: "Powerful laptop with 32GB RAM and 1TB SSD. Great for work, design, and coding.",
-                    price: 2499.00, category: "Electronics", stock: 25, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Wireless ANC Headphones",
-                    description: "Noise-cancelling headphones with 40-hour battery. Clear sound, very comfortable.",
-                    price: 349.99, category: "Electronics", stock: 50, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Minimalist Oak Desk",
-                    description: "Solid oak desk with cable management built in. Clean and modern look for any room.",
-                    price: 850.00, category: "Home", stock: 10, sellerId: adminUser.id,
-                    image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Urban Explorer Backpack",
-                    description: "Waterproof bag with a padded laptop sleeve. Good for school, work, or travel.",
-                    price: 120.00, category: "Fashion", stock: 100, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Mechanical Keyboard",
-                    description: "Satisfying tactile typing experience. Great for programmers and heavy typists.",
-                    price: 159.99, category: "Electronics", stock: 30, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Stainless Steel Watch",
-                    description: "Classic and stylish watch for everyday wear. Water resistant up to 50m.",
-                    price: 299.00, category: "Fashion", stock: 40, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Portable Bluetooth Speaker",
-                    description: "Loud, clear sound in a small package. Waterproof and 12-hour battery life.",
-                    price: 89.99, category: "Electronics", stock: 75, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Running Shoes",
-                    description: "Lightweight and breathable shoes. Good cushioning for long runs or everyday use.",
-                    price: 110.00, category: "Fashion", stock: 60, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "4K Mirrorless Camera",
-                    description: "Take sharp photos and 4K videos. Compact body, swappable lenses, easy to carry.",
-                    price: 1199.00, category: "Electronics", stock: 15, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Ergonomic Office Chair",
-                    description: "Adjustable lumbar support and armrests. Sit comfortably for hours without back pain.",
-                    price: 450.00, category: "Home", stock: 20, sellerId: adminUser.id,
-                    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Coffee Maker",
-                    description: "Brews a fresh pot in under 10 minutes. Simple to use, easy to clean.",
-                    price: 79.99, category: "Home", stock: 45, sellerId: adminUser.id,
-                    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Leather Wallet",
-                    description: "Slim genuine leather wallet. Fits cards and cash without the bulk.",
-                    price: 45.00, category: "Fashion", stock: 120, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=800"
-                },
-                {
-                    title: "Wireless Charging Pad",
-                    description: "Fast wireless charging for any Qi-compatible phone. No cables needed.",
-                    price: 35.00, category: "Electronics", stock: 90, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=800"
-                },
-            
-
             const toCreate = allProducts.filter(p => !existingTitles.includes(p.title));
             if (toCreate.length > 0) await Product.bulkCreate(toCreate);
         }
 
-        // 3. Seed Jobs for the Admin/Employer
+        // 3. Seed Jobs
         console.log('Checking for jobs...');
         const jobCount = await Job.count();
         if (jobCount === 0) {
