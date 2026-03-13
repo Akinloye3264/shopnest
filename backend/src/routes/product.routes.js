@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 
     const products = await Product.findAll({
       where,
-      include: [{ model: User, as: 'seller', attributes: ['name', 'email'] }]
+      include: [{ model: User, as: 'seller', attributes: ['id', 'name', 'email'] }]
     });
 
     res.json({

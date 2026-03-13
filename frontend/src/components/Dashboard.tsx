@@ -36,28 +36,27 @@ function Dashboard({ user }: { user: User }) {
     >
       {/* Hero Section */}
       <motion.section variants={itemVariants} className="pt-20">
-        <span className="studio-label text-brand-accent">CORE SYSTEMS / {user.role?.toUpperCase()}</span>
+        <span className="studio-label text-brand-accent">HOME / {user.role?.toUpperCase()}</span>
         <h1 className="studio-h1 text-white leading-[0.85] mb-8">
-          Accelerating
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/20"> digital</span><br />
-          evolution.
+          Hey, {user.name?.split(' ')[0] || 'there'}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/20"> 👋</span>
         </h1>
         <p className="text-2xl font-medium text-gray-400 max-w-3xl leading-snug mb-12">
           {user.role === 'employee'
-            ? "Your command center for talent acquisition and ecosystem growth. Manage listings and monitor incoming talent flows."
-            : "ShopNest leverages high-performance architecture and AI-driven intelligence to accelerate your presence across the modern marketplace."
+            ? "Here you can manage your job listings and see who applied."
+            : "Welcome to ShopNest. Browse products, place orders, message sellers, and more — all in one place."
           }
         </p>
         <div className="flex flex-wrap gap-4">
           {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
             <button onClick={() => navigate('/products')} className="studio-button px-10 h-16 text-lg group">
-              MARKETPLACE ACCESS
+              SHOP NOW
               <ArrowUpRight className="ml-2 group-hover:rotate-45 transition-transform" size={20} />
             </button>
           )}
           {(user.role === 'job_seeker' || isEmployer) && (
             <button onClick={() => navigate('/jobs')} className="studio-button-ghost px-10 h-16 text-lg group">
-              {isEmployer ? 'RECRUITMENT TERMINAL' : 'CAREER HUB'}
+              {isEmployer ? 'MANAGE JOBS' : 'FIND JOBS'}
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </button>
           )}
@@ -68,37 +67,37 @@ function Dashboard({ user }: { user: User }) {
       <motion.section variants={itemVariants} className="studio-grid">
         <div className="col-span-12 md:col-span-4 glass-card p-10 group cursor-default">
           <div className="flex justify-between items-start mb-12">
-            <span className="studio-label text-gray-400">Inventory Logic</span>
+            <span className="studio-label text-gray-400">Products Listed</span>
             <Package className="text-brand-accent opacity-50 group-hover:opacity-100 transition-opacity" size={24} />
           </div>
           <div className="text-8xl font-black tracking-tighter text-white">12</div>
           <div className="mt-8 flex items-center text-xs font-black uppercase tracking-widest text-brand-accent">
             <TrendingUp size={14} className="mr-2" />
-            Sync Optimized
+            In Stock
           </div>
         </div>
 
         <div className="col-span-12 md:col-span-4 glass-card p-10 group cursor-default">
           <div className="flex justify-between items-start mb-12">
-            <span className="studio-label text-gray-400">Target Matches</span>
+            <span className="studio-label text-gray-400">People Connected</span>
             <Users className="text-brand-accent opacity-50 group-hover:opacity-100 transition-opacity" size={24} />
           </div>
           <div className="text-8xl font-black tracking-tighter text-white">05</div>
           <div className="mt-8 flex items-center text-xs font-black uppercase tracking-widest text-[#555]">
             <Zap size={14} className="mr-2" />
-            AI Processed
+            Active Users
           </div>
         </div>
 
         <div className="col-span-12 md:col-span-4 glass-card p-10 bg-brand-accent/5 border-brand-accent/20 group cursor-default">
           <div className="flex justify-between items-start mb-12">
-            <span className="studio-label text-brand-accent font-black">Ecosystem Growth</span>
+            <span className="studio-label text-brand-accent font-black">Growth This Month</span>
             <Globe className="text-brand-accent" size={24} />
           </div>
           <div className="text-8xl font-black tracking-tighter text-white">+24%</div>
           <div className="mt-8 flex items-center text-xs font-black uppercase tracking-widest text-brand-accent">
             <Shield size={14} className="mr-2" />
-            Verified Metric
+            Verified
           </div>
         </div>
       </motion.section>
@@ -106,13 +105,13 @@ function Dashboard({ user }: { user: User }) {
       {/* Role-Specific Operation Centers */}
       {isEmployer && (
         <motion.section variants={itemVariants} className="space-y-12">
-          <h3 className="text-sm font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6">Employer Operation Center</h3>
+          <h3 className="text-sm font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6">Your Tools</h3>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/jobs')}>
               <div className="space-y-4">
                 <Terminal className="text-brand-accent" size={32} />
-                <h4 className="text-3xl font-black uppercase tracking-tighter">Recruitment Hub</h4>
-                <p className="text-gray-400 text-sm font-medium">Manage active listings and incoming talent.</p>
+                <h4 className="text-3xl font-black uppercase tracking-tighter">Job Listings</h4>
+                <p className="text-gray-400 text-sm font-medium">Post jobs and see who applied.</p>
               </div>
               <ArrowRight size={32} className="text-gray-700 group-hover:text-brand-accent group-hover:translate-x-4 transition-all" />
             </div>
@@ -133,24 +132,24 @@ function Dashboard({ user }: { user: User }) {
       {/* Value Proposition */}
       <motion.section variants={itemVariants} className="studio-grid py-32 border-t border-white/5">
         <div className="col-span-12 lg:col-span-6">
-          <h2 className="studio-h2 text-white font-black">Engineering<br />Trust & Scale.</h2>
+          <h2 className="studio-h2 text-white font-black">Why<br />ShopNest?</h2>
           <p className="text-gray-500 max-w-md mt-6 text-xl">
-            We don't just provide a platform; we provide a foundation for long-term digital evolution.
+            We built ShopNest to make buying, selling, and job hunting simple for everyone.
           </p>
         </div>
         <div className="col-span-12 lg:col-span-6 space-y-16">
           <div className="space-y-6">
             <div className="w-12 h-1 bg-brand-accent" />
-            <h4 className="text-2xl font-black uppercase tracking-tight text-white">Nationwide Logistics</h4>
+            <h4 className="text-2xl font-black uppercase tracking-tight text-white">Fast Delivery</h4>
             <p className="text-gray-400 font-medium leading-relaxed">
-              Our infrastructure bridges the gap between local production and national demand, optimized for low-latency distribution.
+              We connect sellers and buyers all over the country so your orders get to you quickly.
             </p>
           </div>
           <div className="space-y-6">
             <div className="w-12 h-1 bg-white/20" />
-            <h4 className="text-2xl font-black uppercase tracking-tight text-white">Matchmaking Intelligence</h4>
+            <h4 className="text-2xl font-black uppercase tracking-tight text-white">Smart Job Matching</h4>
             <p className="text-gray-400 font-medium leading-relaxed">
-              Connecting specific talent with high-impact opportunities through advanced data modeling and ecosystem transparency.
+              We match job seekers with the right jobs using smart filters and real listings.
             </p>
           </div>
         </div>
@@ -162,14 +161,14 @@ function Dashboard({ user }: { user: User }) {
         className="glass-card bg-gradient-to-br from-brand-accent/5 to-transparent border-brand-accent/10 p-20 flex flex-col md:flex-row justify-between items-center gap-16"
       >
         <div className="max-w-2xl text-center md:text-left">
-          <span className="studio-label text-brand-accent mb-4">Autonomous Intelligence</span>
-          <h3 className="text-5xl font-black tracking-tighter uppercase text-white mb-6 leading-none">Context-Aware<br />Business Logic.</h3>
+          <span className="studio-label text-brand-accent mb-4">AI Assistant</span>
+          <h3 className="text-5xl font-black tracking-tighter uppercase text-white mb-6 leading-none">Need Help?<br />Ask AI.</h3>
           <p className="text-xl font-medium text-gray-400 leading-relaxed">
-            Integrate our AI assistant into your daily operations to automate product vetting, revenue forecasting, and talent acquisition.
+            Use our AI assistant to find products, check prices, get job tips, and more.
           </p>
         </div>
         <button className="studio-button px-12 h-20 text-xl shrink-0 font-black">
-          DEPLOY AI AUDIT
+          TRY AI ASSISTANT
         </button>
       </motion.section>
 
@@ -184,15 +183,15 @@ function Dashboard({ user }: { user: User }) {
           </div>
           <div className="space-y-8 max-w-md">
             <div className="space-y-4">
-              <h5 className="font-black uppercase text-xs tracking-[0.3em] text-gray-500">System Information</h5>
+              <h5 className="font-black uppercase text-xs tracking-[0.3em] text-gray-500">About ShopNest</h5>
               <p className="text-base text-gray-400 font-medium leading-relaxed">
-                Operating at the intersection of commerce and intelligence. Built for organizations who demand high-performance infrastructure.
+                ShopNest is your all-in-one platform for shopping, selling, and finding jobs.
               </p>
             </div>
             <div className="flex space-x-8 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
-              <span className="hover:text-white cursor-pointer transition-colors">System Status</span>
-              <span className="hover:text-white cursor-pointer transition-colors">Privacy Protocol</span>
-              <span className="hover:text-white cursor-pointer transition-colors">Terminals</span>
+              <span className="hover:text-white cursor-pointer transition-colors">Status</span>
+              <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
+              <span className="hover:text-white cursor-pointer transition-colors">Contact</span>
             </div>
           </div>
         </div>

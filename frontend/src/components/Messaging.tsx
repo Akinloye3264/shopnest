@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, MessageSquare, User as UserIcon, Inbox } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useSearchParams } from 'react-router-dom'
 import API_URL from '../config'
 
 interface User { id: string; name?: string; email: string; role: string }
@@ -25,6 +26,7 @@ interface Message {
 }
 
 function Messaging({ user }: { user: User }) {
+    const [searchParams] = useSearchParams()
     const [conversations, setConversations] = useState<Conversation[]>([])
     const [activeConversation, setActiveConversation] = useState<string | null>(null)
     const [messages, setMessages] = useState<Message[]>([])
@@ -38,6 +40,15 @@ function Messaging({ user }: { user: User }) {
 
     useEffect(() => { fetchConversations() }, [user.id])
     useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+
+    // Auto-open conversation when coming from a product page
+    useEffect(() => {
+        const sellerId = searchParams.get('sellerId')
+        const sellerName = searchParams.get('sellerName')
+        if (sellerId && sellerId !== user.id) {
+            openConversation(sellerId, sellerName || 'Seller')
+        }
+    }, [searchParams])
 
     const fetchConversations = async () => {
         try {

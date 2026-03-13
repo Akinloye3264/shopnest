@@ -18,15 +18,100 @@
 
 :root {
   --studio-width: 1400px;
+  --page-bg: #050505;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-hover-bg: rgba(255, 255, 255, 0.05);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-focus-bg: rgba(255, 255, 255, 0.08);
+  --nav-bg: rgba(5, 5, 5, 0.7);
+  --nav-border: rgba(255, 255, 255, 0.05);
+  --ghost-btn-color: #ffffff;
+  --ghost-btn-border: rgba(255, 255, 255, 0.2);
+  --ghost-btn-hover: rgba(255, 255, 255, 0.1);
+}
+
+html.light {
+  --page-bg: #f0f2f5;
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-hover-bg: rgba(255, 255, 255, 0.95);
+  --input-bg: rgba(0, 0, 0, 0.04);
+  --input-border: rgba(0, 0, 0, 0.15);
+  --input-focus-bg: rgba(255, 255, 255, 0.9);
+  --nav-bg: rgba(240, 242, 245, 0.85);
+  --nav-border: rgba(0, 0, 0, 0.08);
+  --ghost-btn-color: #111111;
+  --ghost-btn-border: rgba(0, 0, 0, 0.2);
+  --ghost-btn-hover: rgba(0, 0, 0, 0.06);
+  color-scheme: light;
+}
+
+html.light body {
+  color: var(--text-primary);
+}
+
+html.light .studio-label {
+  color: #444444;
+}
+
+html.light .glass-card {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+html.light .glass-card:hover {
+  background: var(--card-hover-bg);
+  box-shadow: 0 12px 32px rgba(0, 255, 136, 0.12);
+}
+
+html.light .studio-input {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+html.light .studio-input:focus {
+  background: var(--input-focus-bg);
+}
+
+html.light .studio-input::placeholder {
+  color: #aaaaaa;
+}
+
+html.light .studio-button-ghost {
+  color: var(--ghost-btn-color);
+  border-color: var(--ghost-btn-border);
+}
+
+html.light .studio-button-ghost:hover {
+  background: var(--ghost-btn-hover);
+}
+
+html.light .nav-blur {
+  background: var(--nav-bg);
+  border-bottom-color: var(--nav-border);
+}
+
+html.light select option {
+  background: #ffffff;
+  color: #111111;
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--color-bg-base);
-  color: #ffffff;
+  background: var(--page-bg);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .glass-card {

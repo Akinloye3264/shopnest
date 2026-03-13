@@ -315,10 +315,52 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// GET /api/auth/profile
-router.get('/profile', async (req, res) => {
+// GET /api/auth/profile/:userId
+router.get('/profile/:userId', async (req, res) => {
   try {
-    res.status(501).json({ message: 'Profile route requires authentication middleware' });
+    const user = await User.findByPk(req.params.userId, {
+      attributes: ['id', 'name', 'email', 'phone', 'role', 'picture', 'googleId', 'isVerified', 'createdAt']
+    });
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// PUT /api/auth/profile/:userId
+router.put('/profile/:userId', async (req, res) => {
+  try {
+    const { name, email, phone, currentPassword, newPassword } = req.body;
+    const user = await User.findByPk(req.params.userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    // Check if new email is taken by another user
+    if (email && email !== user.email) {
+      const existing = await User.findOne({ where: { email } });
+      if (existing) return res.status(400).json({ success: false, message: 'That email is already used by another account' });
+      user.email = email;
+    }
+
+    if (name) user.name = name;
+    if (phone !== undefined) user.phone = phone || null;
+
+    // Password change (only for non-Google users)
+    if (newPassword) {
+      if (!user.password) return res.status(400).json({ success: false, message: 'Google accounts cannot change passwords here' });
+      if (!currentPassword) return res.status(400).json({ success: false, message: 'Current password is required' });
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) return res.status(400).json({ success: false, message: 'Current password is wrong' });
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Profile updated',
+      user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, picture: user.picture }
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

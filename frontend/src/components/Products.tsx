@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { ShoppingCart, Plus, Minus, X, CreditCard, ArrowRight, Package, Loader2 } from 'lucide-react'
+import { ShoppingCart, Plus, Minus, X, CreditCard, ArrowRight, Package, Loader2, MessageSquare } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import API_URL from '../config'
 
 interface Product {
@@ -12,7 +13,8 @@ interface Product {
   image: string
   category: string
   stock: number
-  seller?: { name: string }
+  sellerId: string
+  seller?: { id: string; name: string }
 }
 
 interface CartItem extends Product {
@@ -20,6 +22,7 @@ interface CartItem extends Product {
 }
 
 function Products({ user }: { user: any }) {
+  const navigate = useNavigate()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -34,6 +37,17 @@ function Products({ user }: { user: any }) {
     stock: 10
   })
 
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/products`)
+      const data = await res.json()
+      if (data.success) setProducts(data.products)
+    } catch (err) {
+      toast.error('Failed to load products.')
+    }
+    setLoading(false)
+  }
+
   useEffect(() => {
     fetchProducts()
     const savedCart = localStorage.getItem('shopnest_cart')
@@ -43,17 +57,6 @@ function Products({ user }: { user: any }) {
   useEffect(() => {
     localStorage.setItem('shopnest_cart', JSON.stringify(cart))
   }, [cart])
-
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/products`)
-      const data = await res.json()
-      if (data.success) setProducts(data.products)
-    } catch (err) {
-      toast.error('Inventory fetch failed.')
-    }
-    setLoading(false)
-  }
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,7 +104,7 @@ function Products({ user }: { user: any }) {
       }
       return [...prev, { ...product, quantity: 1 }]
     })
-    toast.success(`${product.title} added to deployment.`, {
+    toast.success(`${product.title} added to cart.`, {
       style: { background: '#00ff88', color: '#000', fontWeight: 'bold' }
     })
   }
@@ -238,13 +241,24 @@ function Products({ user }: { user: any }) {
               <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-8 line-clamp-2">
                 {product.description}
               </p>
-              <button
-                onClick={() => addToCart(product)}
-                className="studio-button w-full h-16 flex items-center justify-center gap-3 group/btn"
-              >
-                <Plus size={18} className="group-hover/btn:rotate-90 transition-transform" />
-                <span className="uppercase text-xs tracking-widest font-black">Add to Cart</span>
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => addToCart(product)}
+                  className="studio-button flex-1 h-14 flex items-center justify-center gap-2 group/btn"
+                >
+                  <Plus size={16} className="group-hover/btn:rotate-90 transition-transform" />
+                  <span className="uppercase text-xs tracking-widest font-black">Add to Cart</span>
+                </button>
+                {user.role === 'buyer' && (product.seller?.id || product.sellerId) && (product.seller?.id || product.sellerId) !== user.id && (
+                  <button
+                    onClick={() => navigate(`/messages?sellerId=${product.seller?.id || product.sellerId}&sellerName=${encodeURIComponent(product.seller?.name || 'Seller')}`)}
+                    className="studio-button-ghost h-14 px-4 flex items-center justify-center"
+                    title="Message Seller"
+                  >
+                    <MessageSquare size={16} />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}
