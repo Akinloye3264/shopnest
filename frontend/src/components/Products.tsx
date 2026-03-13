@@ -154,7 +154,7 @@ function Products({ user }: { user: any }) {
   return (
     <div className="space-y-16">
       <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pt-8">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl mt-10">
           <span className="studio-label">Ecosystem / Marketplace</span>
           <h1 className="studio-h1 mb-4">The Global<br />Inventory Hub.</h1>
           <p className="text-xl font-medium text-gray-400">Discover premium assets curated from verified sellers across the ShopNest ecosystem.</p>

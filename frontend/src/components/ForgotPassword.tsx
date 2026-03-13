@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react'
+import { Mail, Lock, ArrowLeft, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import API_URL from '../config'
 
 function ForgotPassword() {
@@ -12,6 +12,7 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<'email' | 'verify' | 'reset'>('email')
   const [resending, setResending] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
   const handleRequestReset = async (e: React.FormEvent) => {
@@ -205,14 +206,17 @@ function ForgotPassword() {
                 <div className="relative group">
                   <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="studio-input studio-input-with-icon font-medium"
+                    className="studio-input studio-input-with-icon pr-14 font-medium"
                     placeholder="••••••••"
                     minLength={6}
                   />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
 

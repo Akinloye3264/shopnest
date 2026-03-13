@@ -215,7 +215,7 @@ function App() {
           </nav>
         )}
 
-        <main className={user ? "pt-32 pb-24 studio-container" : ""}>
+        <main className={user ? "pt-44 pb-24 studio-container" : ""}>
           <Routes>
             <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
             <Route path="/about" element={<About />} />

@@ -118,12 +118,12 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
         <div className="space-y-2">
           <label className="studio-label">Full Name</label>
           <div className="relative group">
-            <UserIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+            <UserIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              className="studio-input pl-14 font-medium"
+              className="studio-input studio-input-with-icon font-medium"
               placeholder="Your full name"
             />
           </div>
@@ -133,12 +133,12 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
         <div className="space-y-2">
           <label className="studio-label">Email Address</label>
           <div className="relative group">
-            <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+            <Mail className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className={`studio-input pl-14 font-medium ${isGoogleUser ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`studio-input studio-input-with-icon font-medium ${isGoogleUser ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder="your@email.com"
               readOnly={isGoogleUser}
             />
@@ -150,12 +150,12 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
         <div className="space-y-2">
           <label className="studio-label">Phone Number</label>
           <div className="relative group">
-            <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+            <Phone className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
             <input
               type="tel"
               value={phone}
               onChange={e => setPhone(e.target.value)}
-              className="studio-input pl-14 font-medium"
+              className="studio-input studio-input-with-icon font-medium"
               placeholder="+234 000 000 0000"
             />
           </div>
@@ -173,12 +173,12 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
             <div className="space-y-2">
               <label className="studio-label">Current Password</label>
               <div className="relative group">
-                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+                <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
                 <input
                   type={showCurrent ? 'text' : 'password'}
                   value={currentPassword}
                   onChange={e => setCurrentPassword(e.target.value)}
-                  className="studio-input pl-14 pr-12 font-medium"
+                  className="studio-input studio-input-with-icon pr-14 font-medium"
                   placeholder="Your current password"
                 />
                 <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
@@ -190,12 +190,12 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
             <div className="space-y-2">
               <label className="studio-label">New Password</label>
               <div className="relative group">
-                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+                <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
                 <input
                   type={showNew ? 'text' : 'password'}
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
-                  className="studio-input pl-14 pr-12 font-medium"
+                  className="studio-input studio-input-with-icon pr-14 font-medium"
                   placeholder="New password"
                 />
                 <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
