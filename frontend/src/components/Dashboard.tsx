@@ -9,7 +9,7 @@ interface User {
   role: string
 }
 
-function Dashboard({ user }: { user: User }) {
+function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
   const navigate = useNavigate()
 
   const containerVariants = {
@@ -167,7 +167,7 @@ function Dashboard({ user }: { user: User }) {
             Use our AI assistant to find products, check prices, get job tips, and more.
           </p>
         </div>
-        <button className="studio-button px-12 h-20 text-xl shrink-0 font-black">
+        <button onClick={onOpenAI} className="studio-button px-12 h-20 text-xl shrink-0 font-black">
           TRY AI ASSISTANT
         </button>
       </motion.section>

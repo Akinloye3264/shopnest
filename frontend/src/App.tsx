@@ -215,7 +215,7 @@ function App() {
           </nav>
         )}
 
-        <main className={user ? "pt-44 pb-24 studio-container" : ""}>
+        <main className={user ? "pt-56 pb-24 studio-container" : ""}>
           <Routes>
             <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
             <Route path="/about" element={<About />} />
@@ -224,7 +224,7 @@ function App() {
             <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
             <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
             <Route path="/auth/callback" element={<AuthCallback onLogin={setUser} />} />
-            <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
+            <Route path="/dashboard" element={user ? <Dashboard user={user} onOpenAI={() => setAiOpen(true)} /> : <Navigate to="/login" />} />
             <Route path="/products" element={user ? <Products user={user} /> : <Navigate to="/login" />} />
             <Route path="/jobs" element={user ? <Jobs user={user} /> : <Navigate to="/login" />} />
             <Route path="/orders" element={user ? <Orders user={user} /> : <Navigate to="/login" />} />
