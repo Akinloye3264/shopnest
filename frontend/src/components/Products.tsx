@@ -153,8 +153,8 @@ function Products({ user }: { user: any }) {
   }
 
   return (
-    <div className="space-y-24">
-      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 pt-20">
+    <div className="space-y-16">
+      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
         <div className="max-w-2xl">
           <span className="studio-label">Ecosystem / Marketplace</span>
           <h1 className="studio-h1 mb-4">The Global<br />Inventory Hub.</h1>

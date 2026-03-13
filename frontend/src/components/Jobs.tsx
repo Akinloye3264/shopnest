@@ -125,8 +125,8 @@ function Jobs({ user }: { user: any }) {
 
   return (
     <div className="space-y-16">
-      <header className="pt-20">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-12">
+      <header>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 mb-8">
           <div className="max-w-3xl">
             <span className="studio-label">System / Recruitment</span>
             <h1 className="studio-h1">Global Talent<br />Search Portal.</h1>

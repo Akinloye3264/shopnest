@@ -82,7 +82,7 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto space-y-10 pt-20"
+      className="max-w-2xl mx-auto space-y-10"
     >
       <div>
         <span className="studio-label text-brand-accent">ACCOUNT / PROFILE</span>

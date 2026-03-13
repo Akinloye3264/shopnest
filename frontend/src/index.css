@@ -35,73 +35,132 @@
 }
 
 html.light {
-  --page-bg: #f0f2f5;
-  --text-primary: #111111;
-  --text-secondary: #555555;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --card-border: rgba(0, 0, 0, 0.08);
-  --card-hover-bg: rgba(255, 255, 255, 0.95);
-  --input-bg: rgba(0, 0, 0, 0.04);
-  --input-border: rgba(0, 0, 0, 0.15);
-  --input-focus-bg: rgba(255, 255, 255, 0.9);
-  --nav-bg: rgba(240, 242, 245, 0.85);
-  --nav-border: rgba(0, 0, 0, 0.08);
-  --ghost-btn-color: #111111;
-  --ghost-btn-border: rgba(0, 0, 0, 0.2);
-  --ghost-btn-hover: rgba(0, 0, 0, 0.06);
+  --page-bg: #f5f3ff;
+  --text-primary: #0f0e1a;
+  --text-secondary: #5c5a72;
+  --card-bg: #ffffff;
+  --card-border: rgba(15, 14, 26, 0.07);
+  --card-hover-bg: #ffffff;
+  --input-bg: #f9f8ff;
+  --input-border: rgba(15, 14, 26, 0.12);
+  --input-focus-bg: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.88);
+  --nav-border: rgba(15, 14, 26, 0.07);
+  --ghost-btn-color: #0f0e1a;
+  --ghost-btn-border: rgba(15, 14, 26, 0.18);
+  --ghost-btn-hover: rgba(15, 14, 26, 0.05);
   color-scheme: light;
 }
 
+/* Page background — soft violet gradient */
 html.light body {
+  background: linear-gradient(145deg, #f5f3ff 0%, #ede9fe 40%, #f0f4ff 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
 }
 
-html.light .studio-label {
-  color: #444444;
+/* ---- Text overrides (hardcoded Tailwind classes in components) ---- */
+html.light .text-white {
+  color: #0f0e1a !important;
+}
+html.light .text-gray-400 {
+  color: #7c7a96 !important;
+}
+html.light .text-gray-500 {
+  color: #6b698a !important;
+}
+html.light .text-gray-600 {
+  color: #5c5a72 !important;
+}
+html.light .text-gray-800 {
+  color: #2d2b42 !important;
+}
+html.light .placeholder\:text-white\/10::placeholder {
+  color: rgba(15, 14, 26, 0.25) !important;
 }
 
+/* Headings */
+html.light .studio-h1,
+html.light .studio-h2 {
+  color: #0f0e1a;
+}
+
+/* Labels */
+html.light .studio-label {
+  color: #7c7a96;
+}
+html.light .studio-label.text-brand-accent {
+  color: var(--color-brand-accent) !important;
+}
+
+/* ---- Cards ---- */
 html.light .glass-card {
   background: var(--card-bg);
   border-color: var(--card-border);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(109, 40, 217, 0.06), 0 1px 3px rgba(0, 0, 0, 0.05);
 }
-
 html.light .glass-card:hover {
   background: var(--card-hover-bg);
-  box-shadow: 0 12px 32px rgba(0, 255, 136, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.15), 0 2px 8px rgba(109, 40, 217, 0.08);
 }
 
+/* ---- Inputs ---- */
 html.light .studio-input {
   background: var(--input-bg);
   border-color: var(--input-border);
   color: var(--text-primary);
 }
-
 html.light .studio-input:focus {
   background: var(--input-focus-bg);
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.12);
 }
-
 html.light .studio-input::placeholder {
-  color: #aaaaaa;
+  color: #a9a7c0;
 }
 
+/* ---- Nav ---- */
+html.light .nav-blur {
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--nav-border);
+  box-shadow: 0 1px 24px rgba(109, 40, 217, 0.06);
+}
+
+/* ---- Buttons ---- */
 html.light .studio-button-ghost {
   color: var(--ghost-btn-color);
   border-color: var(--ghost-btn-border);
 }
-
 html.light .studio-button-ghost:hover {
   background: var(--ghost-btn-hover);
+  border-color: var(--color-brand-accent);
 }
 
-html.light .nav-blur {
-  background: var(--nav-bg);
-  border-bottom-color: var(--nav-border);
+/* ---- Borders ---- */
+html.light .border-white\/5 { border-color: rgba(15, 14, 26, 0.05) !important; }
+html.light .border-white\/10 { border-color: rgba(15, 14, 26, 0.08) !important; }
+html.light .border-white\/20 { border-color: rgba(15, 14, 26, 0.12) !important; }
+
+/* ---- Backgrounds ---- */
+html.light .bg-white\/5 { background: rgba(15, 14, 26, 0.04) !important; }
+html.light .bg-white\/10 { background: rgba(15, 14, 26, 0.06) !important; }
+
+/* ---- Inline message bubbles ---- */
+html.light .bg-white\/5.border.border-white\/5 {
+  background: #f0eeff !important;
+  border-color: rgba(109, 40, 217, 0.1) !important;
+  color: #0f0e1a !important;
 }
 
+/* ---- Select dropdowns ---- */
 html.light select option {
   background: #ffffff;
-  color: #111111;
+  color: #0f0e1a;
+}
+
+/* ---- Toaster in light mode ---- */
+html.light .react-hot-toast div {
+  background: #ffffff !important;
+  color: #0f0e1a !important;
 }
 
 body {

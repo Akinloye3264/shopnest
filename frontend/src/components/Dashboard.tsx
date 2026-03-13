@@ -32,10 +32,10 @@ function Dashboard({ user }: { user: User }) {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-32"
+      className="space-y-20"
     >
       {/* Hero Section */}
-      <motion.section variants={itemVariants} className="pt-20">
+      <motion.section variants={itemVariants}>
         <span className="studio-label text-brand-accent">HOME / {user.role?.toUpperCase()}</span>
         <h1 className="studio-h1 text-white leading-[0.85] mb-8">
           Hey, {user.name?.split(' ')[0] || 'there'}

@@ -118,7 +118,7 @@ function Orders({ user }: { user: User }) {
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
             <div>
-                <span className="studio-label text-brand-accen mt-10 pt-10">MY ORDERS</span>
+                <span className="studio-label text-brand-accent">MY ORDERS</span>
                 <h1 className="studio-h1 text-white leading-tight">Order History</h1>
                 <p className="text-gray-400 text-lg mt-2">Track your purchases and order status</p>
             </div>

@@ -105,7 +105,7 @@ function Messaging({ user }: { user: User }) {
 
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-            <div className="flex justify-between items-start pt-15 mt-10">
+            <div className="flex justify-between items-start">
                 <div>
                     <span className="studio-label text-brand-accent">COMMUNICATIONS</span>
                     <h1 className="studio-h1 text-white leading-tight">Messages</h1>
