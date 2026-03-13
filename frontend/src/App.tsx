@@ -16,7 +16,7 @@ import LandingPage from './components/LandingPage'
 import About from './components/About'
 import Marketplace from './components/Marketplace'
 import { Toaster } from 'react-hot-toast'
-import { ShoppingCart, MessageSquare, LayoutDashboard, Shield, Sun, Moon, UserCircle } from 'lucide-react'
+import { ShoppingCart, MessageSquare, LayoutDashboard, Shield, UserCircle } from 'lucide-react'
 import API_URL from './config'
 
 // Scroll to top on route change
@@ -39,7 +39,6 @@ interface User {
 function App() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => (localStorage.getItem('theme') as 'dark' | 'light') || 'dark')
   const [aiOpen, setAiOpen] = useState(false)
   const [aiMessage, setAiMessage] = useState('')
   const [aiResponse, setAiResponse] = useState('')
@@ -62,13 +61,6 @@ function App() {
     html = html.replace(/(<\/(?:ul|h3|h4)>)<br \/>/g, '$1')
     return html
   }
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light')
-    localStorage.setItem('theme', theme)
-  }, [theme])
-
-  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
   useEffect(() => {
     const checkAuth = () => {
@@ -179,9 +171,6 @@ function App() {
               </div>
 
               <div className="hidden lg:flex items-center space-x-6">
-                <button onClick={toggleTheme} className="p-2 hover:text-brand-accent transition-colors" title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
-                  {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-                </button>
                 <Link to="/profile" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
                   <UserCircle size={16} />
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">{user.name?.split(' ')[0] || user.email.split('@')[0]}</span>
@@ -218,10 +207,7 @@ function App() {
                   <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-brand-accent">Admin Panel</Link>
                 )}
                 <button onClick={() => { setAiOpen(true); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase text-left text-brand-accent">Consult AI</button>
-                <div className="pt-6 border-t border-white/10 flex justify-between items-center">
-                  <button onClick={() => { toggleTheme(); setMobileMenuOpen(false); }} className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-gray-400">
-                    {theme === 'dark' ? <><Sun size={16} /> Light Mode</> : <><Moon size={16} /> Dark Mode</>}
-                  </button>
+                <div className="pt-6 border-t border-white/10 flex justify-end">
                   <button onClick={handleLogout} className="studio-button text-xs px-6">LOGOUT</button>
                 </div>
               </div>

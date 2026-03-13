@@ -158,12 +158,6 @@ const seedData = async () => {
                     image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800"
                 },
                 {
-                    title: "Polarised Sunglasses",
-                    description: "UV400 protection with polarised lenses. Reduces glare, great for driving or outdoors.",
-                    price: 65.00, category: "Fashion", stock: 80, sellerId: sellerUser.id,
-                    image: "https://images.unsplash.com/photo-1473496169904-658ba7574b0d?auto=format&fit=crop&q=80&w=800"
-                },
-                {
                     title: "Leather Wallet",
                     description: "Slim genuine leather wallet. Fits cards and cash without the bulk.",
                     price: 45.00, category: "Fashion", stock: 120, sellerId: sellerUser.id,
@@ -175,13 +169,7 @@ const seedData = async () => {
                     price: 35.00, category: "Electronics", stock: 90, sellerId: sellerUser.id,
                     image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=800"
                 },
-                {
-                    title: "Indoor Plant Set",
-                    description: "Set of 3 easy-to-care-for plants. Makes any room feel fresh and lively.",
-                    price: 55.00, category: "Home", stock: 35, sellerId: adminUser.id,
-                    image: "https://images.unsplash.com/photo-1490750967868-88df5691cc9e?auto=format&fit=crop&q=80&w=800"
-                },
-            ];
+            
 
             const toCreate = allProducts.filter(p => !existingTitles.includes(p.title));
             if (toCreate.length > 0) await Product.bulkCreate(toCreate);

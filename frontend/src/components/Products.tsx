@@ -139,10 +139,9 @@ function Products({ user }: { user: any }) {
       })
       const data = await res.json()
       if (data.success && data.url) {
-        // Clear cart before redirect
         setCart([])
         localStorage.removeItem('shopnest_cart')
-        window.location.href = data.url
+        window.open(data.url, '_blank')
       } else {
         toast.error(data.message || 'Gateway connection failed.')
       }
