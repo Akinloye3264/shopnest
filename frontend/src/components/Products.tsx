@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
-import { ShoppingCart, Plus, Minus, X, CreditCard, ArrowRight, Package, Loader2, MessageSquare } from 'lucide-react'
+import { ShoppingCart, Plus, Minus, X, CreditCard, ArrowRight, Package, Loader2, MessageSquare, Upload, ImageIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import API_URL from '../config'
@@ -36,6 +36,20 @@ function Products({ user }: { user: any }) {
     category: 'Electronics',
     stock: 10
   })
+  const [productImage, setProductImage] = useState<string | null>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be under 5MB.')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => setProductImage(reader.result as string)
+    reader.readAsDataURL(file)
+  }
 
   const fetchProducts = async () => {
     try {
@@ -64,12 +78,13 @@ function Products({ user }: { user: any }) {
       const res = await fetch(`${API_URL}/api/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...newProduct, sellerId: user.id })
+        body: JSON.stringify({ ...newProduct, sellerId: user.id, image: productImage || undefined })
       })
       const data = await res.json()
       if (data.success) {
         toast.success('Asset listed successfully.')
         setShowAddForm(false)
+        setProductImage(null)
         fetchProducts()
       }
     } catch (err) {
@@ -212,7 +227,50 @@ function Products({ user }: { user: any }) {
             <div className="col-span-12 lg:col-span-6 space-y-8">
               <div>
                 <label className="studio-label text-gray-400">Market Description</label>
-                <textarea rows={5} required value={newProduct.description} onChange={e => setNewProduct({ ...newProduct, description: e.target.value })} className="studio-input resize-none" placeholder="Provide detailed specifications..." />
+                <textarea rows={3} required value={newProduct.description} onChange={e => setNewProduct({ ...newProduct, description: e.target.value })} className="studio-input resize-none" placeholder="Provide detailed specifications..." />
+              </div>
+              <div>
+                <label className="studio-label text-gray-400">Product Image</label>
+                <input
+                  type="file"
+                  ref={imageInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                />
+                <div
+                  onClick={() => imageInputRef.current?.click()}
+                  className="border-2 border-dashed border-white/10 rounded-2xl p-6 cursor-pointer hover:border-brand-accent/40 transition-colors bg-black/20 flex items-center gap-6"
+                >
+                  {productImage ? (
+                    <>
+                      <img src={productImage} alt="preview" className="w-20 h-20 rounded-xl object-cover shrink-0" />
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-widest text-brand-accent">Image selected</p>
+                        <p className="text-[10px] text-gray-500 mt-1">Click to change</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={e => { e.stopPropagation(); setProductImage(null) }}
+                        className="ml-auto p-1 hover:text-red-400 transition-colors text-gray-500"
+                      >
+                        <X size={16} />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-4 w-full">
+                      <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
+                        <ImageIcon size={22} className="text-gray-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
+                          <Upload size={14} /> Upload Image
+                        </p>
+                        <p className="text-[10px] text-gray-600 mt-1">JPG, PNG, WEBP — max 5MB</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
               <button type="submit" className="studio-button w-full h-20 text-xl font-black uppercase">PUBLISH TO MARKET</button>
             </div>
