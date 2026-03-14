@@ -44,7 +44,7 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
         <p className="text-2xl font-medium text-gray-400 max-w-3xl leading-snug mb-12">
           {user.role === 'employee'
             ? "Here you can manage your job listings and see who applied."
-            : "Welcome to ShopNest. Browse products, place orders, message sellers, and more — all in one place."
+            : "Welcome to ShopNest. Browse products, place orders, message sellers, and more,all in one place."
           }
         </p>
         <div className="flex flex-wrap gap-4">

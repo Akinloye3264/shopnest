@@ -93,19 +93,26 @@ router.get('/callback', async (req, res) => {
     let user = await User.findOne({ where: { email: userData.email } });
 
     if (!user) {
-      // New Google user — create account directly with default role
-      user = await User.create({
-        name: userData.name,
-        email: userData.email,
-        password: null,
-        role: 'buyer',
-        phone: null,
-        googleId: userData.id,
-        picture: userData.picture || null,
-        isVerified: true
-      });
-      console.log(`✅ New Google user created: ${user.email}`);
-    } else if (!user.googleId) {
+      // New Google user — redirect to role selection before creating account
+      const tempToken = jwt.sign(
+        {
+          isGoogleSetup: true,
+          googleData: {
+            name: userData.name,
+            email: userData.email,
+            googleId: userData.id,
+            picture: userData.picture || null
+          }
+        },
+        process.env.JWT_secret || 'secret',
+        { expiresIn: '15m' }
+      );
+
+      const frontendUrl = process.env.FRONTEND_URL;
+      return res.redirect(`${frontendUrl}/auth/select-role?token=${tempToken}`);
+    }
+
+    if (!user.googleId) {
       // Link google account if email matches but no googleId
       user.googleId = userData.id;
       user.picture = userData.picture;
@@ -126,7 +133,6 @@ router.get('/callback', async (req, res) => {
       role: user.role
     };
 
-    
     const frontendUrl = process.env.FRONTEND_URL;
     const redirectUrl = `${frontendUrl}/auth/callback?token=${mockToken}&user=${encodeURIComponent(JSON.stringify(safeUser))}`;
 
@@ -138,6 +144,66 @@ router.get('/callback', async (req, res) => {
       success: false,
       message: 'Internal server error during Google OAuth'
     });
+  }
+});
+
+// POST /api/google-auth/complete-signup - Create new Google user with chosen role
+router.post('/complete-signup', async (req, res) => {
+  const { token, role } = req.body;
+
+  const validRoles = ['buyer', 'seller', 'job_seeker', 'employer', 'employee'];
+  if (!token || !role || !validRoles.includes(role)) {
+    return res.status(400).json({ success: false, message: 'Invalid token or role' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_secret || 'secret');
+
+    if (!decoded.isGoogleSetup || !decoded.googleData) {
+      return res.status(400).json({ success: false, message: 'Invalid setup token' });
+    }
+
+    const { name, email, googleId, picture } = decoded.googleData;
+
+    // Check if user was already created (double-submit guard)
+    let user = await User.findOne({ where: { email } });
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        password: null,
+        role,
+        phone: null,
+        googleId,
+        picture,
+        isVerified: true
+      });
+      console.log(`✅ New Google user created: ${user.email} (${user.role})`);
+    }
+
+    const authToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_secret || 'secret',
+      { expiresIn: '24h' }
+    );
+
+    return res.json({
+      success: true,
+      token: authToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ success: false, message: 'Setup link expired. Please sign in with Google again.' });
+    }
+    console.error('complete-signup error:', err);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 

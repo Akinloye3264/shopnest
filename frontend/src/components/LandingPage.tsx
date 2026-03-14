@@ -234,7 +234,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            ShopNest connects unemployed graduates with real income opportunities —
+            ShopNest connects unemployed graduates with real income opportunities,
             through digital storefronts, gig work, and local e-commerce.
             <strong className="text-white"> No startup capital. No connections needed.</strong> Just your drive.
           </motion.p>

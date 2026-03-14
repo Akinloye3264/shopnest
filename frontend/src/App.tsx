@@ -11,6 +11,7 @@ import Orders from './components/Orders'
 import Messaging from './components/Messaging'
 import AdminPanel from './components/AdminPanel'
 import AuthCallback from './components/AuthCallback'
+import GoogleRoleSelection from './components/GoogleRoleSelection'
 import Background3D from './components/Background3D'
 import LandingPage from './components/LandingPage'
 import About from './components/About'
@@ -224,6 +225,7 @@ function App() {
             <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
             <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
             <Route path="/auth/callback" element={<AuthCallback onLogin={setUser} />} />
+            <Route path="/auth/select-role" element={<GoogleRoleSelection onLogin={setUser} />} />
             <Route path="/dashboard" element={user ? <Dashboard user={user} onOpenAI={() => setAiOpen(true)} /> : <Navigate to="/login" />} />
             <Route path="/products" element={user ? <Products user={user} /> : <Navigate to="/login" />} />
             <Route path="/jobs" element={user ? <Jobs user={user} /> : <Navigate to="/login" />} />
