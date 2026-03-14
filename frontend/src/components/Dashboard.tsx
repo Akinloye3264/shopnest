@@ -25,7 +25,17 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
     visible: { opacity: 1, y: 0 }
   }
 
-  const isEmployer = user.role === 'seller' || user.role === 'employee' || user.role === 'admin'
+  const isEmployer = user.role === 'employer' || user.role === 'admin'
+  const isSeller = user.role === 'seller'
+
+  const roleMessage: Record<string, string> = {
+    buyer: "Browse products, place orders, and message sellers — all in one place.",
+    seller: "List your products, manage your store, and grow your income.",
+    employer: "Post jobs, find the right talent, and manage your hiring pipeline.",
+    job_seeker: "Find job opportunities that match your skills and experience.",
+    employee: "Collaborate within your organization and track your work.",
+    admin: "Manage the platform, users, products, and everything in between.",
+  }
 
   return (
     <motion.div
@@ -42,21 +52,24 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/20"> 👋</span>
         </h1>
         <p className="text-2xl font-medium text-gray-400 max-w-3xl leading-snug mb-12">
-          {user.role === 'employee'
-            ? "Here you can manage your job listings and see who applied."
-            : "Welcome to ShopNest. Browse products, place orders, message sellers, and more,all in one place."
-          }
+          {roleMessage[user.role] || "Welcome to ShopNest."}
         </p>
         <div className="flex flex-wrap gap-4">
           {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
             <button onClick={() => navigate('/products')} className="studio-button px-10 h-16 text-lg group">
-              SHOP NOW
+              {user.role === 'seller' ? 'MY PRODUCTS' : 'SHOP NOW'}
               <ArrowUpRight className="ml-2 group-hover:rotate-45 transition-transform" size={20} />
             </button>
           )}
-          {(user.role === 'job_seeker' || isEmployer) && (
+          {(user.role === 'job_seeker' || user.role === 'employee') && (
             <button onClick={() => navigate('/jobs')} className="studio-button-ghost px-10 h-16 text-lg group">
-              {isEmployer ? 'MANAGE JOBS' : 'FIND JOBS'}
+              FIND JOBS
+              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+            </button>
+          )}
+          {isEmployer && (
+            <button onClick={() => navigate('/jobs')} className="studio-button px-10 h-16 text-lg group">
+              MANAGE JOBS
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </button>
           )}
@@ -103,23 +116,35 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
       </motion.section>
 
       {/* Role-Specific Operation Centers */}
-      {isEmployer && (
+      {(isEmployer || isSeller) && (
         <motion.section variants={itemVariants} className="space-y-12">
           <h3 className="text-sm font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6">Your Tools</h3>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/jobs')}>
-              <div className="space-y-4">
-                <Terminal className="text-brand-accent" size={32} />
-                <h4 className="text-3xl font-black uppercase tracking-tighter">Job Listings</h4>
-                <p className="text-gray-400 text-sm font-medium">Post jobs and see who applied.</p>
+            {isEmployer && (
+              <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/jobs')}>
+                <div className="space-y-4">
+                  <Terminal className="text-brand-accent" size={32} />
+                  <h4 className="text-3xl font-black uppercase tracking-tighter">Job Listings</h4>
+                  <p className="text-gray-400 text-sm font-medium">Post jobs and see who applied.</p>
+                </div>
+                <ArrowRight size={32} className="text-gray-700 group-hover:text-brand-accent group-hover:translate-x-4 transition-all" />
               </div>
-              <ArrowRight size={32} className="text-gray-700 group-hover:text-brand-accent group-hover:translate-x-4 transition-all" />
-            </div>
-            {user.role === 'seller' && (
+            )}
+            {isSeller && (
               <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/products')}>
                 <div className="space-y-4">
                   <Package className="text-brand-accent" size={32} />
-                  <h4 className="text-3xl font-black uppercase tracking-tighter">Asset Control</h4>
+                  <h4 className="text-3xl font-black uppercase tracking-tighter">My Products</h4>
+                  <p className="text-gray-400 text-sm font-medium">List products, manage inventory, and grow your store.</p>
+                </div>
+                <ArrowRight size={32} className="text-gray-700 group-hover:text-brand-accent group-hover:translate-x-4 transition-all" />
+              </div>
+            )}
+            {user.role === 'admin' && (
+              <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/products')}>
+                <div className="space-y-4">
+                  <Package className="text-brand-accent" size={32} />
+                  <h4 className="text-3xl font-black uppercase tracking-tighter">Marketplace</h4>
                   <p className="text-gray-400 text-sm font-medium">Monitor inventory levels and market distribution.</p>
                 </div>
                 <ArrowRight size={32} className="text-gray-700 group-hover:text-brand-accent group-hover:translate-x-4 transition-all" />

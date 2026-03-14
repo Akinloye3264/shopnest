@@ -152,7 +152,7 @@ function App() {
                 {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
                   <Link to="/products" className="text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">Marketplace</Link>
                 )}
-                {(user.role === 'job_seeker' || user.role === 'employee' || user.role === 'employer' || user.role === 'seller' || user.role === 'admin') && (
+                {(user.role === 'job_seeker' || user.role === 'employee' || user.role === 'employer' || user.role === 'admin') && (
                   <Link to="/jobs" className="text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">Career Hub</Link>
                 )}
                 {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
@@ -196,7 +196,7 @@ function App() {
                 {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
                   <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Marketplace</Link>
                 )}
-                {(user.role === 'job_seeker' || user.role === 'employee' || user.role === 'employer' || user.role === 'seller' || user.role === 'admin') && (
+                {(user.role === 'job_seeker' || user.role === 'employee' || user.role === 'employer' || user.role === 'admin') && (
                   <Link to="/jobs" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Career Hub</Link>
                 )}
                 {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (

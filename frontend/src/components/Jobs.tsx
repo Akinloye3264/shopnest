@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
-import { Search, Briefcase, Users, Plus, ExternalLink, Loader2, Upload, FileText, CheckCircle, X } from 'lucide-react'
+import { Search, Briefcase, Users, Plus, ExternalLink, Loader2, Upload, FileText, CheckCircle, X, ListChecks } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import API_URL from '../config'
 
@@ -15,10 +15,12 @@ interface Application {
 function Jobs({ user }: { user: any }) {
   const [externalJobs, setExternalJobs] = useState<any[]>([])
   const [applications, setApplications] = useState<Application[]>([])
+  const [myJobs, setMyJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showPostForm, setShowPostForm] = useState(false)
-  const [view, setView] = useState<'listings' | 'applications'>('listings')
+  const isActualEmployer = user.role === 'employer' || user.role === 'admin'
+  const [view, setView] = useState<'listings' | 'applications' | 'my-jobs'>(isActualEmployer ? 'my-jobs' : 'listings')
   const [newJob, setNewJob] = useState({
     title: '',
     company: '',
@@ -38,8 +40,9 @@ function Jobs({ user }: { user: any }) {
 
   useEffect(() => {
     fetchExternalJobs()
-    if (user.role === 'seller' || user.role === 'employee' || user.role === 'admin') {
+    if (user.role === 'seller' || user.role === 'employee' || user.role === 'admin' || user.role === 'employer') {
       fetchApplications()
+      fetchMyJobs()
     }
   }, [])
 
@@ -61,6 +64,16 @@ function Jobs({ user }: { user: any }) {
       if (data.success) setApplications(data.applications)
     } catch (err) {
       console.log('Failed to fetch applications.')
+    }
+  }
+
+  const fetchMyJobs = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/jobs?employerId=${user.id}`)
+      const data = await res.json()
+      if (data.success) setMyJobs(data.jobs)
+    } catch (err) {
+      console.log('Failed to fetch my jobs.')
     }
   }
 
@@ -87,6 +100,8 @@ function Jobs({ user }: { user: any }) {
       if (data.success) {
         toast.success('Opportunity published.')
         setShowPostForm(false)
+        fetchMyJobs()
+        setView('my-jobs')
       }
     } catch (err) {
       toast.error('Posting failure.')
@@ -121,37 +136,47 @@ function Jobs({ user }: { user: any }) {
     setAuditProcessing(false)
   }
 
-  const isEmployer = user.role === 'seller' || user.role === 'employee' || user.role === 'admin'
+  const isEmployer = user.role === 'seller' || user.role === 'employee' || user.role === 'admin' || user.role === 'employer'
 
   return (
     <div className="space-y-16">
       <header>
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 mb-8">
           <div className="max-w-3xl">
-            <span className="studio-label">System / Recruitment</span>
-            <h1 className="studio-h1">Global Talent<br />Search Portal.</h1>
-            <p className="text-xl font-medium text-gray-400">ShopNest bridges the gap between high-scale ventures and elite ecosystem talent.</p>
+            <span className="studio-label">System / {isActualEmployer ? 'Hiring' : 'Recruitment'}</span>
+            <h1 className="studio-h1">{isActualEmployer ? <>Hiring<br />Management.</> : <>Global Talent<br />Search Portal.</>}</h1>
+            <p className="text-xl font-medium text-gray-400">
+              {isActualEmployer
+                ? 'Post jobs, review applicants, and manage your listings from one place.'
+                : 'ShopNest bridges the gap between high-scale ventures and elite ecosystem talent.'
+              }
+            </p>
           </div>
-          {isEmployer && (
-            <div className="flex gap-4">
+          {isActualEmployer && (
+            <div className="flex gap-4 flex-wrap">
               <button
-                onClick={() => setView(view === 'listings' ? 'applications' : 'listings')}
-                className="studio-button-ghost h-20 px-8 uppercase tracking-widest flex items-center gap-3"
+                onClick={() => setView('my-jobs')}
+                className={`studio-button-ghost h-20 px-8 uppercase tracking-widest flex items-center gap-3 ${view === 'my-jobs' ? 'border-brand-accent text-brand-accent' : ''}`}
               >
-                {view === 'listings' ? <Users size={20} /> : <Briefcase size={20} />}
-                {view === 'listings' ? 'View Applicants' : 'View Listings'}
+                <ListChecks size={20} /> My Jobs
+              </button>
+              <button
+                onClick={() => setView(view === 'applications' ? 'my-jobs' : 'applications')}
+                className={`studio-button-ghost h-20 px-8 uppercase tracking-widest flex items-center gap-3 ${view === 'applications' ? 'border-brand-accent text-brand-accent' : ''}`}
+              >
+                <Users size={20} /> {view === 'applications' ? 'My Jobs' : 'View Applicants'}
               </button>
               <button
                 onClick={() => setShowPostForm(!showPostForm)}
                 className="studio-button h-20 px-8 uppercase tracking-widest flex items-center gap-3"
               >
-                {showPostForm ? 'Cancel' : <><Plus size={20} /> Publish Career</>}
+                {showPostForm ? 'Cancel' : <><Plus size={20} /> Post a Job</>}
               </button>
             </div>
           )}
         </div>
 
-        {view === 'listings' && (
+        {view === 'listings' && !isActualEmployer && (
           <form onSubmit={handleSearch} className="relative max-w-4xl mx-auto group">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={24} />
             <input
@@ -304,6 +329,37 @@ function Jobs({ user }: { user: any }) {
               </div>
             </div>
           </aside>
+        </div>
+      ) : view === 'my-jobs' ? (
+        <div className="space-y-12 animate-fade-in">
+          <h3 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6">My Job Listings</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {myJobs.map((job) => (
+              <div key={job.id} className="glass-card p-10 flex flex-col hover:bg-white/5 transition-all border-white/5">
+                <div className="flex justify-between items-start mb-6 gap-4">
+                  <h4 className="text-2xl font-black uppercase leading-[0.9] tracking-tighter">{job.title}</h4>
+                  <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">{job.type}</span>
+                </div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">{job.company} · {job.location}</p>
+                {job.salary && (
+                  <p className="text-xs text-brand-accent font-black uppercase tracking-widest mb-6">{job.salary}</p>
+                )}
+                <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-8">
+                  {job.description.length > 200 ? job.description.substring(0, 200) + '...' : job.description}
+                </p>
+                <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+                  Posted {new Date(job.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+            {myJobs.length === 0 && (
+              <div className="col-span-full py-40 text-center glass-card border-dashed opacity-50">
+                <Briefcase size={64} className="mx-auto mb-8 text-gray-600" />
+                <h4 className="text-2xl font-black uppercase tracking-tighter">No Jobs Posted Yet</h4>
+                <p className="text-gray-500 font-bold uppercase tracking-widest text-xs mt-4">Use "Publish Career" to post your first listing.</p>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         <div className="space-y-12 animate-fade-in">

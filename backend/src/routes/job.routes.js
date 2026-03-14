@@ -6,9 +6,13 @@ const { Op } = require('sequelize');
 // GET /api/jobs - Get all jobs
 router.get('/', async (req, res) => {
   try {
-    const { category, location, type, search } = req.query;
+    const { category, location, type, search, employerId } = req.query;
 
     let where = {};
+
+    if (employerId) {
+      where.employerId = employerId;
+    }
 
     if (category) {
       where.category = category;

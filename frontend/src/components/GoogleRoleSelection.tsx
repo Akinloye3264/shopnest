@@ -96,14 +96,14 @@ function GoogleRoleSelection({ onLogin }: GoogleRoleSelectionProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-white relative">
+    <div className="min-h-screen flex items-center justify-center p-6 relative">
       <div className="fixed top-0 left-0 w-full h-full -z-10 opacity-30">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-primary blur-[120px] rounded-full"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-secondary blur-[120px] rounded-full"></div>
       </div>
 
       <div className="w-full max-w-xl">
-        <div className="radiant-card p-12 bg-white">
+        <div className="radiant-card p-12">
           <div className="mb-10 text-center">
             <h1 className="text-4xl font-black uppercase tracking-tighter mb-3">One quick thing</h1>
             <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">

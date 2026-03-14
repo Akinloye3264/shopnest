@@ -417,27 +417,34 @@ export default function LandingPage() {
             </h2>
           </FadeUp>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                icon: '🎓',
-                role: 'Job Seekers',
-                desc: 'Apply for gig work, short-term roles, and digital tasks. Build experience and income without needing referrals.',
-                cta: 'Find Work',
+                icon: '🛍️',
+                role: 'Buyers',
+                desc: 'Discover quality local products, support youth businesses, and shop with confidence. Browse and buy from anywhere.',
+                cta: 'Shop Now',
                 link: '/register',
               },
               {
                 icon: '🏪',
                 role: 'Sellers & Vendors',
-                desc: 'Open your digital storefront, list products, and reach customers across Abuja and beyond.',
+                desc: 'Open your digital storefront, list your products, and reach customers across Abuja and beyond — zero startup cost.',
                 cta: 'Start Selling',
                 link: '/register',
               },
               {
-                icon: '🛍️',
-                role: 'Buyers',
-                desc: 'Discover quality local products, support youth businesses, and shop with confidence.',
-                cta: 'Browse Marketplace',
+                icon: '🎓',
+                role: 'Job Seekers',
+                desc: 'Find job opportunities that match your skills. Apply for roles, audit your resume with AI, and get hired without connections.',
+                cta: 'Find Jobs',
+                link: '/register',
+              },
+              {
+                icon: '🏢',
+                role: 'Employers',
+                desc: 'Post job listings, review applicants, and hire qualified talent. Build your team directly through ShopNest.',
+                cta: 'Post a Job',
                 link: '/register',
               },
             ].map((item, i) => (
