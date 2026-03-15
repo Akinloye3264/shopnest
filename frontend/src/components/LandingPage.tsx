@@ -8,9 +8,9 @@ import {
 } from 'lucide-react'
 
 const stats = [
-  { value: '500+', label: 'Youth Employed', icon: Users },
-  { value: '120+', label: 'Local Vendors', icon: Store },
-  { value: '₦2M+', label: 'Income Generated', icon: TrendingUp },
+  { value: '50+', label: 'Youth Employed', icon: Users },
+  { value: '90+', label: 'Local Vendors', icon: Store },
+  { value: '₦1M+', label: 'Income Generated', icon: TrendingUp },
   { value: 'Abuja', label: 'Starting From', icon: MapPin },
 ]
 
@@ -345,7 +345,7 @@ export default function LandingPage() {
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed mb-8">
                 About 9% of Africa's population is unemployed — and the number is growing.
-                ShopNest was built in Gwagwalada, Abuja to give qualified graduates a fair
+                ShopNest was built for Gwagwalada, Abuja to give qualified graduates a fair
                 shot at income, without needing <em className="text-gray-300">"connections from high places."</em>
               </p>
               <a href="#about" className="studio-button-ghost inline-flex items-center gap-2 px-8 py-4 text-sm font-black uppercase tracking-widest rounded-full">
