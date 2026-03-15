@@ -185,7 +185,7 @@ function Jobs({ user }: { user: any }) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search jobs..."
-                className="studio-input pl-12 h-14 text-base font-black bg-white/5 border-white/10 text-white focus:bg-white/10 w-full"
+                className="studio-input pl-14 h-14 text-base font-black bg-white/5 border-white/10 text-white focus:bg-white/10 w-full"
               />
             </div>
             <button type="submit" className="studio-button h-14 px-6 text-sm shrink-0">SEARCH</button>
@@ -194,7 +194,7 @@ function Jobs({ user }: { user: any }) {
       </header>
 
       {showPostForm && (
-        <section className="glass-card p-12 animate-slide-up relative overflow-hidden">
+        <section className="glass-card p-6 md:p-12 animate-slide-up relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 blur-3xl -z-10" />
           <h2 className="text-3xl font-black uppercase tracking-tighter mb-12">Career Specification</h2>
           <form onSubmit={handlePostJob} className="grid grid-cols-12 gap-8">
@@ -203,7 +203,7 @@ function Jobs({ user }: { user: any }) {
                 <label className="studio-label text-gray-400">Job Title</label>
                 <input type="text" required value={newJob.title} onChange={e => setNewJob({ ...newJob, title: e.target.value })} className="studio-input" placeholder="e.g. Senior Logic Architect" />
               </div>
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
                   <label className="studio-label text-gray-400">Company</label>
                   <input type="text" required value={newJob.company} onChange={e => setNewJob({ ...newJob, company: e.target.value })} className="studio-input" />
@@ -262,7 +262,7 @@ function Jobs({ user }: { user: any }) {
 
           {/* Career Sidebar */}
           <aside className="col-span-12 lg:col-span-4 space-y-8">
-            <div className="glass-card p-5 md:p-10 bg-brand-accent/5 border-brand-accent/20 relative overflow-hidden group">
+            <div className="glass-card p-5 md:p-8 bg-brand-accent/5 border-brand-accent/20 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/10 blur-3xl group-hover:scale-150 transition-transform duration-700" />
               <span className="studio-label text-brand-accent mb-4">Autonomous Strategist</span>
               <h3 className="text-3xl md:text-4xl font-black tracking-tighter uppercase mt-4 mb-6 leading-[0.85]">Audit<br />Resume.</h3>

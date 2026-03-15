@@ -105,17 +105,17 @@ function Messaging({ user }: { user: User }) {
 
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-            <div className="flex justify-between items-start">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div>
                     <span className="studio-label text-brand-accent">COMMUNICATIONS</span>
                     <h1 className="studio-h1 text-white leading-tight">Messages</h1>
                 </div>
-                <button onClick={() => setNewMessageModal(true)} className="studio-button px-8 flex items-center gap-2">
+                <button onClick={() => setNewMessageModal(true)} className="studio-button px-8 flex items-center gap-2 shrink-0 self-start sm:self-auto">
                     <Send size={16} /> New Message
                 </button>
             </div>
 
-            <div className="grid md:grid-cols-[320px_1fr] gap-6 h-[calc(100vh-280px)] min-h-[500px]">
+            <div className="grid md:grid-cols-[280px_1fr] gap-6 h-[calc(100vh-320px)] md:h-[calc(100vh-280px)] min-h-[400px]">
                 {/* Conversations sidebar */}
                 <div className="glass-card overflow-y-auto custom-scrollbar">
                     <div className="p-6 border-b border-white/5">

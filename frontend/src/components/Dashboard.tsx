@@ -121,7 +121,7 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
           <h3 className="text-sm font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6">Your Tools</h3>
           <div className="grid md:grid-cols-2 gap-8">
             {isEmployer && (
-              <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/jobs')}>
+              <div className="p-8 md:p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/jobs')}>
                 <div className="space-y-4">
                   <Terminal className="text-brand-accent" size={32} />
                   <h4 className="text-3xl font-black uppercase tracking-tighter">Job Listings</h4>
@@ -131,7 +131,7 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
               </div>
             )}
             {isSeller && (
-              <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/products')}>
+              <div className="p-8 md:p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/products')}>
                 <div className="space-y-4">
                   <Package className="text-brand-accent" size={32} />
                   <h4 className="text-3xl font-black uppercase tracking-tighter">My Products</h4>
@@ -141,7 +141,7 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
               </div>
             )}
             {user.role === 'admin' && (
-              <div className="p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/products')}>
+              <div className="p-8 md:p-12 glass-card bg-gradient-to-br from-white/5 to-transparent flex justify-between items-center group cursor-pointer" onClick={() => navigate('/products')}>
                 <div className="space-y-4">
                   <Package className="text-brand-accent" size={32} />
                   <h4 className="text-3xl font-black uppercase tracking-tighter">Marketplace</h4>
@@ -183,7 +183,7 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
       {/* AI Navigation Feature */}
       <motion.section
         variants={itemVariants}
-        className="glass-card bg-gradient-to-br from-brand-accent/5 to-transparent border-brand-accent/10 p-20 flex flex-col md:flex-row justify-between items-center gap-16"
+        className="glass-card bg-gradient-to-br from-brand-accent/5 to-transparent border-brand-accent/10 p-8 md:p-20 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-16"
       >
         <div className="max-w-2xl text-center md:text-left">
           <span className="studio-label text-brand-accent mb-4">AI Assistant</span>

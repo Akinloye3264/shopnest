@@ -210,7 +210,7 @@ function App() {
           </nav>
         )}
 
-        <main className={user ? "pt-56 pb-24 studio-container" : ""}>
+        <main className={user ? "pt-32 lg:pt-56 pb-24 studio-container" : ""}>
           <Routes>
             <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
             <Route path="/about" element={<About />} />
@@ -241,7 +241,7 @@ function App() {
 
               <div className="flex-1 overflow-y-auto space-y-6 pr-4 custom-scrollbar">
                 {!aiSentMessage && !aiResponse && (
-                  <div className="text-white/20 text-5xl font-black leading-none uppercase select-none">
+                  <div className="text-white/20 text-3xl md:text-5xl font-black leading-none uppercase select-none">
                     Waiting for your query...
                   </div>
                 )}
@@ -261,15 +261,15 @@ function App() {
                 )}
               </div>
 
-              <form onSubmit={askAi} className="mt-12 flex space-x-4">
+              <form onSubmit={askAi} className="mt-8 flex gap-3">
                 <input
                   type="text"
                   value={aiMessage}
                   onChange={(e) => setAiMessage(e.target.value)}
                   placeholder="Inquire about E-commerce..."
-                  className="flex-1 bg-transparent border-b-4 border-white/10 text-white text-4xl font-black pb-4 outline-none focus:border-white transition-colors placeholder:text-white/10"
+                  className="flex-1 bg-transparent border-b-4 border-white/10 text-white text-xl md:text-4xl font-black pb-4 outline-none focus:border-white transition-colors placeholder:text-white/10 min-w-0"
                 />
-                <button type="submit" className="studio-button px-12 text-lg">SEND</button>
+                <button type="submit" className="studio-button px-6 md:px-12 text-sm md:text-lg shrink-0">SEND</button>
               </form>
             </div>
           </div>
