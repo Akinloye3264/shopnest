@@ -174,13 +174,13 @@ function Products({ user }: { user: any }) {
           <h1 className="studio-h1 mb-4">The Global<br />Inventory Hub.</h1>
           <p className="text-xl font-medium text-gray-400">Discover premium assets curated from verified sellers across the ShopNest ecosystem.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-3 flex-wrap">
           <button
             onClick={() => setShowCart(true)}
-            className="studio-button-ghost h-20 px-8 flex items-center gap-4 relative group"
+            className="studio-button-ghost h-14 md:h-20 px-6 md:px-8 flex items-center gap-3 relative group"
           >
-            <ShoppingCart size={24} className="group-hover:text-brand-accent transition-colors" />
-            <span className="uppercase tracking-widest font-black">Cart</span>
+            <ShoppingCart size={20} className="group-hover:text-brand-accent transition-colors" />
+            <span className="uppercase tracking-widest font-black text-sm">Cart</span>
             {cart.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-brand-accent text-black text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center animate-pulse">
                 {cart.length}
@@ -190,16 +190,16 @@ function Products({ user }: { user: any }) {
           {(user.role === 'seller' || user.role === 'admin') && (
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="studio-button h-20 px-12 text-lg uppercase tracking-widest flex items-center gap-3"
+              className="studio-button h-14 md:h-20 px-6 md:px-12 text-sm md:text-lg uppercase tracking-widest flex items-center gap-2"
             >
-              {showAddForm ? 'CANCEL LISTING' : <><Plus size={20} /> NEW PRODUCT</>}
+              {showAddForm ? 'CANCEL LISTING' : <><Plus size={18} /> NEW PRODUCT</>}
             </button>
           )}
         </div>
       </header>
 
       {showAddForm && (
-        <section className="glass-card p-12 animate-slide-up relative overflow-hidden">
+        <section className="glass-card p-6 md:p-12 animate-slide-up relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 blur-3xl -z-10" />
           <h2 className="text-3xl font-black uppercase tracking-tighter mb-12">Asset Registration</h2>
           <form onSubmit={handleAddProduct} className="grid grid-cols-12 gap-10">
@@ -208,14 +208,14 @@ function Products({ user }: { user: any }) {
                 <label className="studio-label text-gray-400">Product Name</label>
                 <input type="text" required value={newProduct.title} onChange={e => setNewProduct({ ...newProduct, title: e.target.value })} className="studio-input" placeholder="e.g. Studio Monitor Pro" />
               </div>
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
                   <label className="studio-label text-gray-400">Valuation (USD)</label>
                   <input type="number" required value={newProduct.price} onChange={e => setNewProduct({ ...newProduct, price: e.target.value })} className="studio-input" placeholder="00.00" />
                 </div>
                 <div>
                   <label className="studio-label text-gray-400">Category</label>
-                  <select value={newProduct.category} onChange={e => setNewProduct({ ...newProduct, category: e.target.value })} className="studio-input cursor-pointer appearance-none bg-transparent">
+                  <select value={newProduct.category} onChange={e => setNewProduct({ ...newProduct, category: e.target.value })} className="studio-input cursor-pointer appearance-none" style={{ background: '#111' }}>
                     <option>Electronics</option>
                     <option>Fashion</option>
                     <option>Home</option>

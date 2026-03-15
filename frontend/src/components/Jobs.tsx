@@ -405,7 +405,7 @@ function Jobs({ user }: { user: any }) {
             />
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[85vh] overflow-y-auto glass-card p-12 z-[301] shadow-2xl border-brand-accent/30 flex flex-col"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[85vh] overflow-y-auto glass-card p-6 md:p-12 z-[301] shadow-2xl border-brand-accent/30 flex flex-col mx-4"
             >
               <div className="flex justify-between items-center mb-12 shrink-0">
                 <div>

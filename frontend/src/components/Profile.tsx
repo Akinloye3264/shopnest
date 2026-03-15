@@ -113,12 +113,12 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
         </div>
       </div>
 
-      <form onSubmit={handleSave} className="glass-card p-10 space-y-8">
+      <form onSubmit={handleSave} className="glass-card p-6 md:p-10 space-y-8">
         {/* Name */}
         <div className="space-y-2">
           <label className="studio-label">Full Name</label>
           <div className="relative group">
-            <UserIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+            <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
             <input
               type="text"
               value={name}
@@ -133,7 +133,7 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
         <div className="space-y-2">
           <label className="studio-label">Email Address</label>
           <div className="relative group">
-            <Mail className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
             <input
               type="email"
               value={email}
@@ -150,7 +150,7 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
         <div className="space-y-2">
           <label className="studio-label">Phone Number</label>
           <div className="relative group">
-            <Phone className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
             <input
               type="tel"
               value={phone}
@@ -173,7 +173,7 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
             <div className="space-y-2">
               <label className="studio-label">Current Password</label>
               <div className="relative group">
-                <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
                 <input
                   type={showCurrent ? 'text' : 'password'}
                   value={currentPassword}
@@ -190,7 +190,7 @@ function Profile({ user, onUpdate }: { user: User; onUpdate: (updated: User) => 
             <div className="space-y-2">
               <label className="studio-label">New Password</label>
               <div className="relative group">
-                <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
                 <input
                   type={showNew ? 'text' : 'password'}
                   value={newPassword}

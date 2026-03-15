@@ -124,7 +124,7 @@ function Orders({ user }: { user: User }) {
             </div>
 
             {orders.length === 0 ? (
-                <div className="glass-card p-20 text-center space-y-6">
+                <div className="glass-card p-10 md:p-20 text-center space-y-6">
                     <ShoppingBag className="mx-auto text-white/10" size={64} />
                     <h3 className="text-3xl font-black text-white/20 uppercase">No orders yet</h3>
                     <p className="text-gray-600">Visit the marketplace to make your first purchase.</p>
