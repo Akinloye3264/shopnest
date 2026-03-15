@@ -153,40 +153,42 @@ function Jobs({ user }: { user: any }) {
             </p>
           </div>
           {isActualEmployer && (
-            <div className="flex gap-4 flex-wrap">
+            <div className="flex gap-3 flex-wrap">
               <button
                 onClick={() => setView('my-jobs')}
-                className={`studio-button-ghost h-20 px-8 uppercase tracking-widest flex items-center gap-3 ${view === 'my-jobs' ? 'border-brand-accent text-brand-accent' : ''}`}
+                className={`studio-button-ghost h-12 px-5 text-xs uppercase tracking-widest flex items-center gap-2 ${view === 'my-jobs' ? 'border-brand-accent text-brand-accent' : ''}`}
               >
-                <ListChecks size={20} /> My Jobs
+                <ListChecks size={16} /> My Jobs
               </button>
               <button
                 onClick={() => setView(view === 'applications' ? 'my-jobs' : 'applications')}
-                className={`studio-button-ghost h-20 px-8 uppercase tracking-widest flex items-center gap-3 ${view === 'applications' ? 'border-brand-accent text-brand-accent' : ''}`}
+                className={`studio-button-ghost h-12 px-5 text-xs uppercase tracking-widest flex items-center gap-2 ${view === 'applications' ? 'border-brand-accent text-brand-accent' : ''}`}
               >
-                <Users size={20} /> {view === 'applications' ? 'My Jobs' : 'View Applicants'}
+                <Users size={16} /> {view === 'applications' ? 'My Jobs' : 'View Applicants'}
               </button>
               <button
                 onClick={() => setShowPostForm(!showPostForm)}
-                className="studio-button h-20 px-8 uppercase tracking-widest flex items-center gap-3"
+                className="studio-button h-12 px-5 text-xs uppercase tracking-widest flex items-center gap-2"
               >
-                {showPostForm ? 'Cancel' : <><Plus size={20} /> Post a Job</>}
+                {showPostForm ? 'Cancel' : <><Plus size={16} /> Post a Job</>}
               </button>
             </div>
           )}
         </div>
 
         {view === 'listings' && !isActualEmployer && (
-          <form onSubmit={handleSearch} className="relative max-w-4xl mx-auto group">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={24} />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by title, technology, or company..."
-              className="studio-input pl-20 h-24 text-2xl font-black bg-white/5 border-white/10 text-white focus:bg-white/10"
-            />
-            <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 studio-button h-16 px-10">SEARCH</button>
+          <form onSubmit={handleSearch} className="flex gap-2 max-w-4xl mx-auto group">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search jobs..."
+                className="studio-input pl-12 h-14 text-base font-black bg-white/5 border-white/10 text-white focus:bg-white/10 w-full"
+              />
+            </div>
+            <button type="submit" className="studio-button h-14 px-6 text-sm shrink-0">SEARCH</button>
           </form>
         )}
       </header>
@@ -234,14 +236,14 @@ function Jobs({ user }: { user: any }) {
           {/* Global Opportunities Pool */}
           <div className="col-span-12 lg:col-span-8 space-y-12">
             <h3 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6 text-white">Global Opportunities</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {externalJobs.map((job, i) => (
-                <div key={i} className="glass-card p-10 flex flex-col hover:bg-white/5 transition-all border-white/5">
-                  <div className="flex justify-between items-start mb-8 gap-4">
-                    <h4 className="text-2xl font-black uppercase leading-[0.9] tracking-tighter">{job.title}</h4>
-                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">{job.location}</span>
+                <div key={i} className="glass-card p-5 md:p-8 flex flex-col hover:bg-white/5 transition-all border-white/5">
+                  <div className="flex justify-between items-start mb-4 gap-3">
+                    <h4 className="text-lg md:text-2xl font-black uppercase leading-tight tracking-tighter">{job.title}</h4>
+                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{job.location}</span>
                   </div>
-                  <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-12 uppercase opacity-80 font-bold">
+                  <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-6 uppercase opacity-80">
                     {job.description.substring(0, 180)}...
                   </p>
                   <a href={job.redirect_url} target="_blank" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#00ff88] hover:text-white transition-colors self-start underline decoration-2 underline-offset-8">
@@ -260,10 +262,10 @@ function Jobs({ user }: { user: any }) {
 
           {/* Career Sidebar */}
           <aside className="col-span-12 lg:col-span-4 space-y-8">
-            <div className="glass-card p-10 bg-brand-accent/5 border-brand-accent/20 relative overflow-hidden group">
+            <div className="glass-card p-5 md:p-10 bg-brand-accent/5 border-brand-accent/20 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/10 blur-3xl group-hover:scale-150 transition-transform duration-700" />
               <span className="studio-label text-brand-accent mb-4">Autonomous Strategist</span>
-              <h3 className="text-4xl font-black tracking-tighter uppercase mt-4 mb-10 leading-[0.85]">Audit<br />Resume.</h3>
+              <h3 className="text-3xl md:text-4xl font-black tracking-tighter uppercase mt-4 mb-6 leading-[0.85]">Audit<br />Resume.</h3>
 
               <form onSubmit={handleAuditResume} className="space-y-6">
                 <div className="space-y-4">
@@ -441,10 +443,6 @@ function Jobs({ user }: { user: any }) {
         <div className="max-w-2xl">
           <h3 className="text-6xl font-black tracking-tighter uppercase mb-8 leading-none text-white">Work for the<br />Future.</h3>
           <p className="text-xl font-medium text-gray-400 mb-12">ShopNest connects talent with the infrastructure of tomorrow. Build your career on a platform designed for scale.</p>
-          <div className="flex gap-4">
-            <button className="studio-button px-10 h-16">VIEW DIRECTORY</button>
-            <button className="studio-button-ghost px-10 h-16">RECRUITMENT API</button>
-          </div>
         </div>
       </footer>
     </div>

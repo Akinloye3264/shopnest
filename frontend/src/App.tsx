@@ -65,14 +65,8 @@ function App() {
 
   useEffect(() => {
     const checkAuth = () => {
-      const storedToken = localStorage.getItem('token')
-      const storedUser = localStorage.getItem('user')
-      if (storedToken && storedUser) {
-        try { setUser(JSON.parse(storedUser)) } catch (e) {
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
-        }
-      }
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
       setLoading(false)
     }
     checkAuth()
