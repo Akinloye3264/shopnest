@@ -8,7 +8,9 @@
       "Bash(node -e \":*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -E \"\\\\.tsx$|\\\\.ts$\")"
     ]
   }
 }

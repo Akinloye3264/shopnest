@@ -542,9 +542,9 @@ export default function LandingPage() {
 
             <FadeUp delay={0.3}>
               <p className="text-gray-400 text-lg leading-relaxed mb-4">
-                Since our launch, ShopNest has helped over <strong className="text-white">500 young people</strong> find
-                employment or start their own businesses, facilitated over <strong className="text-white">₦2 million</strong> in
-                transactions, and supported <strong className="text-white">120+ local vendors</strong> in establishing their
+                Since our launch, ShopNest has helped over <strong className="text-white">50 young people</strong> find
+                employment and start their own businesses, facilitated over <strong className="text-white">₦1 million</strong> in
+                transactions, and supported <strong className="text-white">90+ local vendors</strong> in establishing their
                 digital presence.
               </p>
               <p className="text-gray-400 text-lg leading-relaxed">
