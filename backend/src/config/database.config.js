@@ -9,6 +9,7 @@ const sequelize = process.env.DATABASE_URL
   ? new Sequelize(process.env.DATABASE_URL, {
       dialect: dialect,
       logging: false,
+      searchPath: false,
       dialectOptions: {
         ssl: {
           require: true,
@@ -25,6 +26,7 @@ const sequelize = process.env.DATABASE_URL
         port: process.env.DB_PORT,
         dialect: dialect,
         logging: false,
+        searchPath: false,
         pool: {
           max: 5,
           min: 0,

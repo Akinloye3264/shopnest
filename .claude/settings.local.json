@@ -4,7 +4,12 @@
       "Bash(find /c/Users/AKINLOYE/Documents/shopnest/frontend/src -type f -name *.jsx -o -name *.js -o -name *.tsx -o -name *.ts)",
       "Bash(find /c/Users/AKINLOYE/Documents/shopnest/backend -type f \\\\\\(-name *.js -o -name *.ts \\\\\\))",
       "Bash(find /c/Users/AKINLOYE/Documents/shopnest -type f -name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js)",
-      "Bash(find /c/Users/AKINLOYE/Documents/shopnest -maxdepth 2 -type d ! -path */node_modules ! -path */dist)"
+      "Bash(find /c/Users/AKINLOYE/Documents/shopnest -maxdepth 2 -type d ! -path */node_modules ! -path */dist)",
+      "Bash(mkdir -p docker docs/images database scripts)",
+      "Bash(mv docker-compose.yml docker/)",
+      "Bash(mv .dockerignore docker/)",
+      "Bash(mv API_DOCS.md DEPLOYMENT.md ENV_VARIABLES.md GOOGLE_OAUTH_SETUP.md docs/)",
+      "Bash(mv shopnest_backup.sql database/)"
     ]
   }
 }
