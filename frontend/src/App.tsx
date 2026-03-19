@@ -155,9 +155,11 @@ function App() {
                     <ShoppingCart size={14} /> Orders
                   </Link>
                 )}
-                <Link to="/messages" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
-                  <MessageSquare size={14} /> Messages
-                </Link>
+                {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/messages" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
+                    <MessageSquare size={14} /> Messages
+                  </Link>
+                )}
                 {user.role === 'admin' && (
                   <Link to="/admin" className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-brand-accent transition-colors">
                     <Shield size={14} /> Admin
@@ -197,7 +199,9 @@ function App() {
                 {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
                   <Link to="/orders" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Orders</Link>
                 )}
-                <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Messages</Link>
+                {(user.role === 'buyer' || user.role === 'seller' || user.role === 'admin') && (
+                  <Link to="/messages" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">Messages</Link>
+                )}
                 <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-white">My Profile</Link>
                 {user.role === 'admin' && (
                   <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase text-brand-accent">Admin Panel</Link>

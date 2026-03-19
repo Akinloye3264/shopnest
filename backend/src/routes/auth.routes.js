@@ -322,7 +322,7 @@ router.get('/search', async (req, res) => {
     if (!q || q.length < 2) return res.json({ success: true, users: [] });
 
     const { Op } = require('sequelize');
-    const whereClause: any = {
+    const whereClause = {
       [Op.or]: [
         { name: { [Op.iLike]: `%${q}%` } },
         { email: { [Op.iLike]: `%${q}%` } }
@@ -341,7 +341,7 @@ router.get('/search', async (req, res) => {
     // fallback for MySQL (no iLike)
     try {
       const { Op } = require('sequelize');
-      const whereClause: any = {
+      const whereClause = {
         [Op.or]: [
           { name: { [Op.like]: `%${req.query.q}%` } },
           { email: { [Op.like]: `%${req.query.q}%` } }
