@@ -1,16 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)",
-      "Bash(node -e \"require\\(''nodemailer''\\); console.log\\(''nodemailer exists''\\)\")",
-      "Bash(npm install:*)",
-      "Bash(EMAIL_USER=shopnest3264@gmail.com EMAIL_PASS=\"pqde gzoc srzu crwj\" node -e \":*)",
-      "Bash(node -e \":*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(npm uninstall:*)",
-      "Bash(xargs grep:*)",
-      "Bash(grep -E \"\\\\.tsx$|\\\\.ts$\")"
+      "Bash(find /c/Users/AKINLOYE/Documents/shopnest/frontend/src -type f -name *.jsx -o -name *.js -o -name *.tsx -o -name *.ts)",
+      "Bash(find /c/Users/AKINLOYE/Documents/shopnest/backend -type f \\\\\\(-name *.js -o -name *.ts \\\\\\))",
+      "Bash(find /c/Users/AKINLOYE/Documents/shopnest -type f -name *.tsx -o -name *.ts -o -name *.jsx -o -name *.js)",
+      "Bash(find /c/Users/AKINLOYE/Documents/shopnest -maxdepth 2 -type d ! -path */node_modules ! -path */dist)"
     ]
   }
 }

@@ -17,7 +17,7 @@ This guide will help you deploy ShopNest to Render with proper environment varia
 3. Connect your GitHub repository
 4. Configure the service:
    - **Name**: `shopnest-backend` (or your preferred name)
-   - **Region**: Choose closest to your users
+   - **Region**: Choose closest to your users(used oregion)
    - **Branch**: `main` (or your default branch)
    - **Root Directory**: `backend`
    - **Runtime**: `Node`

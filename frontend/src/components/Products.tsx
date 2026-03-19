@@ -143,7 +143,6 @@ function Products({ user }: { user: any }) {
   const handleCheckout = async () => {
     setCheckoutLoading(true)
     try {
-      // Use orders/checkout to save order to DB + create Stripe session
       const res = await fetch(`${API_URL}/api/orders/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -394,8 +393,7 @@ function Products({ user }: { user: any }) {
                       </button>
                     </div>
                   ))
-                )
-                }
+                )}
               </div>
 
               {cart.length > 0 && (

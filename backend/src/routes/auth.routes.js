@@ -315,6 +315,48 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+// GET /api/auth/search?q=query - Search users by name or email
+router.get('/search', async (req, res) => {
+  try {
+    const { q, exclude } = req.query;
+    if (!q || q.length < 2) return res.json({ success: true, users: [] });
+
+    const { Op } = require('sequelize');
+    const whereClause: any = {
+      [Op.or]: [
+        { name: { [Op.iLike]: `%${q}%` } },
+        { email: { [Op.iLike]: `%${q}%` } }
+      ]
+    };
+    if (exclude) whereClause.id = { [Op.ne]: exclude };
+    if (req.query.role) whereClause.role = req.query.role;
+
+    const users = await User.findAll({
+      where: whereClause,
+      attributes: ['id', 'name', 'email', 'role', 'picture'],
+      limit: 8
+    });
+    res.json({ success: true, users });
+  } catch (error) {
+    // fallback for MySQL (no iLike)
+    try {
+      const { Op } = require('sequelize');
+      const whereClause: any = {
+        [Op.or]: [
+          { name: { [Op.like]: `%${req.query.q}%` } },
+          { email: { [Op.like]: `%${req.query.q}%` } }
+        ]
+      };
+      if (req.query.exclude) whereClause.id = { [Op.ne]: req.query.exclude };
+      if (req.query.role) whereClause.role = req.query.role;
+      const users = await User.findAll({ where: whereClause, attributes: ['id', 'name', 'email', 'role', 'picture'], limit: 8 });
+      res.json({ success: true, users });
+    } catch (e) {
+      res.status(500).json({ success: false, message: e.message });
+    }
+  }
+});
+
 // GET /api/auth/profile/:userId
 router.get('/profile/:userId', async (req, res) => {
   try {

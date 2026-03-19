@@ -167,4 +167,34 @@ router.post('/:id/cancel', async (req, res) => {
     }
 });
 
+// GET /api/orders/check-seller/:buyerId/:sellerId - Check if buyer has a completed transaction with a seller
+router.get('/check-seller/:buyerId/:sellerId', async (req, res) => {
+    try {
+        const { buyerId, sellerId } = req.params;
+        const completedStatuses = ['paid', 'processing', 'shipped', 'delivered'];
+
+        const orders = await Order.findAll({
+            where: { userId: buyerId },
+            include: [{
+                model: OrderItem,
+                as: 'items',
+                include: [{
+                    model: Product,
+                    as: 'product',
+                    attributes: ['id', 'sellerId']
+                }]
+            }]
+        });
+
+        const hasTransaction = orders.some(order =>
+            completedStatuses.includes(order.status) &&
+            order.items?.some(item => item.product?.sellerId === sellerId)
+        );
+
+        res.json({ success: true, hasTransaction });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 module.exports = router;

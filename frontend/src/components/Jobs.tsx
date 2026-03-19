@@ -238,12 +238,12 @@ function Jobs({ user }: { user: any }) {
             <h3 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6 text-white">Global Opportunities</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {externalJobs.map((job, i) => (
-                <div key={i} className="glass-card p-5 md:p-8 flex flex-col hover:bg-white/5 transition-all border-white/5">
-                  <div className="flex justify-between items-start mb-4 gap-3">
-                    <h4 className="text-lg md:text-2xl font-black uppercase leading-tight tracking-tighter">{job.title}</h4>
-                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{job.location}</span>
+                <div key={i} className="glass-card p-5 md:p-8 flex flex-col hover:bg-white/5 transition-all border-white/5 overflow-hidden">
+                  <div className="flex items-start gap-2 mb-3">
+                    <h4 className="flex-1 min-w-0 text-sm md:text-base font-black uppercase leading-tight tracking-tighter line-clamp-2">{job.title}</h4>
+                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest max-w-[100px] truncate">{job.location}</span>
                   </div>
-                  <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-6 uppercase opacity-80">
+                  <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-6 line-clamp-3">
                     {job.description.substring(0, 180)}...
                   </p>
                   <a href={job.redirect_url} target="_blank" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#00ff88] hover:text-white transition-colors self-start underline decoration-2 underline-offset-8">
@@ -337,10 +337,10 @@ function Jobs({ user }: { user: any }) {
           <h3 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6">My Job Listings</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {myJobs.map((job) => (
-              <div key={job.id} className="glass-card p-10 flex flex-col hover:bg-white/5 transition-all border-white/5">
-                <div className="flex justify-between items-start mb-6 gap-4">
-                  <h4 className="text-2xl font-black uppercase leading-[0.9] tracking-tighter">{job.title}</h4>
-                  <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">{job.type}</span>
+              <div key={job.id} className="glass-card p-6 md:p-10 flex flex-col hover:bg-white/5 transition-all border-white/5 overflow-hidden">
+                <div className="flex items-start gap-3 mb-4">
+                  <h4 className="flex-1 min-w-0 text-lg md:text-xl font-black uppercase leading-tight tracking-tighter line-clamp-2">{job.title}</h4>
+                  <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{job.type}</span>
                 </div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">{job.company} · {job.location}</p>
                 {job.salary && (
@@ -368,10 +368,10 @@ function Jobs({ user }: { user: any }) {
           <h3 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6">Active Applicant Tracking</h3>
           <div className="grid grid-cols-1 gap-6">
             {applications.map(app => (
-              <div key={app.id} className="glass-card p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <h4 className="text-3xl font-black uppercase tracking-tighter">{app.applicant.name}</h4>
+              <div key={app.id} className="glass-card p-6 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 overflow-hidden">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <h4 className="text-xl md:text-2xl font-black uppercase tracking-tighter truncate">{app.applicant.name}</h4>
                     <span className="bg-brand-accent/20 text-brand-accent px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{app.status}</span>
                   </div>
                   <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Applying for: <span className="text-white">{app.job.title}</span></p>

@@ -40,6 +40,25 @@ router.get('/job/:jobId', async (req, res) => {
     }
 });
 
+// GET /api/reviews/seller/:sellerId - Get all reviews for a seller
+router.get('/seller/:sellerId', async (req, res) => {
+    try {
+        const reviews = await Review.findAll({
+            where: { productId: req.params.sellerId, type: 'seller' },
+            include: [{ model: User, as: 'reviewer', attributes: ['name', 'picture'] }],
+            order: [['createdAt', 'DESC']]
+        });
+
+        const avgRating = reviews.length
+            ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+            : 0;
+
+        res.json({ success: true, reviews, averageRating: Number(avgRating), total: reviews.length });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // POST /api/reviews - Create a new review
 router.post('/', async (req, res) => {
     try {

@@ -19,11 +19,6 @@ router.get('/google', (req, res) => {
   const redirectUri = `${backendUrl}/api/google-auth/callback`;
   const scope = 'email profile';
 
-  console.log('--- Google OAuth Debug ---');
-  console.log('Redirect URI:', redirectUri);
-  console.log('Client ID:', GOOGLE_CLIENT_ID);
-  console.log('---------------------------');
-
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${GOOGLE_CLIENT_ID}&` +
     `redirect_uri=${encodeURIComponent(redirectUri)}&` +

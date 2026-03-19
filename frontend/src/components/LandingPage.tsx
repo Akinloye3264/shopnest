@@ -407,17 +407,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── PLATFORM SHOWCASE ── */}
-      <section className="py-24 border-y border-white/5 bg-white/[0.015]">
+      {/* ── E-COMMERCE SHOWCASE ── */}
+      <section className="py-32 border-y border-white/5 bg-white/[0.015]">
         <div className="studio-container">
           <FadeUp className="text-center mb-16">
-            <p className="text-xs font-black uppercase tracking-widest text-brand-accent mb-4">Who It's For</p>
+            <p className="text-xs font-black uppercase tracking-widest text-brand-accent mb-4">Marketplace</p>
             <h2 className="font-black tracking-tighter" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
-              One Platform, Multiple Paths
+              Buy & Sell on ShopNest
             </h2>
+            <p className="text-gray-400 mt-4 text-lg max-w-lg mx-auto">
+              Zero startup cost. Open your digital storefront and start earning today.
+            </p>
           </FadeUp>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
               {
                 icon: '🛍️',
@@ -433,20 +435,38 @@ export default function LandingPage() {
                 cta: 'Start Selling',
                 link: '/register',
               },
-              {
-                icon: '🎓',
-                role: 'Job Seekers',
-                desc: 'Find job opportunities that match your skills. Apply for roles, audit your resume with AI, and get hired without connections.',
-                cta: 'Find Jobs',
-                link: '/register',
-              },
-              {
-                icon: '🏢',
-                role: 'Employers',
-                desc: 'Post job listings, review applicants, and hire qualified talent. Build your team directly through ShopNest.',
-                cta: 'Post a Job',
-                link: '/register',
-              },
+            ].map((item, i) => (
+              <FadeUp key={i} delay={i * 0.1}>
+                <div className="glass-card p-10 text-center flex flex-col h-full">
+                  <span className="text-5xl mb-6 block">{item.icon}</span>
+                  <h3 className="font-black text-xl uppercase tracking-tight mb-4 text-brand-accent">{item.role}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed flex-1 mb-8">{item.desc}</p>
+                  <Link to={item.link} className="studio-button text-xs uppercase tracking-widest py-3 w-full">
+                    {item.cta} <ArrowRight size={14} className="inline ml-1" />
+                  </Link>
+                </div>
+              </FadeUp>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── JOBS SHOWCASE ── */}
+      <section className="py-32 border-b border-white/5">
+        <div className="studio-container">
+          <FadeUp className="text-center mb-16">
+            <p className="text-xs font-black uppercase tracking-widest text-brand-accent mb-4">Employment</p>
+            <h2 className="font-black tracking-tighter" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
+              Jobs & Hiring on ShopNest
+            </h2>
+            <p className="text-gray-400 mt-4 text-lg max-w-lg mx-auto">
+              Get hired or build your team — based on skills, not connections.
+            </p>
+          </FadeUp>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {[
+              { icon: '🎓', role: 'Job Seekers', desc: 'Find job opportunities that match your skills. Apply for roles, audit your resume with AI, and get hired without connections.', cta: 'Find Jobs', link: '/register' },
+              { icon: '🏢', role: 'Employers', desc: 'Post job listings, review applicants, and hire qualified talent. Build your team directly through ShopNest.', cta: 'Post a Job', link: '/register' },
             ].map((item, i) => (
               <FadeUp key={i} delay={i * 0.1}>
                 <div className="glass-card p-10 text-center flex flex-col h-full">
