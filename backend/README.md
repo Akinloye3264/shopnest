@@ -80,8 +80,9 @@ backend/
 2. **Environment variables**:
    Create a `.env` file with:
    ```
-   PORT=5001
-   FRONTEND_URL=http://localhost:5173
+   PORT=10000
+   FRONTEND_URL=https://sshopnestt.netlify.app
+   BACKEND_URL=https://shopnest-2ywt.onrender.com
    ```
 
 3. **Start development server**:
@@ -130,24 +131,24 @@ This will:
 
 ### Health Check
 ```bash
-curl http://localhost:5001/health
+curl https://shopnest-2ywt.onrender.com/health
 ```
 
 ### Get Products
 ```bash
-curl http://localhost:5001/api/products
+curl https://shopnest-2ywt.onrender.com/api/products
 ```
 
 ### Login
 ```bash
-curl -X POST http://localhost:5001/api/auth/login \
+curl -X POST https://shopnest-2ywt.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password"}'
 ```
 
 ### AI Assistant
 ```bash
-curl -X POST http://localhost:5001/api/ai/learning-assistant \
+curl -X POST https://shopnest-2ywt.onrender.com/api/ai/learning-assistant \
   -H "Content-Type: application/json" \
   -d '{"question":"How can I grow my business?"}'
 ```
@@ -155,9 +156,10 @@ curl -X POST http://localhost:5001/api/ai/learning-assistant \
 ## 🔧 Configuration
 
 ### Server Configuration
-- **Port**: 5001 (default)
-- **Frontend URL**: http://localhost:5173 (default)
-- **Environment**: development (default)
+- **Port**: 10000
+- **Backend URL**: https://shopnest-2ywt.onrender.com
+- **Frontend URL**: https://sshopnestt.netlify.app
+- **Environment**: production
 
 ### CORS Configuration
 - Origin: Configured via FRONTEND_URL
@@ -223,7 +225,7 @@ This project is part of the ShopNest platform.
 
 ---
 
-**Server Status**: ✅ Running on http://localhost:5001
+**Server Status**: ✅ Running on https://shopnest-2ywt.onrender.com
 **API Version**: v2.0.0
 **Last Updated**: 2024-02-27
 
