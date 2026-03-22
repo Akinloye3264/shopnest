@@ -82,7 +82,7 @@ backend/
    ```
    PORT=10000
    FRONTEND_URL=https://sshopnestt.netlify.app
-   BACKEND_URL=https://shopnest-2ywt.onrender.com/api-docs
+   BACKEND_URL=https://shopnest-2ywt.onrender.com
    ```
 
 3. **Start development server**:

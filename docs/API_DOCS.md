@@ -9,7 +9,7 @@ The ShopNest API is fully documented using Swagger/OpenAPI 3.0 specification.
 Once the backend server is running, access the interactive API documentation at:
 
 ```
-http://localhost:5000/api-docs
+https://shopnest-2ywt.onrender.com/api-docs
 ```
 
 ### Features
@@ -21,7 +21,7 @@ http://localhost:5000/api-docs
 
 ### API Base URL
 
-- **Development**: `http://localhost:5000/api`
+- **Development**: `https://shopnest-2ywt.onrender.com/api`
 - 
 
 ### Authentication
