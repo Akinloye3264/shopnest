@@ -30,18 +30,10 @@ This guide will help you deploy ShopNest to Render with proper environment varia
 In the Render dashboard, go to your backend service → Environment tab and add:
 
 ```
-DB_NAME=your_database_name
-DB_USER=your_database_user
-DB_PASSWORD=your_database_password
-DB_HOST=your_database_host
-DB_PORT=3306
+DATABASE_URL=
+DB_DIALECT=
 PORT=5001
 JWT_secret=your_secure_jwt_secret
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_gmail_app_password
-TWILIO_ACCOUNT_SID=your_twilio_sid
-TWILIO_AUTH_TOKEN=your_twilio_token
-TWILIO_MESSAGING_SERVICE_SID=your_messaging_sid
 ADZUNA_APP_ID=your_adzuna_app_id
 ADZUNA_API_KEY=your_adzuna_key
 COHERE_API_KEY=your_cohere_key

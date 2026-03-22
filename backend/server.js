@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/config/swagger.config');
 require('dotenv').config();
 
 // Import routes
@@ -20,12 +22,12 @@ const { errorHandler, notFound, requestLogger } = require('./src/middleware/erro
 const app = express();
 const PORT = process.env.PORT || 5001;
 const { sequelize } = require('./src/config/database.config');
-require('./src/models'); // Initialize associations
+require('./src/models'); 
 
 // Connect to Database
 sequelize.sync({ alter: true })
-  .then(() => console.log(`✅ ${process.env.DB_DIALECT?.toUpperCase() || 'DATABASE'} Models synchronized.`))
-  .catch(err => console.error('❌ Error synchronizing models:', err));
+  .then(() => console.log(`${process.env.DB_DIALECT?.toUpperCase() || 'DATABASE'} Models synchronized.`))
+  .catch(err => console.error('Error synchronizing models:', err));
 
 // Middleware
 const allowedOrigins = [
@@ -48,6 +50,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
+
+// Swagger docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -116,8 +121,8 @@ const server = app.listen(PORT, "0.0.0.0", () => {
 const backendUrl = process.env.BACKEND_URL || `http://localhost:${PORT}`;
 setInterval(() => {
   fetch(`${backendUrl}/health`)
-    .then(res => console.log(`⏰ Keep-alive ping at ${new Date().toISOString()}`))
-    .catch(() => {}); // silently fail
+    .then(res => console.log(` Keep-alive ping at ${new Date().toISOString()}`))
+    .catch(() => {}); 
 }, 5 * 60 * 1000); // every 5 minutes
 
 module.exports = app;
