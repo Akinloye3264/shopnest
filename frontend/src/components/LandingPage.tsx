@@ -129,32 +129,38 @@ export default function LandingPage() {
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden lg:flex items-center space-x-10">
             <a href="#features" className="text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors">Features</a>
             <a href="#mission" className="text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors">Mission</a>
             <a href="#how-it-works" className="text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors">How It Works</a>
             <a href="#about" className="text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors">About</a>
           </div>
 
-          <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-sm font-black uppercase tracking-widest px-6 py-3 border border-white/20 rounded-full hover:border-brand-accent hover:text-brand-accent transition-all"
-            >
-              Log In
-            </Link>
-            <Link to="/register" className="studio-button text-xs uppercase tracking-widest px-7 py-3">
-              Sign Up Free
-            </Link>
+          <div className="hidden lg:flex items-center space-x-4">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/login"
+                className="text-sm font-black uppercase tracking-widest px-6 py-3 border border-white/20 rounded-full hover:border-brand-accent hover:text-brand-accent transition-all cursor-pointer"
+              >
+                Log In
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+              <Link to="/register" className="studio-button text-xs uppercase tracking-widest px-7 py-3">
+                Sign Up 
+              </Link>
+            </motion.div>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button
+          {/* Mobile/Tablet Menu Toggle */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.85 }}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-white"
+            className="lg:hidden p-2 text-white cursor-pointer"
           >
             {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          </motion.button>
         </div>
       </motion.nav>
 
@@ -166,15 +172,15 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.25 }}
-            className="fixed top-20 left-0 w-full z-[99] bg-[#0a0a0a]/98 backdrop-blur-2xl border-b border-white/5 p-8 flex flex-col space-y-6 md:hidden"
+            className="fixed top-20 left-0 w-full z-[99] bg-[#0a0a0a]/98 backdrop-blur-2xl border-b border-white/5 p-8 flex flex-col space-y-6 lg:hidden"
           >
             <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-xl font-black uppercase tracking-wide">Features</a>
             <a href="#mission" onClick={() => setMobileMenuOpen(false)} className="text-xl font-black uppercase tracking-wide">Mission</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-xl font-black uppercase tracking-wide">How It Works</a>
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-xl font-black uppercase tracking-wide">About</a>
             <div className="pt-4 border-t border-white/10 flex flex-col space-y-4">
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-center py-4 border border-white/20 rounded-full font-black uppercase tracking-widest text-sm hover:border-brand-accent hover:text-brand-accent transition-all">Log In</Link>
-              <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="studio-button text-center py-4 uppercase tracking-widest text-sm">Sign Up Free</Link>
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-center py-4 border border-white/20 rounded-full font-black uppercase tracking-widest text-sm hover:border-brand-accent hover:text-brand-accent transition-all cursor-pointer">Log In</Link>
+              <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="studio-button text-center py-4 uppercase tracking-widest text-sm cursor-pointer">Sign Up</Link>
             </div>
           </motion.div>
         )}
@@ -211,13 +217,13 @@ export default function LandingPage() {
             className="inline-flex items-center space-x-2 mb-8 px-5 py-2 border border-brand-accent/30 rounded-full bg-brand-accent/5"
           >
             <span className="text-lg">🇳🇬</span>
-            <span className="text-xs font-black uppercase tracking-widest text-brand-accent">Built for African Youth</span>
+            <span className="text-xs font-black uppercase tracking-widest text-brand-accent">Built for Nigerian Youth</span>
           </motion.div>
 
           {/* Headline */}
           <motion.h1
             className="font-black tracking-tighter leading-none mb-8"
-            style={{ fontSize: 'clamp(3rem, 9vw, 7rem)' }}
+            style={{ fontSize: 'clamp(2rem, 9vw, 7rem)' }}
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -246,13 +252,6 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Link to="/register" className="studio-button text-base uppercase tracking-widest px-10 py-5 flex items-center gap-3 group">
-              Start Earning Today
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link to="/login" className="text-sm font-black uppercase tracking-widest px-10 py-5 border border-white/20 rounded-full hover:border-brand-accent hover:text-brand-accent transition-all">
-              Log In to Account
-            </Link>
           </motion.div>
 
           {/* Trust badges */}
@@ -348,9 +347,11 @@ export default function LandingPage() {
                 ShopNest was built for Gwagwalada, Abuja to give qualified graduates a fair
                 shot at income, without needing <em className="text-gray-300">"connections from high places."</em>
               </p>
-              <a href="#about" className="studio-button-ghost inline-flex items-center gap-2 px-8 py-4 text-sm font-black uppercase tracking-widest rounded-full">
-                Read Our Story <ArrowRight size={16} />
-              </a>
+              <motion.div whileHover={{ scale: 1.05, x: 4 }} whileTap={{ scale: 0.95 }} style={{ display: 'inline-flex' }}>
+                <a href="#about" className="studio-button-ghost inline-flex items-center gap-2 px-8 py-4 text-sm font-black uppercase tracking-widest rounded-full cursor-pointer">
+                  Read Our Story <ArrowRight size={16} />
+                </a>
+              </motion.div>
             </SlideIn>
 
             <SlideIn direction="right" delay={0.15}>
@@ -441,9 +442,11 @@ export default function LandingPage() {
                   <span className="text-5xl mb-6 block">{item.icon}</span>
                   <h3 className="font-black text-xl uppercase tracking-tight mb-4 text-brand-accent">{item.role}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed flex-1 mb-8">{item.desc}</p>
-                  <Link to={item.link} className="studio-button text-xs uppercase tracking-widest py-3 w-full">
-                    {item.cta} <ArrowRight size={14} className="inline ml-1" />
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}>
+                    <Link to={item.link} className="studio-button text-xs uppercase tracking-widest py-3 w-full cursor-pointer">
+                      {item.cta} <ArrowRight size={14} className="inline ml-1" />
+                    </Link>
+                  </motion.div>
                 </div>
               </FadeUp>
             ))}
@@ -473,9 +476,11 @@ export default function LandingPage() {
                   <span className="text-5xl mb-6 block">{item.icon}</span>
                   <h3 className="font-black text-xl uppercase tracking-tight mb-4 text-brand-accent">{item.role}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed flex-1 mb-8">{item.desc}</p>
-                  <Link to={item.link} className="studio-button text-xs uppercase tracking-widest py-3 w-full">
-                    {item.cta} <ArrowRight size={14} className="inline ml-1" />
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}>
+                    <Link to={item.link} className="studio-button text-xs uppercase tracking-widest py-3 w-full cursor-pointer">
+                      {item.cta} <ArrowRight size={14} className="inline ml-1" />
+                    </Link>
+                  </motion.div>
                 </div>
               </FadeUp>
             ))}
@@ -501,13 +506,17 @@ export default function LandingPage() {
               Your opportunity is waiting.
             </p>
             <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
-              <Link to="/register" className="studio-button text-base uppercase tracking-widest px-12 py-5 flex items-center gap-3 group">
-                Create Free Account
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link to="/login" className="text-sm font-black uppercase tracking-widest px-12 py-5 border border-white/20 rounded-full hover:border-brand-accent hover:text-brand-accent transition-all">
-                Already Have Account
-              </Link>
+              <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.96 }}>
+                <Link to="/register" className="studio-button text-base uppercase tracking-widest px-12 py-5 flex items-center gap-3 group cursor-pointer">
+                  Create Free Account
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}>
+                <Link to="/login" className="text-sm font-black uppercase tracking-widest px-12 py-5 border border-white/20 rounded-full hover:border-brand-accent hover:text-brand-accent transition-all cursor-pointer">
+                  Already Have Account
+                </Link>
+              </motion.div>
             </div>
           </FadeUp>
         </div>
@@ -527,7 +536,7 @@ export default function LandingPage() {
             <FadeUp delay={0.1}>
               <p className="text-gray-400 text-lg leading-relaxed mb-6">
                 ShopNest was born out of a simple observation: talented, qualified graduates across Africa
-                are struggling to find meaningful employment — not because they lack skills, but because
+                are struggling to find meaningful employment, not because they lack skills, but because
                 they lack connections and opportunities.
               </p>
               <p className="text-gray-400 text-lg leading-relaxed mb-6">
@@ -589,10 +598,6 @@ export default function LandingPage() {
             <div className="text-center">
               <p className="text-xs text-gray-600">© 2026 ShopNest. Starting from Gwagwalada, Abuja.</p>
               <p className="text-xs text-gray-600 mt-1">Creating jobs. Building futures.</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link to="/login" className="text-xs font-black uppercase tracking-widest text-gray-500 hover:text-brand-accent transition-colors">Log In</Link>
-              <Link to="/register" className="studio-button text-xs uppercase tracking-widest px-5 py-2">Sign Up</Link>
             </div>
           </div>
         </div>

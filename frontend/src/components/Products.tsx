@@ -155,7 +155,7 @@ function Products({ user }: { user: any }) {
       if (data.success && data.url) {
         setCart([])
         localStorage.removeItem('shopnest_cart')
-        window.open(data.url, '_blank')
+        window.location.href = data.url
       } else {
         toast.error(data.message || 'Gateway connection failed.')
       }
@@ -174,9 +174,11 @@ function Products({ user }: { user: any }) {
           <p className="text-xl font-medium text-gray-400">Discover premium assets curated from verified sellers across the ShopNest ecosystem.</p>
         </div>
         <div className="flex gap-3 flex-wrap">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setShowCart(true)}
-            className="studio-button-ghost h-14 md:h-20 px-6 md:px-8 flex items-center gap-3 relative group"
+            className="studio-button-ghost h-14 md:h-20 px-6 md:px-8 flex items-center gap-3 relative group cursor-pointer"
           >
             <ShoppingCart size={20} className="group-hover:text-brand-accent transition-colors" />
             <span className="uppercase tracking-widest font-black text-sm">Cart</span>
@@ -185,14 +187,16 @@ function Products({ user }: { user: any }) {
                 {cart.length}
               </span>
             )}
-          </button>
+          </motion.button>
           {(user.role === 'seller' || user.role === 'admin') && (
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setShowAddForm(!showAddForm)}
-              className="studio-button h-14 md:h-20 px-6 md:px-12 text-sm md:text-lg uppercase tracking-widest flex items-center gap-2"
+              className="studio-button h-14 md:h-20 px-6 md:px-12 text-sm md:text-lg uppercase tracking-widest flex items-center gap-2 cursor-pointer"
             >
               {showAddForm ? 'CANCEL LISTING' : <><Plus size={18} /> NEW PRODUCT</>}
-            </button>
+            </motion.button>
           )}
         </div>
       </header>
