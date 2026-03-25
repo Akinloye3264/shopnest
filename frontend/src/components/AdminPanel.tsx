@@ -123,12 +123,12 @@ function AdminPanel({ user }: { user: User }) {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 bg-white/3 rounded-xl p-1 w-fit">
+            <div className="flex gap-1 bg-white/[0.03] rounded-xl p-1 w-full sm:w-fit">
                 {(['overview', 'users', 'orders'] as const).map(tab => (
                     <button
                         key={tab}
                         onClick={() => { setActiveTab(tab); if (tab === 'users') fetchUsers() }}
-                        className={`px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-brand-accent text-black' : 'text-gray-400 hover:text-white'}`}
+                        className={`flex-1 sm:flex-none px-4 md:px-8 py-3 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-brand-accent text-black' : 'text-gray-400 hover:text-white'}`}
                     >
                         {tab}
                     </button>

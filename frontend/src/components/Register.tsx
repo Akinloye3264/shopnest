@@ -298,7 +298,7 @@ function Register() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            className="w-full max-w-lg glass-card p-12 text-center"
+            className="w-full max-w-lg glass-card p-8 md:p-12 text-center"
           >
             <ShieldCheck className="mx-auto text-brand-accent mb-6" size={64} />
             <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Verification</h2>
@@ -313,7 +313,7 @@ function Register() {
                 required
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className="studio-input text-center text-5xl font-black tracking-[0.5em] h-24"
+                className="studio-input text-center text-3xl md:text-5xl font-black tracking-[0.3em] md:tracking-[0.5em] h-16 md:h-24"
                 placeholder="000000"
                 maxLength={6}
                 autoFocus

@@ -41,8 +41,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [aiOpen, setAiOpen] = useState(false)
   const [aiMessage, setAiMessage] = useState('')
-  const [aiResponse, setAiResponse] = useState('')
-  const [aiSentMessage, setAiSentMessage] = useState('')
+  const [aiMessages, setAiMessages] = useState<{role: 'user'|'ai', text: string}[]>([])
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const formatMarkdown = (text: string): string => {
@@ -98,19 +97,20 @@ function App() {
   const askAi = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!aiMessage.trim()) return
-    setAiSentMessage(aiMessage)
+    const userMsg = aiMessage
+    setAiMessages(prev => [...prev, { role: 'user', text: userMsg }])
     setAiMessage('')
-    setAiResponse('Consulting ShopNest ...')
+    setAiMessages(prev => [...prev, { role: 'ai', text: 'Consulting ShopNest ...' }])
     try {
       const res = await fetch(`${API_URL}/api/ai/learning-assistant`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: aiMessage })
+        body: JSON.stringify({ question: userMsg })
       })
       const data = await res.json()
-      setAiResponse(data.response)
+      setAiMessages(prev => [...prev.slice(0, -1), { role: 'ai', text: data.response }])
     } catch (err) {
-      setAiResponse('Connection to AI brain failed.')
+      setAiMessages(prev => [...prev.slice(0, -1), { role: 'ai', text: 'Connection to AI brain failed.' }])
     }
   }
 
@@ -236,36 +236,38 @@ function App() {
 
         {/* AI Modal */}
         {aiOpen && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl">
-            <div className="w-full max-w-4xl max-h-[90vh] flex flex-col animate-slide-up">
-              <div className="flex justify-between items-center mb-12">
-                <h2 className="text-white studio-h2 mb-0">AI STRATEGIST</h2>
-                <button onClick={() => setAiOpen(false)} className="text-white font-black uppercase text-xs tracking-widest border border-white/20 px-6 py-2 rounded-full hover:bg-white hover:text-black transition-all">Close</button>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-black/95 backdrop-blur-xl">
+            <div className="w-full max-w-4xl h-[90vh] md:max-h-[90vh] flex flex-col animate-slide-up">
+              <div className="flex justify-between items-center mb-4 md:mb-10">
+                <h2 className="text-white text-2xl md:text-4xl font-black tracking-tighter mb-0">AI STRATEGIST</h2>
+                <button onClick={() => setAiOpen(false)} className="text-white font-black uppercase text-xs tracking-widest border border-white/20 px-4 py-2 rounded-full hover:bg-white hover:text-black transition-all shrink-0">Close</button>
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-6 pr-4 custom-scrollbar">
-                {!aiSentMessage && !aiResponse && (
-                  <div className="text-white/20 text-3xl md:text-5xl font-black leading-none uppercase select-none">
-                    Waiting for your input...
-                  </div>
-                )}
-               
-                {aiResponse && (
-                  <div className="flex justify-start">
-                    <div className="ai-response-bubble bg-white text-black rounded-2xl rounded-tl-sm px-8 py-6 max-w-[85%] text-[15px] leading-relaxed font-medium">
-                      <div dangerouslySetInnerHTML={{ __html: formatMarkdown(aiResponse) }} />
+                {aiMessages.map((msg, i) => (
+                  msg.role === 'user' ? (
+                    <div key={i} className="flex justify-end">
+                      <div className="bg-white/10 text-white rounded-2xl rounded-tr-sm px-6 py-4 max-w-[85%] text-[15px] leading-relaxed font-medium">
+                        {msg.text}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div key={i} className="flex justify-start">
+                      <div className="ai-response-bubble bg-white text-black rounded-2xl rounded-tl-sm px-8 py-6 max-w-[85%] text-[15px] leading-relaxed font-medium">
+                        <div dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.text) }} />
+                      </div>
+                    </div>
+                  )
+                ))}
               </div>
 
-              <form onSubmit={askAi} className="mt-8 flex gap-3">
+              <form onSubmit={askAi} className="mt-4 md:mt-8 flex gap-3">
                 <input
                   type="text"
                   value={aiMessage}
                   onChange={(e) => setAiMessage(e.target.value)}
                   placeholder="Inquire about ShopNest..."
-                  className="flex-1 bg-transparent border-b-4 border-white/10 text-white text-xl md:text-4xl font-black pb-4 outline-none focus:border-white transition-colors placeholder:text-white/10 min-w-0"
+                  className="flex-1 bg-transparent border-b-4 border-white/10 text-white text-lg md:text-2xl font-black pb-4 outline-none focus:border-white transition-colors placeholder:text-white/10 min-w-0"
                 />
                 <button type="submit" className="studio-button px-6 md:px-12 text-sm md:text-lg shrink-0">SEND</button>
               </form>

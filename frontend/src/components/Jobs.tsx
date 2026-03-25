@@ -145,7 +145,7 @@ function Jobs({ user }: { user: any }) {
           <div className="max-w-3xl">
             <span className="studio-label">System / {isActualEmployer ? 'Hiring' : 'Recruitment'}</span>
             <h1 className="studio-h1">{isActualEmployer ? <>Hiring<br />Management.</> : <>Global Talent<br />Search Portal.</>}</h1>
-            <p className="text-xl font-medium text-gray-400">
+            <p className="text-base md:text-xl font-medium text-gray-400">
               {isActualEmployer
                 ? 'Post jobs, review applicants, and manage your listings from one place.'
                 : 'ShopNest bridges the gap between high-scale ventures and elite ecosystem talent.'
@@ -410,7 +410,7 @@ function Jobs({ user }: { user: any }) {
               <div className="flex justify-between items-center mb-12 shrink-0">
                 <div>
                   <span className="studio-label text-brand-accent">Autonomous HR Audit Complete</span>
-                  <h2 className="text-4xl font-black tracking-tighter uppercase mt-2">Strategic Report</h2>
+                  <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase mt-2">Strategic Report</h2>
                 </div>
                 <button onClick={() => setAuditResult(null)} className="p-3 hover:bg-white/10 rounded-full transition-colors text-white">
                   <X size={32} />
@@ -439,10 +439,10 @@ function Jobs({ user }: { user: any }) {
         )}
       </AnimatePresence>
 
-      <footer className="pt-40 pb-60 border-t border-white/5">
+      <footer className="pt-16 pb-24 md:pt-40 md:pb-60 border-t border-white/5">
         <div className="max-w-2xl">
-          <h3 className="text-6xl font-black tracking-tighter uppercase mb-8 leading-none text-white">Work for the<br />Future.</h3>
-          <p className="text-xl font-medium text-gray-400 mb-12">ShopNest connects talent with the infrastructure of tomorrow. Build your career on a platform designed for scale.</p>
+          <h3 className="text-3xl md:text-6xl font-black tracking-tighter uppercase mb-6 md:mb-8 leading-none text-white">Work for the<br />Future.</h3>
+          <p className="text-base md:text-xl font-medium text-gray-400 mb-8 md:mb-12">ShopNest connects talent with the infrastructure of tomorrow. Build your career on a platform designed for scale.</p>
         </div>
       </footer>
     </div>

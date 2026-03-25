@@ -167,11 +167,27 @@ function Products({ user }: { user: any }) {
 
   return (
     <div className="space-y-16">
+
+      {/* Floating sticky cart button */}
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setShowCart(true)}
+        className="fixed bottom-6 right-6 z-[150] bg-brand-accent text-black rounded-full w-16 h-16 flex items-center justify-center shadow-[0_8px_30px_rgba(0,255,136,0.5)] cursor-pointer"
+      >
+        <ShoppingCart size={24} />
+        {cart.length > 0 && (
+          <span className="absolute -top-1 -right-1 bg-black text-brand-accent text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-brand-accent animate-pulse">
+            {cart.length}
+          </span>
+        )}
+      </motion.button>
+
       <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
         <div className="max-w-2xl">
           <span className="studio-label">Ecosystem / Marketplace</span>
           <h1 className="studio-h1 mb-4">The Global<br />Inventory Hub.</h1>
-          <p className="text-xl font-medium text-gray-400">Discover premium assets curated from verified sellers across the ShopNest ecosystem.</p>
+          <p className="text-base md:text-xl font-medium text-gray-400">Discover premium assets curated from verified sellers across the ShopNest ecosystem.</p>
         </div>
         <div className="flex gap-3 flex-wrap">
           <motion.button

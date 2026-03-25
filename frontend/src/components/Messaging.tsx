@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, MessageSquare, User as UserIcon, Star, X, Loader2, Search, Inbox } from 'lucide-react'
+import { Send, MessageSquare, User as UserIcon, Star, X, Loader2, Search, Inbox, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useSearchParams } from 'react-router-dom'
 import API_URL from '../config'
@@ -63,6 +63,7 @@ function Messaging({ user }: { user: User }) {
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const isBuyer = user.role === 'buyer'
+    const [mobileChatOpen, setMobileChatOpen] = useState(false)
 
     useEffect(() => { fetchConversations() }, [user.id])
     useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
@@ -92,6 +93,7 @@ function Messaging({ user }: { user: User }) {
         setActiveConversation(partnerId)
         setSendingTo(partnerName)
         setSendingToPicture(partnerPicture)
+        setMobileChatOpen(true)
         setCanRateSeller(false)
         setSellerResults([])
         setSellerSearch('')
@@ -220,7 +222,7 @@ function Messaging({ user }: { user: User }) {
             <div className="grid md:grid-cols-[300px_1fr] gap-5 h-[calc(100vh-340px)] md:h-[calc(100vh-300px)] min-h-[420px]">
 
                 {/* ── SIDEBAR ── */}
-                <div className="glass-card flex flex-col overflow-hidden">
+                <div className={`glass-card flex flex-col overflow-hidden ${mobileChatOpen ? 'hidden md:flex' : 'flex'}`}>
 
                     {isBuyer ? (
                         /* BUYER sidebar: search sellers + conversations */
@@ -372,7 +374,7 @@ function Messaging({ user }: { user: User }) {
                 </div>
 
                 {/* ── CHAT AREA ── */}
-                <div className="glass-card flex flex-col overflow-hidden">
+                <div className={`glass-card flex flex-col overflow-hidden ${!mobileChatOpen ? 'hidden md:flex' : 'flex'}`}>
                     {!activeConversation ? (
                         <div className="flex-1 flex items-center justify-center">
                             <div className="text-center space-y-4 px-8">
@@ -389,6 +391,12 @@ function Messaging({ user }: { user: User }) {
                         <>
                             {/* Chat header */}
                             <div className="px-6 py-4 border-b border-white/5 flex items-center gap-4">
+                                <button
+                                    onClick={() => setMobileChatOpen(false)}
+                                    className="md:hidden p-1 text-gray-400 hover:text-white transition-colors shrink-0"
+                                >
+                                    <ArrowLeft size={20} />
+                                </button>
                                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 overflow-hidden border border-white/10">
                                     {sendingToPicture
                                         ? <img src={sendingToPicture} alt={sendingTo} className="w-10 h-10 object-cover rounded-full" />
