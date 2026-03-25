@@ -249,13 +249,7 @@ function App() {
                     Waiting for your input...
                   </div>
                 )}
-                {aiSentMessage && (
-                  <div className="flex justify-end">
-                    <div className="bg-white/10 border border-white/10 text-white rounded-2xl rounded-tr-sm px-6 py-4 max-w-[75%] text-base font-medium">
-                      {aiSentMessage}
-                    </div>
-                  </div>
-                )}
+               
                 {aiResponse && (
                   <div className="flex justify-start">
                     <div className="ai-response-bubble bg-white text-black rounded-2xl rounded-tl-sm px-8 py-6 max-w-[85%] text-[15px] leading-relaxed font-medium">
