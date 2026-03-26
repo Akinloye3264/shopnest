@@ -185,7 +185,7 @@ function Jobs({ user }: { user: any }) {
   const isEmployer = user.role === 'seller' || user.role === 'employee' || user.role === 'admin' || user.role === 'employer'
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-16 overflow-x-hidden w-full">
       <header>
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 mb-8">
           <div className="max-w-3xl">
@@ -223,15 +223,15 @@ function Jobs({ user }: { user: any }) {
         </div>
 
         {view === 'listings' && !isActualEmployer && (
-          <form onSubmit={handleSearch} className="flex gap-2 max-w-4xl mx-auto group">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
+          <form onSubmit={handleSearch} className="flex gap-3 w-full group">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search jobs..."
-                className="studio-input pl-14 h-14 text-base font-black bg-white/5 border-white/10 text-white focus:bg-white/10 w-full"
+                className="studio-input pl-12 h-14 text-base font-black bg-white/5 border-white/10 text-white focus:bg-white/10 w-full"
               />
             </div>
             <button type="submit" className="studio-button h-14 px-6 text-sm shrink-0">SEARCH</button>
@@ -282,9 +282,9 @@ function Jobs({ user }: { user: any }) {
       )}
 
       {!loading && view === 'listings' ? (
-        <div className="grid grid-cols-12 gap-12">
+        <div className="grid grid-cols-12 gap-6 lg:gap-12">
           {/* Global Opportunities Pool */}
-          <div className="col-span-12 lg:col-span-8 space-y-12">
+          <div className="col-span-12 lg:col-span-8 space-y-8 min-w-0">
             <h3 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6 text-white">Global Opportunities</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {externalJobs.map((job, i) => (
@@ -293,13 +293,13 @@ function Jobs({ user }: { user: any }) {
                   href={job.redirect_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="glass-card p-5 md:p-8 flex flex-col hover:bg-white/5 hover:border-brand-accent/30 transition-all border-white/5 overflow-hidden cursor-pointer group"
+                  className="glass-card p-5 flex flex-col hover:bg-white/5 hover:border-brand-accent/30 transition-all border-white/5 overflow-hidden cursor-pointer group w-full min-w-0"
                 >
-                  <div className="flex items-start gap-2 mb-3">
-                    <h4 className="flex-1 min-w-0 text-sm md:text-base font-black uppercase leading-tight tracking-tighter line-clamp-2 group-hover:text-brand-accent transition-colors">{job.title}</h4>
-                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest max-w-[100px] truncate">{job.type || 'Full-time'}</span>
+                  <div className="flex items-start gap-2 mb-3 min-w-0">
+                    <h4 className="flex-1 min-w-0 text-sm font-black uppercase leading-tight tracking-tighter line-clamp-2 group-hover:text-brand-accent transition-colors break-words">{job.title}</h4>
+                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest max-w-[90px] truncate">{job.type || 'Full-time'}</span>
                   </div>
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">{job.company} · {job.location}</p>
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 truncate">{job.company} · {job.location}</p>
                   {job.salary && job.salary !== 'Competitive' && (
                     <p className="text-xs text-brand-accent font-black uppercase tracking-widest mb-3">{job.salary}</p>
                   )}
@@ -328,7 +328,7 @@ function Jobs({ user }: { user: any }) {
           </div>
 
           {/* Career Sidebar */}
-          <aside className="col-span-12 lg:col-span-4 space-y-8">
+          <aside className="col-span-12 lg:col-span-4 space-y-8 min-w-0">
             <div className="glass-card p-5 md:p-8 bg-brand-accent/5 border-brand-accent/20 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/10 blur-3xl group-hover:scale-150 transition-transform duration-700" />
               <span className="studio-label text-brand-accent mb-4">Autonomous Strategist</span>
