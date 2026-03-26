@@ -218,16 +218,16 @@ function Products({ user }: { user: any }) {
       </header>
 
       {showAddForm && (
-        <section className="glass-card p-6 md:p-12 animate-slide-up relative">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 blur-3xl -z-10 pointer-events-none overflow-hidden" />
-          <h2 className="text-3xl font-black uppercase tracking-tighter mb-12">Asset Registration</h2>
-          <form onSubmit={handleAddProduct} className="grid grid-cols-12 gap-10">
-            <div className="col-span-12 lg:col-span-6 space-y-8">
+        <section className="glass-card p-6 md:p-12 animate-slide-up relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 blur-3xl -z-10 pointer-events-none" />
+          <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-8 md:mb-12">Asset Registration</h2>
+          <form onSubmit={handleAddProduct} className="grid grid-cols-12 gap-6 md:gap-10">
+            <div className="col-span-12 lg:col-span-6 space-y-6 md:space-y-8">
               <div>
                 <label className="studio-label text-gray-400">Product Name</label>
                 <input type="text" required value={newProduct.title} onChange={e => setNewProduct({ ...newProduct, title: e.target.value })} className="studio-input" placeholder="e.g. Studio Monitor Pro" />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                 <div>
                   <label className="studio-label text-gray-400">Valuation (USD)</label>
                   <input type="number" required value={newProduct.price} onChange={e => setNewProduct({ ...newProduct, price: e.target.value })} className="studio-input" placeholder="00.00" />
@@ -243,7 +243,7 @@ function Products({ user }: { user: any }) {
                 </div>
               </div>
             </div>
-            <div className="col-span-12 lg:col-span-6 space-y-8">
+            <div className="col-span-12 lg:col-span-6 space-y-6 md:space-y-8">
               <div>
                 <label className="studio-label text-gray-400">Market Description</label>
                 <textarea rows={3} required value={newProduct.description} onChange={e => setNewProduct({ ...newProduct, description: e.target.value })} className="studio-input resize-none" placeholder="Provide detailed specifications..." />
@@ -291,7 +291,7 @@ function Products({ user }: { user: any }) {
                   )}
                 </div>
               </div>
-              <button type="submit" className="studio-button w-full h-20 text-xl font-black uppercase">PUBLISH TO MARKET</button>
+              <button type="submit" className="studio-button w-full h-14 md:h-20 text-base md:text-xl font-black uppercase">PUBLISH TO MARKET</button>
             </div>
           </form>
         </section>
