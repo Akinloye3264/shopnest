@@ -303,9 +303,16 @@ function Jobs({ user }: { user: any }) {
                   {job.salary && job.salary !== 'Competitive' && (
                     <p className="text-xs text-brand-accent font-black uppercase tracking-widest mb-3">{job.salary}</p>
                   )}
-                  <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-6 line-clamp-3">
+                  <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-4 line-clamp-3">
                     {job.description.substring(0, 180)}...
                   </p>
+                  {job.tags && job.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {job.tags.slice(0, 4).map((tag: string) => (
+                        <span key={tag} className="px-2 py-0.5 bg-white/5 rounded-full text-[9px] font-black uppercase tracking-widest text-gray-500 border border-white/10">{tag}</span>
+                      ))}
+                    </div>
+                  )}
                   <span className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#00ff88] group-hover:text-white transition-colors self-start underline decoration-2 underline-offset-8">
                     Apply Now <ExternalLink size={14} />
                   </span>

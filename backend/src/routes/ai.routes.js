@@ -50,18 +50,12 @@ router.post('/learning-assistant', async (req, res) => {
   }
 });
 
-// GET /api/ai/external-jobs - Fetch jobs from Adzuna
+// GET /api/ai/external-jobs - Fetch jobs from Remotive (free, no key required)
 router.get('/external-jobs', async (req, res) => {
   try {
-    const { search, location = 'us' } = req.query;
-    const AD_ID = process.env.ADZUNA_APP_ID;
-    const AD_KEY = process.env.ADZUNA_API_KEY;
-
-    if (!AD_ID || !AD_KEY) {
-      return res.status(500).json({ success: false, message: 'Adzuna credentials not configured' });
-    }
-
-    const url = `https://api.adzuna.com/v1/api/jobs/${location}/search/1?app_id=${AD_ID}&app_key=${AD_KEY}&results_per_page=20&what=${encodeURIComponent(search || 'software business design')}&content-type=application/json&sort_by=relevance`;
+    const { search } = req.query;
+    const query = search || 'software';
+    const url = `https://remotive.com/api/remote-jobs?search=${encodeURIComponent(query)}&limit=20`;
 
     const response = await fetch(url);
     if (!response.ok) return res.status(response.status).json({ success: false, message: 'External API Error' });
@@ -70,14 +64,17 @@ router.get('/external-jobs', async (req, res) => {
 
     res.json({
       success: true,
-      jobs: (data.results || []).map(job => ({
+      jobs: (data.jobs || []).map(job => ({
         id: job.id,
-        title: (job.title || 'Specialist').replace(/<\/?[^>]+(>|$)/g, ""),
-        company: job.company?.display_name || 'Global Enterprise',
-        location: job.location?.display_name || 'Remote / Tier 1',
-        description: (job.description || 'Access specifications via external node.').replace(/<\/?[^>]+(>|$)/g, ""),
-        redirect_url: job.redirect_url,
-        salary: job.salary_min ? `$${Math.round(job.salary_min)} - $${Math.round(job.salary_max)}` : 'Competitive'
+        title: job.title || 'Specialist',
+        company: job.company_name || 'Global Enterprise',
+        location: job.candidate_required_location || 'Remote / Worldwide',
+        description: (job.description || '').replace(/<\/?[^>]+(>|$)/g, '').substring(0, 500),
+        redirect_url: job.url,
+        salary: job.salary || 'Competitive',
+        type: job.job_type ? job.job_type.replace('_', '-') : 'Full-time',
+        category: job.category || '',
+        tags: job.tags || []
       }))
     });
   } catch (error) {
