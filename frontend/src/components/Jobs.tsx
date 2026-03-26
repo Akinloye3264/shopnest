@@ -49,7 +49,7 @@ function Jobs({ user }: { user: any }) {
     }
   }, [])
 
-  const fetchExternalJobs = async (query = 'software business design') => {
+  const fetchExternalJobs = async (query = 'software') => {
     try {
       const res = await fetch(`${API_URL}/api/ai/external-jobs?search=${encodeURIComponent(query)}`)
       const data = await res.json()
@@ -83,7 +83,7 @@ function Jobs({ user }: { user: any }) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    fetchExternalJobs(searchTerm || 'software business design')
+    fetchExternalJobs(searchTerm || 'software')
     if (searchTerm) {
       toast.success(`Querying global clusters for "${searchTerm}"...`, {
         style: { background: '#00ff88', color: '#000', fontWeight: 'bold' }
