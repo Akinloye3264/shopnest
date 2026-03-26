@@ -50,31 +50,42 @@ router.post('/learning-assistant', async (req, res) => {
   }
 });
 
-// GET /api/ai/external-jobs - Fetch jobs from Remotive (free, no key required)
+// GET /api/ai/external-jobs - Fetch jobs from FindWork API
 router.get('/external-jobs', async (req, res) => {
   try {
     const { search } = req.query;
+    const FINDWORK_KEY = process.env.FINDWORK_API_KEY;
+
+    if (!FINDWORK_KEY) {
+      return res.status(500).json({ success: false, message: 'FindWork API key not configured' });
+    }
+
     const query = search || 'software';
-    const url = `https://remotive.com/api/remote-jobs?search=${encodeURIComponent(query)}&limit=20`;
+    // Fetch 2 pages to get ~30 jobs (each page returns ~15-20)
+    const fetchPage = (page) => fetch(
+      `https://findwork.dev/api/jobs/?search=${encodeURIComponent(query)}&page=${page}`,
+      { headers: { Authorization: `Token ${FINDWORK_KEY}` } }
+    ).then(r => r.json());
 
-    const response = await fetch(url);
-    if (!response.ok) return res.status(response.status).json({ success: false, message: 'External API Error' });
+    const [page1, page2] = await Promise.all([fetchPage(1), fetchPage(2)]);
 
-    const data = await response.json();
+    const results = [
+      ...(page1.results || []),
+      ...(page2.results || [])
+    ].slice(0, 30);
 
     res.json({
       success: true,
-      jobs: (data.jobs || []).map(job => ({
+      jobs: results.map(job => ({
         id: job.id,
-        title: job.title || 'Specialist',
+        title: job.role || 'Specialist',
         company: job.company_name || 'Global Enterprise',
-        location: job.candidate_required_location || 'Remote / Worldwide',
-        description: (job.description || '').replace(/<\/?[^>]+(>|$)/g, '').substring(0, 500),
+        location: job.location || (job.remote ? 'Remote' : 'Worldwide'),
+        description: (job.text || '').replace(/<\/?[^>]+(>|$)/g, '').substring(0, 500),
         redirect_url: job.url,
-        salary: job.salary || 'Competitive',
-        type: job.job_type ? job.job_type.replace('_', '-') : 'Full-time',
-        category: job.category || '',
-        tags: job.tags || []
+        salary: 'Competitive',
+        type: job.employment_type || (job.remote ? 'Remote' : 'Full-time'),
+        tags: job.keywords || []
       }))
     });
   } catch (error) {
