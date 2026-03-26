@@ -288,18 +288,28 @@ function Jobs({ user }: { user: any }) {
             <h3 className="text-xs font-black uppercase tracking-[0.5em] text-gray-500 border-l-4 border-brand-accent pl-6 text-white">Global Opportunities</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {externalJobs.map((job, i) => (
-                <div key={i} className="glass-card p-5 md:p-8 flex flex-col hover:bg-white/5 transition-all border-white/5 overflow-hidden">
+                <a
+                  key={i}
+                  href={job.redirect_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-card p-5 md:p-8 flex flex-col hover:bg-white/5 hover:border-brand-accent/30 transition-all border-white/5 overflow-hidden cursor-pointer group"
+                >
                   <div className="flex items-start gap-2 mb-3">
-                    <h4 className="flex-1 min-w-0 text-sm md:text-base font-black uppercase leading-tight tracking-tighter line-clamp-2">{job.title}</h4>
-                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest max-w-[100px] truncate">{job.location}</span>
+                    <h4 className="flex-1 min-w-0 text-sm md:text-base font-black uppercase leading-tight tracking-tighter line-clamp-2 group-hover:text-brand-accent transition-colors">{job.title}</h4>
+                    <span className="shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest max-w-[100px] truncate">{job.type || 'Full-time'}</span>
                   </div>
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">{job.company} · {job.location}</p>
+                  {job.salary && job.salary !== 'Competitive' && (
+                    <p className="text-xs text-brand-accent font-black uppercase tracking-widest mb-3">{job.salary}</p>
+                  )}
                   <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-6 line-clamp-3">
                     {job.description.substring(0, 180)}...
                   </p>
-                  <a href={job.redirect_url} target="_blank" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#00ff88] hover:text-white transition-colors self-start underline decoration-2 underline-offset-8">
-                    Access External Node <ExternalLink size={14} />
-                  </a>
-                </div>
+                  <span className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#00ff88] group-hover:text-white transition-colors self-start underline decoration-2 underline-offset-8">
+                    Apply Now <ExternalLink size={14} />
+                  </span>
+                </a>
               ))}
               {externalJobs.length === 0 && (
                 <div className="col-span-full py-20 text-center glass-card border-dashed opacity-50">
