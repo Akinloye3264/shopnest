@@ -85,7 +85,7 @@ function Jobs({ user }: { user: any }) {
     setLoading(true)
     fetchExternalJobs(searchTerm || 'software')
     if (searchTerm) {
-      toast.success(`Querying global clusters for "${searchTerm}"...`, {
+      toast.success(`Looking for "${searchTerm}" Job...`, {
         style: { background: '#00ff88', color: '#000', fontWeight: 'bold' }
       })
     }
