@@ -49,7 +49,6 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
         <span className="studio-label text-brand-accent">HOME / {user.role?.toUpperCase()}</span>
         <h1 className="studio-h1 text-white leading-[0.85] mb-8">
           Hey, {user.name?.split(' ')[0] || 'there'}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/20"> 👋</span>
         </h1>
         <p className="text-base md:text-2xl font-medium text-gray-400 max-w-3xl leading-snug mb-8 md:mb-12">
           {roleMessage[user.role] || "Welcome to ShopNest."}

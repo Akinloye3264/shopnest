@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
-import { Search, Briefcase, Users, Plus, ExternalLink, Loader2, Upload, FileText, CheckCircle, X, ListChecks } from 'lucide-react'
+import { Search, Briefcase, Users, Plus, ExternalLink, Loader2, Upload, FileText, CheckCircle, X, ListChecks, Pencil, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import API_URL from '../config'
 
@@ -29,6 +29,9 @@ function Jobs({ user }: { user: any }) {
     type: 'Full-time',
     salary: ''
   })
+
+  const [editingJob, setEditingJob] = useState<any | null>(null)
+  const [editJob, setEditJob] = useState({ title: '', company: '', location: '', description: '', type: 'Full-time', salary: '' })
 
   // Audit Resume States
   const [auditFile, setAuditFile] = useState<File | null>(null)
@@ -85,6 +88,49 @@ function Jobs({ user }: { user: any }) {
       toast.success(`Querying global clusters for "${searchTerm}"...`, {
         style: { background: '#00ff88', color: '#000', fontWeight: 'bold' }
       })
+    }
+  }
+
+  const handleDeleteJob = async (jobId: string) => {
+    if (!confirm('Delete this job listing?')) return
+    try {
+      const res = await fetch(`${API_URL}/api/jobs/${jobId}`, { method: 'DELETE' })
+      const data = await res.json()
+      if (data.success) {
+        toast.success('Job deleted.')
+        fetchMyJobs()
+      } else {
+        toast.error(data.message || 'Failed to delete job.')
+      }
+    } catch {
+      toast.error('Failed to delete job.')
+    }
+  }
+
+  const openEditJob = (job: any) => {
+    setEditingJob(job)
+    setEditJob({ title: job.title, company: job.company, location: job.location || '', description: job.description, type: job.type || 'Full-time', salary: job.salary || '' })
+  }
+
+  const handleEditJob = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingJob) return
+    try {
+      const res = await fetch(`${API_URL}/api/jobs/${editingJob.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editJob)
+      })
+      const data = await res.json()
+      if (data.success) {
+        toast.success('Job updated.')
+        setEditingJob(null)
+        fetchMyJobs()
+      } else {
+        toast.error(data.message || 'Failed to update job.')
+      }
+    } catch {
+      toast.error('Failed to update job.')
     }
   }
 
@@ -211,6 +257,10 @@ function Jobs({ user }: { user: any }) {
                 <div>
                   <label className="studio-label text-gray-400">Location</label>
                   <input type="text" value={newJob.location} onChange={e => setNewJob({ ...newJob, location: e.target.value })} className="studio-input" placeholder="Remote / Global" />
+                </div>
+                <div>
+                  <label className="studio-label text-gray-400">Job URL</label>
+                  <input type="text" value={newJob.url} onChange={e => setNewJob({ ...newJob, url: e.target.value })} className="studio-input" placeholder="https://example.com/job" />
                 </div>
               </div>
             </div>
@@ -346,12 +396,28 @@ function Jobs({ user }: { user: any }) {
                 {job.salary && (
                   <p className="text-xs text-brand-accent font-black uppercase tracking-widest mb-6">{job.salary}</p>
                 )}
-                <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-8">
+                <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-4">
                   {job.description.length > 200 ? job.description.substring(0, 200) + '...' : job.description}
                 </p>
-                <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">
-                  Posted {new Date(job.createdAt).toLocaleDateString()}
-                </p>
+                <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                  <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+                    Posted {new Date(job.createdAt).toLocaleDateString()}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => openEditJob(job)}
+                      className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border border-white/10 text-gray-400 rounded-full hover:border-brand-accent hover:text-brand-accent transition-colors"
+                    >
+                      <Pencil size={11} /> Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteJob(job.id)}
+                      className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 border border-white/10 text-gray-400 rounded-full hover:border-red-400 hover:text-red-400 transition-colors"
+                    >
+                      <Trash2 size={11} /> Delete
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
             {myJobs.length === 0 && (
@@ -393,6 +459,70 @@ function Jobs({ user }: { user: any }) {
           </div>
         </div>
       )}
+
+      {/* Edit Job Modal */}
+      <AnimatePresence>
+        {editingJob && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setEditingJob(null)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[300]"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-card p-6 md:p-10 z-[301] shadow-2xl mx-4"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <span className="studio-label text-brand-accent">Edit Listing</span>
+                  <h2 className="text-2xl font-black tracking-tighter uppercase mt-1">Update Job</h2>
+                </div>
+                <button onClick={() => setEditingJob(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                  <X size={22} />
+                </button>
+              </div>
+
+              <form onSubmit={handleEditJob} className="space-y-6">
+                <div>
+                  <label className="studio-label text-gray-400">Job Title</label>
+                  <input type="text" required value={editJob.title} onChange={e => setEditJob({ ...editJob, title: e.target.value })} className="studio-input" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="studio-label text-gray-400">Company</label>
+                    <input type="text" required value={editJob.company} onChange={e => setEditJob({ ...editJob, company: e.target.value })} className="studio-input" />
+                  </div>
+                  <div>
+                    <label className="studio-label text-gray-400">Location</label>
+                    <input type="text" value={editJob.location} onChange={e => setEditJob({ ...editJob, location: e.target.value })} className="studio-input" placeholder="Remote / Global" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="studio-label text-gray-400">Type</label>
+                    <select value={editJob.type} onChange={e => setEditJob({ ...editJob, type: e.target.value })} className="studio-input cursor-pointer" style={{ background: '#111' }}>
+                      {['Full-time', 'Part-time', 'Contract', 'Internship', 'Remote'].map(t => <option key={t}>{t}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="studio-label text-gray-400">Salary (optional)</label>
+                    <input type="text" value={editJob.salary} onChange={e => setEditJob({ ...editJob, salary: e.target.value })} className="studio-input" placeholder="e.g. $60,000/yr" />
+                  </div>
+                </div>
+                <div>
+                  <label className="studio-label text-gray-400">Description</label>
+                  <textarea rows={5} required value={editJob.description} onChange={e => setEditJob({ ...editJob, description: e.target.value })} className="studio-input resize-none" />
+                </div>
+                <div className="flex gap-4 pt-2">
+                  <button type="button" onClick={() => setEditingJob(null)} className="studio-button-ghost flex-1 h-12 text-xs uppercase tracking-widest font-black">Cancel</button>
+                  <button type="submit" className="studio-button flex-1 h-12 text-xs uppercase tracking-widest font-black">Save Changes</button>
+                </div>
+              </form>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Audit Result Modal */}
       <AnimatePresence>

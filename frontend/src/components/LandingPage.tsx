@@ -4,7 +4,8 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import {
   ShoppingCart, Briefcase, Store, Bot, Package, MessageSquare,
   ArrowRight, ChevronDown, Users, TrendingUp, MapPin,
-  Shield, Zap, CheckCircle, Menu, X
+  Shield, Zap, CheckCircle, Menu, X,
+  Globe, Award, Building2, Target, Lightbulb, GraduationCap, ShoppingBag
 } from 'lucide-react'
 
 const stats = [
@@ -54,9 +55,9 @@ const steps = [
 ]
 
 const highlights = [
-  { icon: '🎓', title: 'Merit Over Connections', text: 'We match talent to opportunity based on skills and experience — not who you know.' },
-  { icon: '🏘️', title: 'Community-First Growth', text: 'Starting in Gwagwalada, Abuja — with plans to expand across Nigeria and Africa.' },
-  { icon: '📈', title: 'Real, Sustainable Income', text: 'Task-based payments, commissions, and storefront earnings — money you actually keep.' },
+  { Icon: Award, title: 'Merit Over Connections', text: 'We match talent to opportunity based on skills and experience — not who you know.' },
+  { Icon: Building2, title: 'Community-First Growth', text: 'Starting in Gwagwalada, Abuja — with plans to expand across Nigeria and Africa.' },
+  { Icon: TrendingUp, title: 'Real, Sustainable Income', text: 'Task-based payments, commissions, and storefront earnings — money you actually keep.' },
 ]
 
 function useScrolled() {
@@ -216,7 +217,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="inline-flex items-center space-x-2 mb-8 px-5 py-2 border border-brand-accent/30 rounded-full bg-brand-accent/5"
           >
-            <span className="text-lg">🇳🇬</span>
+            <Globe size={16} className="text-brand-accent" />
             <span className="text-xs font-black uppercase tracking-widest text-brand-accent">Built for Nigerian Youth</span>
           </motion.div>
 
@@ -363,7 +364,9 @@ export default function LandingPage() {
                     whileHover={{ x: 6 }}
                     transition={{ type: 'spring', stiffness: 300 }}
                   >
-                    <span className="text-3xl flex-shrink-0">{h.icon}</span>
+                    <div className="w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center shrink-0">
+                      <h.Icon size={20} className="text-brand-accent" />
+                    </div>
                     <div>
                       <h4 className="font-black text-sm uppercase tracking-wide text-brand-accent mb-2">{h.title}</h4>
                       <p className="text-gray-400 text-sm leading-relaxed">{h.text}</p>
@@ -423,14 +426,14 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
               {
-                icon: '🛍️',
+                Icon: ShoppingBag,
                 role: 'Buyers',
                 desc: 'Discover quality local products, support youth businesses, and shop with confidence. Browse and buy from anywhere.',
                 cta: 'Shop Now',
                 link: '/register',
               },
               {
-                icon: '🏪',
+                Icon: Store,
                 role: 'Sellers & Vendors',
                 desc: 'Open your digital storefront, list your products, and reach customers across Abuja and beyond — zero startup cost.',
                 cta: 'Start Selling',
@@ -439,7 +442,9 @@ export default function LandingPage() {
             ].map((item, i) => (
               <FadeUp key={i} delay={i * 0.1}>
                 <div className="glass-card p-10 text-center flex flex-col h-full">
-                  <span className="text-5xl mb-6 block">{item.icon}</span>
+                  <div className="w-16 h-16 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mb-6 mx-auto">
+                    <item.Icon size={30} className="text-brand-accent" />
+                  </div>
                   <h3 className="font-black text-xl uppercase tracking-tight mb-4 text-brand-accent">{item.role}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed flex-1 mb-8">{item.desc}</p>
                   <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}>
@@ -468,12 +473,14 @@ export default function LandingPage() {
           </FadeUp>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              { icon: '🎓', role: 'Job Seekers', desc: 'Find job opportunities that match your skills. Apply for roles, audit your resume with AI, and get hired without connections.', cta: 'Find Jobs', link: '/register' },
-              { icon: '🏢', role: 'Employers', desc: 'Post job listings, review applicants, and hire qualified talent. Build your team directly through ShopNest.', cta: 'Post a Job', link: '/register' },
+              { Icon: GraduationCap, role: 'Job Seekers', desc: 'Find job opportunities that match your skills. Apply for roles, audit your resume with AI, and get hired without connections.', cta: 'Find Jobs', link: '/register' },
+              { Icon: Building2, role: 'Employers', desc: 'Post job listings, review applicants, and hire qualified talent. Build your team directly through ShopNest.', cta: 'Post a Job', link: '/register' },
             ].map((item, i) => (
               <FadeUp key={i} delay={i * 0.1}>
                 <div className="glass-card p-10 text-center flex flex-col h-full">
-                  <span className="text-5xl mb-6 block">{item.icon}</span>
+                  <div className="w-16 h-16 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mb-6 mx-auto">
+                    <item.Icon size={30} className="text-brand-accent" />
+                  </div>
                   <h3 className="font-black text-xl uppercase tracking-tight mb-4 text-brand-accent">{item.role}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed flex-1 mb-8">{item.desc}</p>
                   <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}>
@@ -555,13 +562,15 @@ export default function LandingPage() {
             <FadeUp delay={0.2}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
                 {[
-                  { icon: '🎯', title: 'Merit-Based', desc: 'Opportunities based on skills, not connections.' },
-                  { icon: '🤝', title: 'Community', desc: 'Building local economies from the ground up.' },
-                  { icon: '💡', title: 'Innovation', desc: 'Technology solving real African problems.' },
-                  { icon: '🌍', title: 'Pan-African', desc: 'Starting local, scaling across the continent.' },
+                  { Icon: Target, title: 'Merit-Based', desc: 'Opportunities based on skills, not connections.' },
+                  { Icon: Users, title: 'Community', desc: 'Building local economies from the ground up.' },
+                  { Icon: Lightbulb, title: 'Innovation', desc: 'Technology solving real African problems.' },
+                  { Icon: Globe, title: 'Pan-African', desc: 'Starting local, scaling across the continent.' },
                 ].map((v, i) => (
                   <div key={i} className="glass-card p-6 text-center">
-                    <span className="text-3xl block mb-3">{v.icon}</span>
+                    <div className="w-10 h-10 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center mb-3 mx-auto">
+                      <v.Icon size={20} className="text-brand-accent" />
+                    </div>
                     <h4 className="font-black text-sm uppercase tracking-wide text-brand-accent mb-2">{v.title}</h4>
                     <p className="text-gray-500 text-xs leading-relaxed">{v.desc}</p>
                   </div>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Target, Users, Lightbulb, Globe } from 'lucide-react';
 
 export default function About() {
   return (
@@ -150,8 +151,15 @@ export default function About() {
         }
 
         .value-icon {
-          font-size: 48px;
-          margin-bottom: 16px;
+          width: 56px;
+          height: 56px;
+          background: rgba(45, 106, 79, 0.12);
+          border: 1px solid rgba(45, 106, 79, 0.25);
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 16px;
         }
 
         .value-title {
@@ -257,28 +265,28 @@ export default function About() {
           <h2 className="section-heading">Our Values</h2>
           <div className="values-grid">
             <div className="value-card">
-              <div className="value-icon">🎯</div>
+              <div className="value-icon"><Target size={26} color="#2d6a4f" /></div>
               <div className="value-title">Merit-Based</div>
               <div className="value-desc">
                 Opportunities based on skills and effort, not connections.
               </div>
             </div>
             <div className="value-card">
-              <div className="value-icon">🤝</div>
+              <div className="value-icon"><Users size={26} color="#2d6a4f" /></div>
               <div className="value-title">Community-Driven</div>
               <div className="value-desc">
                 Building local economies from the ground up.
               </div>
             </div>
             <div className="value-card">
-              <div className="value-icon">💡</div>
+              <div className="value-icon"><Lightbulb size={26} color="#2d6a4f" /></div>
               <div className="value-title">Innovation</div>
               <div className="value-desc">
                 Using technology to solve real African problems.
               </div>
             </div>
             <div className="value-card">
-              <div className="value-icon">🌍</div>
+              <div className="value-icon"><Globe size={26} color="#2d6a4f" /></div>
               <div className="value-title">Pan-African</div>
               <div className="value-desc">
                 Starting local, scaling across the continent.

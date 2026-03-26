@@ -267,7 +267,7 @@ function App() {
                   value={aiMessage}
                   onChange={(e) => setAiMessage(e.target.value)}
                   placeholder="Inquire about ShopNest..."
-                  className="flex-1 bg-transparent border-b-4 border-white/10 text-white text-lg md:text-2xl font-black pb-4 outline-none focus:border-white transition-colors placeholder:text-white/10 min-w-0"
+                  className="flex-1 border-b-4 border-white/10 text-white text-lg md:text-2xl font-black pb-4 outline-none focus:border-white transition-colors placeholder:text-white/12 min-w-0"
                 />
                 <button type="submit" className="studio-button px-6 md:px-12 text-sm md:text-lg shrink-0">SEND</button>
               </form>
