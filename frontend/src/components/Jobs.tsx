@@ -225,13 +225,13 @@ function Jobs({ user }: { user: any }) {
         {view === 'listings' && !isActualEmployer && (
           <form onSubmit={handleSearch} className="flex gap-3 w-full group">
             <div className="relative flex-1 min-w-0">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-accent transition-colors pointer-events-none" size={16} />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search jobs..."
-                className="studio-input pl-12 h-14 text-base font-black bg-white/5 border-white/10 text-white focus:bg-white/10 w-full"
+                className="studio-input pl-11 h-14 text-base font-black bg-white/5 border-white/10 text-white focus:bg-white/10 w-full"
               />
             </div>
             <button type="submit" className="studio-button h-14 px-6 text-sm shrink-0">SEARCH</button>

@@ -218,8 +218,8 @@ function Products({ user }: { user: any }) {
       </header>
 
       {showAddForm && (
-        <section className="glass-card p-6 md:p-12 animate-slide-up relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 blur-3xl -z-10" />
+        <section className="glass-card p-6 md:p-12 animate-slide-up relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 blur-3xl -z-10 pointer-events-none overflow-hidden" />
           <h2 className="text-3xl font-black uppercase tracking-tighter mb-12">Asset Registration</h2>
           <form onSubmit={handleAddProduct} className="grid grid-cols-12 gap-10">
             <div className="col-span-12 lg:col-span-6 space-y-8">
