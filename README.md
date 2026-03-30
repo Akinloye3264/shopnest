@@ -87,7 +87,7 @@ shopnest/
 | Auth | JWT, OTP via email (Brevo), Google OAuth |
 | Payments | Stripe Checkout |
 | AI | Claude API (business assistant + resume auditor) |
-| Jobs | Adzuna API (external job listings) |
+| Jobs | Findwork API (external job listings) |
 | Deployment | Render (backend), Netlify (frontend) |
 
 ---
@@ -141,10 +141,8 @@ STRIPE_SECRET_KEY=sk_test_...
 
 # AI (Anthropic Claude)
 CLAUDE_API=your_claude_api_key
-
-# External Jobs (Adzuna)
-ADZUNA_APP_ID=your_adzuna_app_id
-ADZUNA_API_KEY=your_adzuna_api_key
+# External Jobs (findwork)
+Findwork_api= Your api key here
 ```
 
 ### Frontend (`frontend/.env`)
@@ -332,7 +330,7 @@ For Google OAuth setup see [docs/GOOGLE_OAUTH_SETUP.md](docs/GOOGLE_OAUTH_SETUP.
 | GET | `/api/reviews/seller/:sellerId` | Get reviews for a seller |
 | POST | `/api/ai/learning-assistant` | Ask the AI business assistant |
 | POST | `/api/ai/audit-resume` | Upload PDF resume for AI audit |
-| GET | `/api/ai/external-jobs` | Fetch live jobs from Adzuna |
+| GET | `/api/ai/external-jobs` | Fetch live jobs from Findwork |
 | GET | `/api/admin/stats` | Platform-wide statistics (admin) |
 | GET | `/health` | Server health check |
 

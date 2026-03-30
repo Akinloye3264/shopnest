@@ -53,8 +53,7 @@ fetch(`${API_URL}/api/products`)
 | `GOOGLE_SECRET` | Google OAuth secret | Google login |
 | `STRIPE_SECRET_KEY` | Stripe secret key | Payment processing |
 | `STRIPE_PUBLISHABLE_KEY` | Stripe public key | Payment processing |
-| `ADZUNA_APP_ID` | Adzuna app ID | Job listings |
-| `ADZUNA_API_KEY` | Adzuna API key | Job listings |
+| `FINDWORK_API` | Findwork api key| Job listings |
 | `COHERE_API_KEY` | Cohere API key | AI features |
 | `CLAUDE_API` | Claude API key | AI features |
 
@@ -98,8 +97,6 @@ DB_PASSWORD=secure_production_password
 JWT_secret=secure_random_production_secret
 FRONTEND_URL=https://shopnest-frontend.onrender.com
 BACKEND_URL=https://shopnest-backend.onrender.com
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_SECRET=your_google_secret
 STRIPE_SECRET_KEY=sk_live_your_live_key
@@ -135,10 +132,7 @@ STRIPE_PUBLISHABLE_KEY=pk_live_your_live_key
 4. Use test keys (sk_test_...) for development
 5. Use live keys (sk_live_...) for production
 
-### Adzuna (Job API)
-1. Sign up at https://developer.adzuna.com
-2. Create an application
-3. Get App ID and API Key
+
 
 ### Cohere AI
 1. Sign up at https://cohere.ai
