@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Job, User, Application } = require('../models');
 const { Op } = require('sequelize');
+const { sendJobNotificationEmail } = require('../utils/emailService');
 
 // GET /api/jobs - Get all jobs
 router.get('/', async (req, res) => {
@@ -94,6 +95,17 @@ router.post('/', async (req, res) => {
       requirements,
       employerId
     });
+
+    // Notify all job seekers/employees in background (don't await — don't block response)
+    User.findAll({
+      where: { role: { [Op.in]: ['job_seeker', 'employee'] } },
+      attributes: ['email', 'name']
+    }).then(jobSeekers => {
+      jobSeekers.forEach(seeker => {
+        sendJobNotificationEmail(seeker.email, seeker.name, newJob).catch(() => {});
+      });
+      console.log(`📧 Job notifications queued for ${jobSeekers.length} job seekers`);
+    }).catch(err => console.error('❌ Failed to fetch job seekers:', err.message));
 
     res.status(201).json({
       success: true,
