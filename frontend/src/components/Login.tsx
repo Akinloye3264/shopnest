@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, ShieldCheck, Smartphone, MessageCircle } from 'lucide-react'
 import API_URL from '../config'
 
 interface LoginProps {
@@ -130,27 +130,27 @@ function Login({ onLogin }: LoginProps) {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.1, y: -20 }}
-            className="w-full max-w-lg glass-card p-8 lg:p-12 relative overflow-hidden"
+            className="w-full max-w-sm glass-card p-5 relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/10 blur-3xl -z-10" />
 
-            <Link to="/" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors mb-6">
+            <Link to="/" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors mb-4">
               <ArrowLeft size={14} /> Go Back
             </Link>
 
-            <div className="text-center mb-10">
-              <Link to="/" className="text-3xl font-black tracking-tighter block mb-6">
+            <div className="text-center mb-6">
+              <Link to="/" className="text-2xl font-black tracking-tighter block mb-3">
                 ShopNest<span className="text-brand-accent">.</span>
               </Link>
-              <h2 className="text-4xl font-black uppercase tracking-tighter mb-2">Welcome Back</h2>
-              <p className="text-gray-400 font-medium">Enter your credentials to log in.</p>
+              <h2 className="text-2xl font-black uppercase tracking-tighter mb-1">Welcome Back</h2>
+              <p className="text-gray-400 text-xs font-medium">Enter your credentials to log in.</p>
             </div>
 
-            <form onSubmit={handleEmailLogin} className="space-y-6">
-              <div className="space-y-2">
+            <form onSubmit={handleEmailLogin} className="space-y-4">
+              <div className="space-y-1">
                 <label className="studio-label ml-1">Email Address</label>
                 <div className="relative group">
-                  <Mail className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
+                  <Mail className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={16} />
                   <input
                     type="email"
                     required
@@ -162,10 +162,10 @@ function Login({ onLogin }: LoginProps) {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <label className="studio-label ml-1">Password</label>
                 <div className="relative group">
-                  <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={20} />
+                  <Lock className="absolute left-8 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-accent transition-colors" size={16} />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
@@ -179,7 +179,7 @@ function Login({ onLogin }: LoginProps) {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-white transition-colors"
                   >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
@@ -190,20 +190,20 @@ function Login({ onLogin }: LoginProps) {
                 </Link>
               </div>
 
-              <button type="submit" disabled={loading} className="studio-button w-full h-16 text-lg group">
+              <button type="submit" disabled={loading} className="studio-button w-full h-11 text-sm group">
                 <span className="mr-2">{loading ? statusMsg : 'ACCESS PORTAL'}</span>
-                {!loading && <ArrowRight className="inline group-hover:translate-x-1 transition-transform" size={20} />}
+                {!loading && <ArrowRight className="inline group-hover:translate-x-1 transition-transform" size={16} />}
               </button>
             </form>
 
-            <div className="mt-10">
-              <div className="relative flex items-center justify-center mb-8">
+            <div className="mt-6">
+              <div className="relative flex items-center justify-center mb-4">
                 <div className="absolute w-full border-t border-white/5"></div>
                 <span className="relative bg-[#0a0a0a]/50 backdrop-blur-md px-4 text-[10px] font-black uppercase tracking-widest text-gray-500">Secure Gateways</span>
               </div>
 
-              <button onClick={handleGoogleLogin} className="studio-button-ghost w-full h-16 flex items-center justify-center space-x-3 group">
-                <svg width="20" height="20" viewBox="0 0 48 48">
+              <button onClick={handleGoogleLogin} className="studio-button-ghost w-full h-11 flex items-center justify-center space-x-3 group">
+                <svg width="18" height="18" viewBox="0 0 48 48">
                   <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
                   <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
                   <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
@@ -213,7 +213,7 @@ function Login({ onLogin }: LoginProps) {
               </button>
             </div>
 
-            <p className="mt-10 text-center text-xs font-black uppercase tracking-widest text-gray-500">
+            <p className="mt-6 text-center text-xs font-black uppercase tracking-widest text-gray-500">
               No account? <Link to="/register" className="text-white hover:text-brand-accent hover:underline underline-offset-4 transition-all">Create Account</Link>
             </p>
           </motion.div>
@@ -223,48 +223,48 @@ function Login({ onLogin }: LoginProps) {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            className="w-full max-w-lg glass-card p-8 md:p-12 text-center"
+            className="w-full max-w-sm glass-card p-5 text-center"
           >
-            <ShieldCheck className="mx-auto text-brand-accent mb-6" size={64} />
-            <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Security Layer</h2>
-            <p className="text-gray-400 font-medium mb-3">
+            <ShieldCheck className="mx-auto text-brand-accent mb-4" size={48} />
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-3">Security Layer</h2>
+            <p className="text-gray-400 text-xs font-medium mb-2">
               A 6-digit code has been sent to:
             </p>
-            <p className="text-white font-bold text-base mb-4">{email}</p>
+            <p className="text-white font-bold text-sm mb-3">{email}</p>
             {deliveryChannels && (
-              <div className="flex flex-wrap justify-center gap-2 mb-8">
+              <div className="flex flex-wrap justify-center gap-2 mb-4">
                 {deliveryChannels.email && (
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">✉ Email</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent"><Mail size={10} /> Email</span>
                 )}
                 {deliveryChannels.sms && (
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">📱 SMS</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent"><Smartphone size={10} /> SMS</span>
                 )}
                 {deliveryChannels.whatsapp && (
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">💬 WhatsApp</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent"><MessageCircle size={10} /> WhatsApp</span>
                 )}
               </div>
             )}
-            {!deliveryChannels && <div className="mb-8" />}
+            {!deliveryChannels && <div className="mb-4" />}
 
-            <form onSubmit={handleVerifyOTP} className="space-y-8">
+            <form onSubmit={handleVerifyOTP} className="space-y-4">
               <input
                 type="text"
                 required
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className="studio-input text-center text-3xl md:text-5xl font-black tracking-[0.3em] md:tracking-[0.5em] h-16 md:h-24"
+                className="studio-input text-center text-2xl font-black tracking-[0.4em] h-14"
                 placeholder="000000"
                 maxLength={6}
                 autoFocus
               />
 
-              <button type="submit" disabled={loading || otp.length !== 6} className="studio-button w-full h-16 text-lg">
+              <button type="submit" disabled={loading || otp.length !== 6} className="studio-button w-full h-11 text-sm">
                 {loading ? 'VERIFYING...' : 'AUTHORIZE LOGIN'}
               </button>
             </form>
 
-            <div className="mt-10 pt-10 border-t border-white/5">
-              <p className="text-xs text-gray-500 mb-4 font-bold uppercase tracking-widest">Protocol failed?</p>
+            <div className="mt-6 pt-6 border-t border-white/5">
+              <p className="text-xs text-gray-500 mb-3 font-bold uppercase tracking-widest">Protocol failed?</p>
               <div className="flex justify-center space-x-8">
                 <button
                   onClick={() => { setStep('credentials'); setOtp('') }}

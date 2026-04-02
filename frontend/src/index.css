@@ -316,8 +316,11 @@ body {
 
 /* Prevent horizontal overflow on all screens */
 * {
-  max-width: 100%;
   box-sizing: border-box;
+}
+
+*:not(.glass-card) {
+  max-width: 100%;
 }
 
 img, video, iframe {

@@ -153,7 +153,7 @@ function Register() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.1, y: -20 }}
-            className="w-full max-w-xl glass-card p-8 lg:p-12 relative overflow-hidden"
+            className="w-full max-w-2xl glass-card p-8 lg:p-12 relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/10 blur-3xl -z-10" />
 

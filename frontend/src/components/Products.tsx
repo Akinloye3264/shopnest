@@ -432,7 +432,7 @@ function Products({ user }: { user: any }) {
                     ) : (
                       <>
                         <CreditCard size={24} />
-                        <span className="font-black uppercase tracking-tighter">Initialize Checkout</span>
+                        <span className="font-black uppercase tracking-tighter target=_blank">Initialize Checkout</span>
                         <ArrowRight size={24} />
                       </>
                     )}
