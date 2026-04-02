@@ -82,13 +82,13 @@ function Products({ user }: { user: any }) {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success('Asset listed successfully.')
+        toast.success('Product listed successfully.')
         setShowAddForm(false)
         setProductImage(null)
         fetchProducts()
       }
     } catch (err) {
-      toast.error('Listing failure.')
+      toast.error('Failed to list product.')
     }
   }
 
@@ -102,11 +102,11 @@ function Products({ user }: { user: any }) {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success('Warehouse populated.')
+        toast.success('Sample products added.')
         fetchProducts()
       }
     } catch (err) {
-      toast.error('Seeding failure.')
+      toast.error('Failed to add sample products.')
     }
     setLoading(false)
   }
@@ -155,12 +155,12 @@ function Products({ user }: { user: any }) {
       if (data.success && data.url) {
         setCart([])
         localStorage.removeItem('shopnest_cart')
-        window.location.href = data.url
+        window.open(data.url, '_blank')
       } else {
-        toast.error(data.message || 'Gateway connection failed.')
+        toast.error(data.message || 'Payment failed. Please try again.')
       }
     } catch (err) {
-      toast.error('Secure checkout restricted.')
+      toast.error('Checkout failed. Please try again.')
     }
     setCheckoutLoading(false)
   }
@@ -220,7 +220,7 @@ function Products({ user }: { user: any }) {
       {showAddForm && (
         <section className="glass-card p-6 md:p-12 animate-slide-up relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 blur-3xl -z-10 pointer-events-none" />
-          <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-8 md:mb-12">Asset Registration</h2>
+          <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-8 md:mb-12">List a Product</h2>
           <form onSubmit={handleAddProduct} className="grid grid-cols-12 gap-6 md:gap-10">
             <div className="col-span-12 lg:col-span-6 space-y-6 md:space-y-8">
               <div>
@@ -229,7 +229,7 @@ function Products({ user }: { user: any }) {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                 <div>
-                  <label className="studio-label text-gray-400">Valuation (USD)</label>
+                  <label className="studio-label text-gray-400">Price (USD)</label>
                   <input type="number" required value={newProduct.price} onChange={e => setNewProduct({ ...newProduct, price: e.target.value })} className="studio-input" placeholder="00.00" />
                 </div>
                 <div>
@@ -245,7 +245,7 @@ function Products({ user }: { user: any }) {
             </div>
             <div className="col-span-12 lg:col-span-6 space-y-6 md:space-y-8">
               <div>
-                <label className="studio-label text-gray-400">Market Description</label>
+                <label className="studio-label text-gray-400">Description</label>
                 <textarea rows={3} required value={newProduct.description} onChange={e => setNewProduct({ ...newProduct, description: e.target.value })} className="studio-input resize-none" placeholder="Provide detailed specifications..." />
               </div>
               <div>
@@ -291,7 +291,7 @@ function Products({ user }: { user: any }) {
                   )}
                 </div>
               </div>
-              <button type="submit" className="studio-button w-full h-14 md:h-20 text-base md:text-xl font-black uppercase">PUBLISH TO MARKET</button>
+              <button type="submit" className="studio-button w-full h-14 md:h-20 text-base md:text-xl font-black uppercase">LIST PRODUCT</button>
             </div>
           </form>
         </section>
@@ -312,7 +312,7 @@ function Products({ user }: { user: any }) {
                 <p className="text-xl font-black tracking-tighter text-brand-accent">${product.price}</p>
               </div>
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-6">
-                Origin: <span className="text-gray-300">{product.seller?.name || 'ShopNest Verified'}</span>
+                Seller: <span className="text-gray-300">{product.seller?.name || 'ShopNest Verified'}</span>
               </p>
               <p className="text-sm text-gray-400 font-medium leading-relaxed flex-1 mb-8 line-clamp-2">
                 {product.description}
@@ -343,15 +343,15 @@ function Products({ user }: { user: any }) {
           <div className="col-span-12 py-40 text-center glass-card border-dashed flex flex-col items-center justify-center space-y-8">
             <Package size={64} className="text-gray-800" />
             <div className="space-y-4">
-              <h3 className="text-4xl font-black tracking-tighter opacity-10 uppercase">Empty Warehouse</h3>
-              <p className="text-gray-500 font-black uppercase tracking-widest text-xs">Inventory list is currently zero.</p>
+              <h3 className="text-4xl font-black tracking-tighter opacity-10 uppercase">No Products Yet</h3>
+              <p className="text-gray-500 font-black uppercase tracking-widest text-xs">No products available right now.</p>
             </div>
             {user.role === 'seller' && (
               <button
                 onClick={handleSeed}
                 className="studio-button-ghost px-10 h-14 uppercase text-[10px] tracking-widest font-black"
               >
-                POPULATE SAMPLE LOGISTICS
+                ADD SAMPLE PRODUCTS
               </button>
             )}
           </div>
@@ -379,7 +379,7 @@ function Products({ user }: { user: any }) {
               <div className="p-8 border-b border-white/10 flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   <ShoppingCart size={24} className="text-brand-accent" />
-                  <h3 className="text-2xl font-black uppercase tracking-tighter leading-none pt-1">Unit Deployment</h3>
+                  <h3 className="text-2xl font-black uppercase tracking-tighter leading-none pt-1">Your Cart</h3>
                 </div>
                 <button onClick={() => setShowCart(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
                   <X size={24} />
@@ -390,8 +390,8 @@ function Products({ user }: { user: any }) {
                 {cart.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
                     <Package size={48} className="text-gray-800" />
-                    <p className="text-gray-500 font-black uppercase tracking-widest text-xs">No units active in deployment.</p>
-                    <button onClick={() => setShowCart(false)} className="studio-button-ghost px-8 h-12 uppercase text-[10px] tracking-widest font-black">Return to Market</button>
+                    <p className="text-gray-500 font-black uppercase tracking-widest text-xs">Your cart is empty.</p>
+                    <button onClick={() => setShowCart(false)} className="studio-button-ghost px-8 h-12 uppercase text-[10px] tracking-widest font-black">Continue Shopping</button>
                   </div>
                 ) : (
                   cart.map(item => (
@@ -419,7 +419,7 @@ function Products({ user }: { user: any }) {
               {cart.length > 0 && (
                 <div className="p-8 border-t border-white/10 space-y-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-black uppercase tracking-widest text-gray-500">Subtotal Estimation</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-gray-500">Total</span>
                     <span className="text-3xl font-black tracking-tighter text-white">${cartTotal.toFixed(2)}</span>
                   </div>
                   <button
@@ -432,13 +432,13 @@ function Products({ user }: { user: any }) {
                     ) : (
                       <>
                         <CreditCard size={24} />
-                        <span className="font-black uppercase tracking-tighter target=_blank">Initialize Checkout</span>
+                        <span className="font-black uppercase tracking-tighter">Pay Now</span>
                         <ArrowRight size={24} />
                       </>
                     )}
                   </button>
                   <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest text-center">
-                    Secure transaction powered by Stripe Gateway
+                    Secure payment powered by Stripe
                   </p>
                 </div>
               )}
