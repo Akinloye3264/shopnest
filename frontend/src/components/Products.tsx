@@ -285,7 +285,7 @@ function Products({ user }: { user: any }) {
                         <p className="text-xs font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
                           <Upload size={14} /> Upload Image
                         </p>
-                        <p className="text-[10px] text-gray-600 mt-1">JPG, PNG, WEBP — max 5MB</p>
+                        <p className="text-[10px] text-gray-600 mt-1">JPG, PNG, WEBP, max 5MB</p>
                       </div>
                     </div>
                   )}

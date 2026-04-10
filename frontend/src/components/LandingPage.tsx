@@ -19,12 +19,12 @@ const features = [
   {
     icon: ShoppingCart,
     title: 'Digital Marketplace',
-    desc: 'Browse and buy from local small businesses and youth entrepreneurs across your community — all in one place.',
+    desc: 'Browse and buy from local small businesses and youth entrepreneurs across your community, all in one place.',
   },
   {
     icon: Briefcase,
     title: 'Job & Gig Opportunities',
-    desc: 'Find short-term tasks, storefront management roles, and digital gigs that fit your skills — no connections required.',
+    desc: 'Find short-term tasks, storefront management roles, and digital gigs that fit your skills, no connections required.',
   },
   {
     icon: Store,
@@ -44,7 +44,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'Direct Messaging',
-    desc: 'Communicate directly with vendors, employers, or buyers — no middlemen, no delays.',
+    desc: 'Communicate directly with vendors, employers, or buyers, no middlemen, no delays.',
   },
 ]
 
@@ -55,9 +55,9 @@ const steps = [
 ]
 
 const highlights = [
-  { Icon: Award, title: 'Merit Over Connections', text: 'We match talent to opportunity based on skills and experience — not who you know.' },
-  { Icon: Building2, title: 'Community-First Growth', text: 'Starting in Gwagwalada, Abuja — with plans to expand across Nigeria and Africa.' },
-  { Icon: TrendingUp, title: 'Real, Sustainable Income', text: 'Task-based payments, commissions, and storefront earnings — money you actually keep.' },
+  { Icon: Award, title: 'Merit Over Connections', text: 'We match talent to opportunity based on skills and experience, not who you know.' },
+  { Icon: Building2, title: 'Community-First Growth', text: 'Starting in Gwagwalada, Abuja, with plans to expand across Nigeria and Africa.' },
+  { Icon: TrendingUp, title: 'Real, Sustainable Income', text: 'Task-based payments, commissions, and storefront earnings, money you actually keep.' },
 ]
 
 function useScrolled() {
@@ -312,7 +312,7 @@ export default function LandingPage() {
               <span className="text-gray-500">Earn and Grow Online</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
-              Whether you want to sell products, find digital work, or support local businesses —
+              Whether you want to sell products, find digital work, or support local businesses,
               ShopNest gives you the tools to do it all from one platform.
             </p>
           </FadeUp>
@@ -344,7 +344,7 @@ export default function LandingPage() {
                 <span className="text-brand-accent">One Digital Job</span><br />at a Time
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                About 9% of Africa's population is unemployed — and the number is growing.
+                About 9% of Africa's population is unemployed, and the number is growing.
                 ShopNest was built for Gwagwalada, Abuja to give qualified graduates a fair
                 shot at income, without needing <em className="text-gray-300">"connections from high places."</em>
               </p>
@@ -435,7 +435,7 @@ export default function LandingPage() {
               {
                 Icon: Store,
                 role: 'Sellers & Vendors',
-                desc: 'Open your digital storefront, list your products, and reach customers across Abuja and beyond — zero startup cost.',
+                desc: 'Open your digital storefront, list your products, and reach customers across Abuja and beyond, zero startup cost.',
                 cta: 'Start Selling',
                 link: '/register',
               },
@@ -468,7 +468,7 @@ export default function LandingPage() {
               Jobs & Hiring on ShopNest
             </h2>
             <p className="text-gray-400 mt-4 text-lg max-w-lg mx-auto">
-              Get hired or build your team — based on skills, not connections.
+              Get hired or build your team, based on skills, not connections.
             </p>
           </FadeUp>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">

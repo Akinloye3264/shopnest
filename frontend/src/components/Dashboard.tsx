@@ -29,7 +29,7 @@ function Dashboard({ user, onOpenAI }: { user: User; onOpenAI?: () => void }) {
   const isSeller = user.role === 'seller'
 
   const roleMessage: Record<string, string> = {
-    buyer: "Browse products, place orders, and message sellers — all in one place.",
+    buyer: "Browse products, place orders, and message sellers, all in one place.",
     seller: "List your products, manage your store, and grow your income.",
     employer: "Post jobs, find the right talent, and manage your hiring pipeline.",
     job_seeker: "Find job opportunities that match your skills and experience.",
