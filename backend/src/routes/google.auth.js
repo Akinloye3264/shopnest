@@ -4,6 +4,16 @@ const router = express.Router();
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 
+const getAppUrl = (value, fallback) => value || fallback;
+
+const readResponseText = async (response) => {
+  try {
+    return await response.text();
+  } catch (error) {
+    return '';
+  }
+};
+
 // GET /api/google-auth/google - Real Google OAuth
 router.get('/google', (req, res) => {
   const { GOOGLE_CLIENT_ID } = process.env;
@@ -50,6 +60,17 @@ router.get('/callback', async (req, res) => {
   }
 
   try {
+    const backendUrl = getAppUrl(process.env.BACKEND_URL, 'http://localhost:5001');
+    const frontendUrl = getAppUrl(process.env.FRONTEND_URL, 'http://localhost:5173');
+
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_SECRET) {
+      console.error('Google OAuth is missing GOOGLE_CLIENT_ID or GOOGLE_SECRET');
+      return res.status(500).json({
+        success: false,
+        message: 'Google OAuth is not configured on the server'
+      });
+    }
+
     // Exchange code for tokens
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
@@ -61,9 +82,19 @@ router.get('/callback', async (req, res) => {
         client_secret: process.env.GOOGLE_SECRET,
         code: code,
         grant_type: 'authorization_code',
-        redirect_uri: `${process.env.BACKEND_URL || 'http://localhost:5001'}/api/google-auth/callback`
+        redirect_uri: `${backendUrl}/api/google-auth/callback`
       })
     });
+
+    if (!tokenResponse.ok) {
+      const tokenErrorText = await readResponseText(tokenResponse);
+      console.error('Google token exchange failed:', tokenResponse.status, tokenErrorText);
+      return res.status(400).json({
+        success: false,
+        message: 'Failed to exchange Google authorization code',
+        error: tokenErrorText || 'Unknown token exchange error'
+      });
+    }
 
     const tokenData = await tokenResponse.json();
 
@@ -82,7 +113,25 @@ router.get('/callback', async (req, res) => {
       }
     });
 
+    if (!userResponse.ok) {
+      const userErrorText = await readResponseText(userResponse);
+      console.error('Google userinfo request failed:', userResponse.status, userErrorText);
+      return res.status(400).json({
+        success: false,
+        message: 'Failed to fetch Google user profile',
+        error: userErrorText || 'Unknown userinfo error'
+      });
+    }
+
     const userData = await userResponse.json();
+
+    if (!userData.email) {
+      console.error('Google OAuth user profile did not include an email:', userData);
+      return res.status(400).json({
+        success: false,
+        message: 'Google account email was not returned'
+      });
+    }
 
     // Find or create user in database
     let user = await User.findOne({ where: { email: userData.email } });
@@ -109,9 +158,22 @@ router.get('/callback', async (req, res) => {
 
     if (!user.googleId) {
       // Link google account if email matches but no googleId
-      user.googleId = userData.id;
-      user.picture = userData.picture;
-      await user.save();
+      try {
+        user.googleId = userData.id;
+        user.picture = userData.picture;
+        await user.save();
+      } catch (linkError) {
+        if (linkError.name === 'SequelizeUniqueConstraintError') {
+          const linkedUser = await User.findOne({ where: { googleId: userData.id } });
+          if (linkedUser) {
+            user = linkedUser;
+          } else {
+            throw linkError;
+          }
+        } else {
+          throw linkError;
+        }
+      }
     }
 
     const mockToken = jwt.sign(
@@ -128,17 +190,14 @@ router.get('/callback', async (req, res) => {
       role: user.role
     };
 
-    const frontendUrl = process.env.FRONTEND_URL;
     const redirectUrl = `${frontendUrl}/auth/callback?token=${mockToken}&user=${encodeURIComponent(JSON.stringify(safeUser))}`;
 
     res.redirect(redirectUrl);
 
   } catch (error) {
     console.error('Google OAuth error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error during Google OAuth'
-    });
+    const frontendUrl = getAppUrl(process.env.FRONTEND_URL, 'http://localhost:5173');
+    return res.redirect(`${frontendUrl}/login?error=google_oauth_failed`);
   }
 });
 
