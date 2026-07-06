@@ -211,7 +211,15 @@ router.post('/complete-signup', async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_secret || 'secret');
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_secret || 'secret');
+    } catch (jwtErr) {
+      if (jwtErr.name === 'TokenExpiredError') {
+        return res.status(401).json({ success: false, message: 'Setup link expired. Please sign in with Google again.' });
+      }
+      return res.status(401).json({ success: false, message: 'Invalid setup token. Please sign in with Google again.' });
+    }
 
     if (!decoded.isGoogleSetup || !decoded.googleData) {
       return res.status(400).json({ success: false, message: 'Invalid setup token' });
@@ -229,10 +237,15 @@ router.post('/complete-signup', async (req, res) => {
         role,
         phone: null,
         googleId,
-        picture,
+        picture: picture || null,
         isVerified: true
       });
       console.log(`✅ New Google user created: ${user.email} (${user.role})`);
+    } else if (!user.googleId) {
+      // Link google to existing account
+      user.googleId = googleId;
+      user.picture = picture || user.picture;
+      await user.save();
     }
 
     const authToken = jwt.sign(
@@ -253,11 +266,8 @@ router.post('/complete-signup', async (req, res) => {
       }
     });
   } catch (err) {
-    if (err.name === 'TokenExpiredError') {
-      return res.status(401).json({ success: false, message: 'Setup link expired. Please sign in with Google again.' });
-    }
     console.error('complete-signup error:', err);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    return res.status(500).json({ success: false, message: 'Internal server error. Please try again.' });
   }
 });
 

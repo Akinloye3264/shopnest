@@ -69,6 +69,10 @@ function GoogleRoleSelection({ onLogin }: GoogleRoleSelectionProps) {
 
       if (!data.success) {
         setError(data.message || 'Something went wrong. Please try again.')
+        // If token expired, redirect back to login
+        if (res.status === 401) {
+          setTimeout(() => navigate('/login'), 2000)
+        }
         setLoading(false)
         return
       }
