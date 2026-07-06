@@ -13,9 +13,9 @@ router.post('/learning-assistant', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Question is required' });
     }
 
-    const CLAUDE_API_KEY = process.env.CLAUDE_API;
+    const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
     if (!CLAUDE_API_KEY) {
-      return res.json({ success: true, response: "AI OFFLINE: The CLAUDE_API key is missing.", timestamp: new Date().toISOString() });
+      return res.json({ success: true, response: "AI OFFLINE: The CLAUDE_API_KEY is missing.", timestamp: new Date().toISOString() });
     }
 
     const requestBody = {
@@ -35,13 +35,13 @@ router.post('/learning-assistant', async (req, res) => {
     });
 
     const data = await response.json();
-    
+
     // Check for API errors
     if (data.error) {
       console.error('Claude API Error:', data.error);
       return res.json({ success: true, response: `AI Error: ${data.error.message || 'API request failed'}`, timestamp: new Date().toISOString() });
     }
-    
+
     const aiText = data.content && data.content[0] ? data.content[0].text : "No content in response.";
 
     res.json({ success: true, response: aiText, timestamp: new Date().toISOString() });
@@ -97,14 +97,14 @@ router.get('/external-jobs', async (req, res) => {
 router.post('/audit-resume', upload.single('resume'), async (req, res) => {
   try {
     const { focus, salary } = req.body;
-    const CLAUDE_API_KEY = process.env.CLAUDE_API;
+    const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'PDF Resume is required' });
     }
 
     if (!CLAUDE_API_KEY) {
-      return res.json({ success: true, audit: "AI SERVICE OFFLINE: Please configure Claude API." });
+      return res.json({ success: true, audit: "AI SERVICE OFFLINE: Please configure CLAUDE_API_KEY." });
     }
 
     let pdfParser = pdf;
@@ -136,10 +136,10 @@ router.post('/audit-resume', upload.single('resume'), async (req, res) => {
           content: `You are an expert HR auditor. Analyze this resume text and provide a strategic audit report.
           Target Focus: ${focus || 'General'}
           Desired Salary: ${salary || 'Market Rate'}
-          
+
           Resume Content:
           ${resumeText}
-          
+
           Format your response with:
           1. **Strategic Score** (x/100)
           2. **Gap Analysis**
